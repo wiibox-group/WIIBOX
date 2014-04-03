@@ -12,7 +12,7 @@ WIIBOX open source
 4. 我们不只是做控制器，之后还有更强大的生态链，希望强大的你与我们一起完善控制器程序！
 
 5. 目前已经开放 raspberry 方案，官方 img 可在此处下载：
-       http://pan.baidu.com/s/1o6AuFKQ
+       http://pan.baidu.com/s/1o6AuFKQ (此镜像解压8G，请准备8G以上SD卡)
 
    镜像烧录工具可在此处下载：
        http://pan.baidu.com/s/1mgshP9Y
