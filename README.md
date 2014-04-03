@@ -13,7 +13,7 @@ WIIBOX open source
 
 5. 目前已经开放 raspberry 方案，官方 img 可在此处下载：
 
-       http://pan.baidu.com/s/1o6AuFKQ (此镜像解压8G，请准备8G以上SD卡)
+       （由于树莓官方系统有死机问题，等我们测试稳定后发布新img）
 
    镜像烧录工具可在此处下载：
 
