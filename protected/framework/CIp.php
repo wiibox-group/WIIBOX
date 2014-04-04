@@ -32,7 +32,7 @@ class CIp
 		$temp_array = array();
 		foreach ( $this->return_array as $value )
 		{
-			if ( preg_match_all( "/192\.168\.\d{1,3}\.\d{1,3}/i", $value, $temp_array ) )
+			if ( preg_match_all( "/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/i", $value, $temp_array ) )
 			{
 				$tmpIp = $temp_array[0];
 				if ( is_array( $tmpIp ) ) $tmpIp = array_shift( $tmpIp );
