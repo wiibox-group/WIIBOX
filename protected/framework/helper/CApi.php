@@ -42,6 +42,8 @@ class CApi
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		// 设置cURL 参数，要求结果保存到字符串中还是输出到屏幕上。
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		// 设置cURL 最长执行时间
+		curl_setopt($curl, CURLOPT_TIMEOUT, 3);
 		// 运行cURL，请求网页
 		$res = curl_exec($curl);
 		// 关闭URL请求

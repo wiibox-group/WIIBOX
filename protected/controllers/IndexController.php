@@ -550,13 +550,11 @@ class IndexController extends BaseController
 				}
 			}
 
-/*
 			if ( count( $aryNewMachine ) > 0 )
 			{
 				foreach ( $aryNewMachine as $usb )
 					$this->actionRestartTarget( $usb , 'ltc' , 'L' , true );
 			}
-*/
 
 			if ( count( $usbData['LTC'] ) === 0 )
 				$this->actionShutdown( true );
