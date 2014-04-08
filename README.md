@@ -13,7 +13,7 @@ WIIBOX open source
 
 5. 目前已经开放 raspberry 方案，官方 img 可在此处下载：
 
-       http://pan.baidu.com/s/1i3hyKXf（ 目前已通过稳定性测试120小时，需要8G以上SD卡 ）
+       http://pan.baidu.com/s/1i3hyKXf  （ 目前已通过稳定性测试120小时，需要8G以上SD卡 ）
 
    镜像烧录工具可在此处下载：
 
