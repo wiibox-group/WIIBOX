@@ -7,14 +7,14 @@ WIIBOX open source
 3. WIIBOX之前没有开源有诸多原因，简单说来包括：系统不稳定、支持菊花矿机时间紧迫、升级频率过高、官方要求严格。<br/><br/>
 4. 我们不只是做控制器，之后还有更强大的生态链，希望强大的你与我们一起完善控制器程序！<br/><br/>
 5. 目前已经开放 raspberry 方案，官方 img 可在此处下载：<br/>
-		```ObjectiveC
-		http://pan.baidu.com/s/1i3hyKXf （ 目前已通过稳定性测试120小时，需要8G以上SD卡 ） <br/>
-		```
+```ObjectiveC
+http://pan.baidu.com/s/1i3hyKXf （ 目前已通过稳定性测试120小时，需要8G以上SD卡 ） <br/>
+```
    镜像烧录工具可在此处下载：<br/>
-		```ObjectiveC
-		http://pan.baidu.com/s/1mgshP9Y
-		```
-	   <br/><br/>
+```ObjectiveC
+http://pan.baidu.com/s/1mgshP9Y
+```
+<br/><br/>
 6. 如何联系我们加入开发？<br/>
        请写邮件到：group#wiibox.com ，注明你的github帐号，我们会及时联系你！感谢。<br/><br/>
 7. 开源说明：<br/><br/>
