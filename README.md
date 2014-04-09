@@ -11,7 +11,10 @@ WIIBOX open source
 5. 目前已经开放 raspberry 方案，官方 img 可在此处下载：<br/>
        http://pan.baidu.com/s/1i3hyKXf  （ 目前已通过稳定性测试120小时，需要8G以上SD卡 ） <br/>
    镜像烧录工具可在此处下载：<br/>
-       http://pan.baidu.com/s/1mgshP9Y <br/><br/>
+       ```ObjectiveC
+       http://pan.baidu.com/s/1mgshP9Y
+       ```
+	   <br/><br/>
 
 6. 如何联系我们加入开发？<br/>
        请写邮件到：group#wiibox.com ，注明你的github帐号，我们会及时联系你！感谢。<br/><br/>
