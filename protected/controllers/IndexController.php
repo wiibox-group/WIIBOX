@@ -289,7 +289,7 @@ class IndexController extends BaseController
 
 			if ( !empty( $_strSingleShutDown ) )
 			{
-				preg_match( '/.*-G\s(.+?)\s--.*/' , $r , $match_usb );
+				preg_match( '/.*--dif=(.+?)\s.*/' , $r , $match_usb );
 				if ( in_array( $_strSingleShutDown , array( $match_usb[1] ) ) ) $singlePids[] = $match[1];
 			}
 		}
@@ -353,7 +353,7 @@ class IndexController extends BaseController
 				continue;
 
 			// Match all usb machine
-			preg_match( '/.*\s-G\s(.+?)\s.*/' , $r , $match_usb );
+			preg_match( '/.*\s--dif=(.+?)\s.*/' , $r , $match_usb );
 
 			// If LTC model only, and usb cannot use
 			if ( !empty( $match_usb[1] ) && !in_array( $match_usb[1] , $allUsbCache ) )
@@ -523,7 +523,7 @@ class IndexController extends BaseController
 			$alivedProcess = array();
 			foreach ( $grepout as $r )
 			{
-				preg_match( '/.*-G\s(.+?)\s--.*/' , $r , $match_usb );
+				preg_match( '/.*\s--dif=(.+?)\s.*/' , $r , $match_usb );
 				if ( !empty( $match_usb[1] ) && !in_array( $match_usb[1] , $alivedProcess ) )
 					$alivedProcess[] = $match_usb[1];
 			}
