@@ -3,7 +3,7 @@
 /**
  * CCaptchaAction class file.
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author wengebin <wengebin@hotmail.com>
  * @link http://www.yiiframework.com/
  * @copyright 2008-2013 Yii Software LLC
  * @license http://www.yiiframework.com/license/
@@ -30,7 +30,7 @@
  *
  * @property string $verifyCode The verification code.
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author wengebin <wengebin@hotmail.com>
  * @package system.web.widgets.captcha
  * @since 1.0
  */

@@ -2,7 +2,7 @@
 /**
  * 重新定义session，便于以后进行重载
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author wengebin <wengebin@hotmail.com>
  * @link http://www.yiiframework.com/
  * @copyright 2008-2013 Yii Software LLC
  * @license http://www.yiiframework.com/license/

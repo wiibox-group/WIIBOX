@@ -94,7 +94,7 @@ class UsbModel extends CModel
 		}
 		else if ( empty( $_strCheckTar ) || $_strCheckTar === 'tty' )
 		{
-			@exec( SUDO_COMMAND.'ls /dev/*ACM*' , $output );
+			@exec( SUDO_COMMAND.'ls /dev/tty* |grep -E "ACM|USB"' , $output );
 
 			$aryUsbCache = array();
 			$aryUsbCache['usb'] = $output;

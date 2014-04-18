@@ -3,7 +3,7 @@
  * CComponents class file.
  * 
  * 
- * @author samson.zhou	<samson.zhou@newbiiz.com>
+ * @author wengebin	<wengebin@hotmail.com>
  * @package framework
  * @date 2010-06-24
  */

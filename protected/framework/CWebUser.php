@@ -4,7 +4,7 @@
  * Save session and get info from session.
  * 
  * 
- * @author samson.zhou<samson.zhou@newbiiz.com>
+ * @author wengebin<wengebin@hotmail.com>
  * @package framework
  * @date 2010-08-18
  */

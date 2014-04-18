@@ -87,6 +87,7 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['md'] = $strRunModel;
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
+		$arySyncData['data']['sync']['info'] = SYS_INFO;
 		if ( $boolIsReloadConf === true )
 			$arySyncData['data']['sync']['reloadconf'] = 1;
 		$arySyncData['data'] = urlencode( base64_encode( json_encode( $arySyncData['data'] ) ) );
@@ -147,17 +148,21 @@ class SyncController extends BaseController
 
 			$aryConfig = json_decode( $syncData['config'] , 1 );
 
-			$aryBTCData = array();
+			$aryBTCData = $indexController->getTarConfig( 'btc' );
 			$aryBTCData['ad'] = $aryConfig['address_btc'];
 			$aryBTCData['ac'] = $aryConfig['account_btc'];
 			$aryBTCData['pw'] = $aryConfig['password_btc'];
-			$aryBTCData['su'] = isset( $aryConfig['super_btc'] ) ? $aryConfig['super_btc'] : 1;
+			if ( !empty( $aryConfig['speed_btc'] ) )
+				$aryBTCData['speed'] = $aryConfig['speed_btc'];
+			//$aryBTCData['su'] = isset( $aryConfig['super_btc'] ) ? $aryConfig['super_btc'] : 1;
 
-			$aryLTCData = array();
+			$aryLTCData = $indexController->getTarConfig( 'ltc' );
 			$aryLTCData['ad'] = $aryConfig['address_ltc'];
 			$aryLTCData['ac'] = $aryConfig['account_ltc'];
 			$aryLTCData['pw'] = $aryConfig['password_ltc'];
-			$aryLTCData['su'] = isset( $aryConfig['super_ltc'] ) ? $aryConfig['super_ltc'] : 1;
+			if ( !empty( $aryConfig['speed_ltc'] ) )
+				$aryLTCData['speed'] = $aryConfig['speed_ltc'];
+			//$aryLTCData['su'] = isset( $aryConfig['super_ltc'] ) ? $aryConfig['super_ltc'] : 1;
 
 			// is params empty
 			$boolCheck = CUtil::isParamsEmpty( $aryLTCData );

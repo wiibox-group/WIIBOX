@@ -5,8 +5,8 @@ class UtilWww
 	const VIDEO_ACCESS_KEY = "password";
 	
 	/**
-	 * @author  zhaojingyun
-	 *将传入的UID 进行md5加密 以及取出MD5后的数字
+	 * 将传入的UID 进行md5加密 以及取出MD5后的数字
+	 *
 	 * @param INT $_str
 	 * @return string
 	 */

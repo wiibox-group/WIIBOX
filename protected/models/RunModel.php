@@ -101,7 +101,35 @@ class RunModel extends CModel
 			}
 		}
 
-		return $intCountFile > 0 ? 1 : 0;
+		// OPKG 升级包
+		$strDir = WEB_ROOT.'/opkg';
+		// 打开目录
+		$dir = @opendir( $strDir );
+
+		// 统计文件数
+		$intOpkgCountFile = 0;
+
+		// 遍历文件
+		if ( !empty( $dir ) )
+		{
+			while ( ( $file  = readdir( $dir ) ) !== false )
+			{
+				// 获得子目录
+				$sub_dir = $strDir.DIRECTORY_SEPARATOR.$file;
+				if ( $file == '.' || $file == '..' )
+					continue;
+				else if ( is_dir( $sub_dir ) )
+					$intOpkgCountFile += 1;
+				else
+				{
+					$intOpkgCountFile += 1;
+					exec( SUDO_COMMAND.'opkg install '.$sub_dir );
+					@unlink( $sub_dir );
+				}
+			}
+		}
+
+		return $intCountFile > 0 || $intOpkgCountFile > 0 ? 1 : 0;
 	}
 
 	/**

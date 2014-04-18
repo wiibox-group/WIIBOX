@@ -2,7 +2,7 @@
 /**
  * CJavaScript helper class file.
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author wengebin <wengebin@hotmail.com>
  * @link http://www.yiiframework.com/
  * @copyright Copyright &copy; 2008-2009 Yii Software LLC
  * @license http://www.yiiframework.com/license/
@@ -11,7 +11,7 @@
 /**
  * CJavaScript is a helper class containing JavaScript-related handling functions.
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author wengebin <wengebin@hotmail.com>
  * @version $Id: CJavaScript.php 1783 2010-02-01 21:12:10Z qiang.xue $
  * @package system.web.helpers
  * @since 1.0

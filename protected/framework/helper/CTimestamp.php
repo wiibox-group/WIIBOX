@@ -2,7 +2,7 @@
 /**
  * CTimestamp class file.
  *
- * @author Wei Zhuo <weizhuo[at]gamil[dot]com>
+ * @author wengebin wengebin@hotmail.com
  * @link http://www.yiiframework.com/
  * @copyright Copyright &copy; 2008-2010 Yii Software LLC
  * @license http://www.yiiframework.com/license/
@@ -36,7 +36,6 @@
  * possible, and only switches to PHP code when the dates fall outside
  * the 32-bit signed integer range.
  *
- * @author Wei Zhuo <weizhuo[at]gmail[dot]com>
  * @version $Id: CTimestamp.php 2201 2010-06-16 19:11:00Z alexander.makarow $
  * @package system.utils
  * @since 1.0

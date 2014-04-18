@@ -3,7 +3,7 @@
  * CHtml class files.
  * 
  * 
- * @author samson.zhou<samson.zhou@newbiiz.com>
+ * @author wengebin<wengebin@hotmail.com>
  * @date 2010-08-18
  */
 class CHtml

@@ -28,12 +28,47 @@
 			<input class="form-control" placeholder="SCRYPT矿工号 (多个请用 英文半角',' 隔开)" name="account_ltc" value="<?php echo $ltc['ac']; ?>" type="text" />
 			<input class="form-control" placeholder="SCRYPT统一矿工密码" name="password_ltc" value="<?php echo $ltc['pw']; ?>" type="text" />
 
+			<input type="hidden" id="run_speed" name="run_speed" value="<?php echo $speed; ?>" />
+			<div class="btn-group">
+				<button type="button" class="btn btn-default">运行频率: <span id="speed-cur"><?php echo $speed; ?></span>M</button>
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<span class="caret"></span>
+					<span class="sr-only">Toggle Dropdown</span>
+				</button>
+				<ul id="speed-select-options" class="dropdown-menu" role="menu">
+					<li><a href="javascript:;">700</a></li>
+					<li><a href="javascript:;">800</a></li>
+					<li><a href="javascript:;">850</a></li>
+					<li><a href="javascript:;">900</a></li>
+					<li><a href="javascript:;">950</a></li>
+					<li><a href="javascript:;">975</a></li>
+					<li><a href="javascript:;">1000</a></li>
+					<li><a href="javascript:;">1025</a></li>
+					<li><a href="javascript:;">1050</a></li>
+					<li><a href="javascript:;">1100</a></li>
+					<li><a href="javascript:;">1125</a></li>
+					<li><a href="javascript:;">1150</a></li>
+					<li><a href="javascript:;">1175</a></li>
+					<li><a href="javascript:;">1200</a></li>
+				</ul>
+			</div>
+			<span style="font-size:15px;">&nbsp;&nbsp;(超频有风险，请谨慎对待)</span>
+			<script type="text/javascript">
+				$('#speed-select-options li a').click(function(){
+					$('#speed-cur').html( $(this).html() );
+					$('#run_speed').val( $(this).html() );
+				}); 
+			</script>
+			<p>&nbsp;</p>
+
+<?/*
 			<div>挖矿模式</div>
 			<div class="btn-group" style="padding-bottom:10px;">
 				<input type="hidden" id="runmodel-input" name="runmodel" value="<?php echo $runmodel; ?>"/>
 				<button type="button" tar="L" class="runmodel-bt btn btn-default<?php echo $runmodel === 'L' ? ' active' : '' ?>">SCRYPT单挖</button>
 				<button type="button" tar="LB" class="runmodel-bt btn btn-default<?php echo $runmodel === 'LB' ? ' active' : '' ?>">SCRYPT/SHA双挖</button>
 			</div>
+*/?>
 		</div>
 		<p>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">保存设置</button>

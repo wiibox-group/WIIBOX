@@ -2,9 +2,7 @@
 /**
  * CDateTimeParser class file
  *
- * @author Wei Zhuo <weizhuo[at]gamil[dot]com>
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @author Tomasz Suchanek <tomasz[dot]suchanek[at]gmail[dot]com>
+ * @author wengebin <wengebin@hotmail.com>
  * @link http://www.yiiframework.com/
  * @copyright Copyright &copy; 2008-2010 Yii Software LLC
  * @license http://www.yiiframework.com/license/
@@ -42,8 +40,7 @@
  *
  * To format a timestamp to a date string, please use {@link CDateFormatter}.
  *
- * @author Wei Zhuo <weizhuo[at]gmail[dot]com>
- * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author wengebin <wengebin@hotmail.com>
  * @version $Id: CDateTimeParser.php 2184 2010-06-14 20:39:12Z qiang.xue $
  * @package system.utils
  * @since 1.0

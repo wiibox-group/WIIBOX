@@ -41,7 +41,12 @@ class IndexController extends BaseController
 			$btcVal = $redis->readByKey( 'btc.setting' );
 			$ltcVal = $redis->readByKey( 'ltc.setting' );
 			$aryBTCData = empty( $btcVal ) ? array() : json_decode( $btcVal , true );
+			if ( empty($aryBTCData['speed']) )
+				$aryBTCData['speed'] = 850;
+
 			$aryLTCData = empty( $ltcVal ) ? array() : json_decode( $ltcVal , true );
+			if ( empty($aryLTCData['speed']) )
+				$aryLTCData['speed'] = 850;
 
 			// get run model
 			$strRunModel = RunModel::model()->getRunModel();
@@ -57,6 +62,8 @@ class IndexController extends BaseController
 				$strLTCAccount = isset( $_POST['account_ltc'] ) ? htmlspecialchars( $_POST['account_ltc'] ) : '';
 				$strLTCPassword = isset( $_POST['password_ltc'] ) ? htmlspecialchars( $_POST['password_ltc'] ) : '';
 
+				$intSpeed = isset( $_POST['run_speed'] ) ? intval( $_POST['run_speed'] ) : 850;
+
 				$strGetRunModel = isset( $_POST['runmodel'] ) ? htmlspecialchars( $_POST['runmodel'] ) : '';
 				if ( !empty( $strGetRunModel ) && in_array( $strGetRunModel , array( 'L' , 'LB' ) ) )
 				{
@@ -67,12 +74,14 @@ class IndexController extends BaseController
 				$aryBTCData['ad'] = $strBTCAddress;
 				$aryBTCData['ac'] = $strBTCAccount;
 				$aryBTCData['pw'] = $strBTCPassword;
-				$aryBTCData['su'] = isset( $aryBTCData['su'] ) ? $aryBTCData['su'] : 1;
+				$aryBTCData['speed'] = $intSpeed;
+				//$aryBTCData['su'] = isset( $aryBTCData['su'] ) ? $aryBTCData['su'] : 1;
 
 				$aryLTCData['ad'] = $strLTCAddress;
 				$aryLTCData['ac'] = $strLTCAccount;
 				$aryLTCData['pw'] = $strLTCPassword;
-				$aryLTCData['su'] = isset( $aryLTCData['su'] ) ? $aryLTCData['su'] : 1;
+				$aryLTCData['speed'] = $intSpeed;
+				//$aryLTCData['su'] = isset( $aryLTCData['su'] ) ? $aryLTCData['su'] : 1;
 
 				$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
 				if ( $boolCheck === false )
@@ -97,6 +106,7 @@ class IndexController extends BaseController
 		$aryData['btc'] = $aryBTCData;
 		$aryData['ltc'] = $aryLTCData;
 		$aryData['runmodel'] = $strRunModel;
+		$aryData['speed'] = $aryLTCData['speed'];
 		$this->render( 'index' , $aryData );
 	}
 
@@ -106,6 +116,7 @@ class IndexController extends BaseController
 	public function actionMode()
 	{
 		// is super mode
+		/*
 		$intIsSuper = isset( $_GET['s'] ) ? intval( $_GET['s'] ) : 0;
 
 		$redis = $this->getRedis();
@@ -130,6 +141,7 @@ class IndexController extends BaseController
 		$redis->writeByKey( 'ltc.setting' , json_encode( $aryLTCData ) );
 
 		$this->actionRestart( true );
+		*/
 		echo '200';exit;
 	}
 
@@ -175,7 +187,8 @@ class IndexController extends BaseController
 			CPowerSystem::restartPower( 1000000 );
 
 		// single model or dule model
-		$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+		//$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+		$strCheckTar = $strRunModel == 'L' ? 'lsusb' : 'lsusb';
 
 		if ( $sys->cursys == 'OPENWRT' )
 			$aryUsbCache = UsbModel::model()->getUsbChanging( $strRunModel , 6, $strCheckTar );
@@ -197,6 +210,7 @@ class IndexController extends BaseController
 		}
 
 		// if ltc machine has restart
+		/*
 		if ( count( $aryUsb ) > 0 && in_array( $strRunModel , array( 'L' , 'LB' ) ) )
 		{
 			$aryLTCData = $this->getTarConfig( 'ltc' );
@@ -215,6 +229,21 @@ class IndexController extends BaseController
 				$this->restartByUsb( $aryConfig , $usb , $strRunModel );
 				$intUids --;
 			}
+		}
+		*/
+
+		if ( count( $aryUsb ) > 0 && in_array( $strRunModel , array( 'L' , 'LB' ) ) )
+		{
+			$aryLTCData = $this->getTarConfig( 'ltc' );
+
+			$aryConfig = $aryLTCData;
+			$aryConfig['ac'] = $aryLTCData['ac'][0];
+			$aryConfig['mode'] = $strRunModel === 'LB' ? 'LB-L' : 'L';
+			$aryConfig['speed'] = $aryLTCData['speed'];
+			//$aryConfig['su'] = $aryLTCData['su'];
+
+			$this->restartByUsb( $aryConfig , 'all' , $strRunModel );
+			$intUids --;
 		}
 
 		$restartData = array( 'status'=>0 , 'time'=>time() );
@@ -248,12 +277,13 @@ class IndexController extends BaseController
 		if ( in_array( $aryData['mode'] , array( 'LB-B' , 'B' ) ) )
 		{
 			$aryUsbCache = json_decode( $this->getRedis()->readByKey( 'usb.check.result' ) , 1 );
-			$intRunSpeed = $aryUsbCache['hasgd'] === 0 ? 800 : 700;
+			$intRunSpeed = $aryUsbCache['hasgd'] === 0 ? $aryData['speed'] : 700;
+			/*
 			if ( $aryData['mode'] == 'L-B' && $aryUsbCache['hasgd'] === 0 )
 				$intRunSpeed = 850;
-
 			if ( $aryData['su'] == 0 )
 				$intRunSpeed = 600;
+			*/
 
 			$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer --dif --gridseed-options=baud=115200,freq={$intRunSpeed},chips=5,modules=1,usefifo=0,btc={$intRunLevel} --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} {$startUsb} >/dev/null 2>&1 &";
 		}
@@ -263,8 +293,9 @@ class IndexController extends BaseController
 		// get single mode ltc start command
 		else if ( in_array( $startModel , array( 'L' ) ) && in_array( $aryData['mode'] , array( 'L' ) ) )
 		{
-			$intRunSpeed = $aryData['su'] == 1 ? 850 : 600;
-			$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd{$modelLParam} -G {$_strUsb} --freq={$intRunSpeed} --dif={$_strUsb} -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} >/dev/null 2>&1 &";
+			$intRunSpeed = $aryData['speed'];
+			//$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd{$modelLParam} -G {$_strUsb} --freq={$intRunSpeed} --dif={$_strUsb} -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} >/dev/null 2>&1 &";
+			$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --dif --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
 		}
 
 		exec( $command );
@@ -325,7 +356,8 @@ class IndexController extends BaseController
 		$alivedLTCUsb = array();
 
 		// get usb machine and run model
-		$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+		//$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+		$strCheckTar = $strRunModel == 'L' ? 'lsusb' : 'lsusb';
 		$aryUsb = UsbModel::model()->getUsbCheckResult( $strRunModel , $strCheckTar );
 		$allUsbCache = $aryUsb['usb'];
 
@@ -334,28 +366,36 @@ class IndexController extends BaseController
 
 		foreach ( $output as $r )
 		{
-			preg_match( '/.*(cgminer).*/' , $r , $match_btc );
-			preg_match( '/.*(minerd).*/' , $r , $match_ltc );
+			//preg_match( '/.*(cgminer).*/' , $r , $match_btc );
+			//preg_match( '/.*(minerd).*/' , $r , $match_ltc );
+			preg_match( '/.*(cgminer_ltc).*/' , $r , $match_ltc );
 
 			// if LTC model
-			if ( empty( $match_btc[1] ) && !empty( $match_ltc[1] ) && $alivedLTC === false )
+			if ( !empty( $match_ltc[1] ) && $alivedLTC === false )
 				$alivedLTC = true;
 			// if BTC model
+			/*
 			else if ( !empty( $match_btc[1] ) && empty( $match_ltc[1] ) && $alivedBTC === false )
 				$alivedBTC = true;
+			*/
 
 			// If BTC model
+			/*
 			if ( !empty( $match_btc[1] ) )
 				continue;
+			*/
 
 			// If LTC model, and LB model running
+			/*
 			if ( !empty( $match_ltc[1] ) && $strRunModel === 'LB' )
 				continue;
+			*/
 
 			// Match all usb machine
-			preg_match( '/.*\s--dif=(.+?)\s.*/' , $r , $match_usb );
+			//preg_match( '/.*\s--dif=(.+?)\s.*/' , $r , $match_usb );
 
 			// If LTC model only, and usb cannot use
+			/*
 			if ( !empty( $match_usb[1] ) && !in_array( $match_usb[1] , $allUsbCache ) )
 			{
 				$this->actionShutdown( true , $match_usb[1] );
@@ -367,18 +407,25 @@ class IndexController extends BaseController
 				if ( !in_array( $match_usb[1] , $alivedLTCUsb ) )
 					$alivedLTCUsb[] = $match_usb[1];
 			}
+			*/
 		}
 
 		// if has btc model
+		/*
 		if ( in_array( $strRunModel , array( 'B' , 'LB' ) ) && $alivedBTC === true )
 		{
 			$alived['BTC'] = $allUsbCache;
 			$alivedLTC = true;
 		}
+		*/
 
 		// if has btc model
+		/*
 		if ( in_array( $strRunModel , array( 'L' , 'LB' ) ) && $alivedLTC === true )
 			$alived['LTC'] = $strRunModel === 'LB' ? $allUsbCache : $alivedLTCUsb;
+		*/
+		if ( in_array( $strRunModel , array( 'L' , 'LB' ) ) && $alivedLTC === true )
+			$alived['LTC'] = $allUsbCache;
 
 		sort( $alived['BTC'] );
 		sort( $alived['LTC'] );
@@ -386,7 +433,10 @@ class IndexController extends BaseController
 		// Died machine
 		if ( in_array( $strRunModel  , array( 'B' , 'LB' ) ) && $alivedBTC === false )
 			$died['BTC'] = $allUsbCache;
+		if ( in_array( $strRunModel  , array( 'L' , 'LB' ) ) && $alivedLTC === false )
+			$died['LTC'] = $allUsbCache;
 
+		/*
 		if ( in_array( $strRunModel , array( 'L' , 'LB' ) ) )
 		{
 			$diedUsb = array();
@@ -399,6 +449,7 @@ class IndexController extends BaseController
 		}
 		else if ( $strRunModel === 'LB' && $alivedLTC === false )
 			$died['LTC'] = $allUsbCache;
+		*/
 
 		sort( $died['BTC'] );
 		sort( $died['LTC'] );
@@ -512,7 +563,8 @@ class IndexController extends BaseController
 		else if ( $strRunModel === 'L' )
 		{
 			// find new usb machine
-			$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+			//$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+			$strCheckTar = $strRunModel == 'L' ? 'lsusb' : 'lsusb';
 			$aryUsbCache = UsbModel::model()->getUsbCheckResult( $strRunModel , $strCheckTar );
 			$aryUsb = $aryUsbCache['usb'];
 
@@ -520,14 +572,23 @@ class IndexController extends BaseController
 			$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep miner';
 			exec( $command , $grepout );
 
-			$alivedProcess = array();
+			//$alivedProcess = array();
+			$usbData = array('BTC'=>array(),'LTC'=>array());
 			foreach ( $grepout as $r )
 			{
-				preg_match( '/.*\s--dif=(.+?)\s.*/' , $r , $match_usb );
-				if ( !empty( $match_usb[1] ) && !in_array( $match_usb[1] , $alivedProcess ) )
-					$alivedProcess[] = $match_usb[1];
+				//preg_match( '/.*\s--dif=(.+?)\s.*/' , $r , $match_usb );
+				//if ( !empty( $match_usb[1] ) && !in_array( $match_usb[1] , $alivedProcess ) )
+				//	$alivedProcess[] = $match_usb[1];
+
+				preg_match( '/.*(cgminer_ltc).*/' , $r , $match_ltc );
+				if ( !empty( $match_ltc[1] ) )
+				{
+					$usbData['LTC'] = $aryUsb;
+					break;
+				}
 			}
 
+			/*
 			$newUsbData = array('BTC'=>array(),'LTC'=>array());
 			foreach ( $alivedProcess as $usb )
 			{
@@ -555,8 +616,9 @@ class IndexController extends BaseController
 				foreach ( $aryNewMachine as $usb )
 					$this->actionRestartTarget( $usb , 'ltc' , 'L' , true );
 			}
+			*/
 
-			if ( count( $usbData['LTC'] ) === 0 )
+			if ( count( $aryUsb ) === 0 )
 				$this->actionShutdown( true );
 		}
 
@@ -602,8 +664,11 @@ class IndexController extends BaseController
 	 */
 	public function getSuperModelState()
 	{
+		/*
 		$aryBTCData = $this->getTarConfig( 'btc' );
 		return !empty( $aryBTCData ) && intval( $aryBTCData['su'] ) === 1 ? true : false;
+		*/
+		return true;
 	}
 
 	/**
@@ -678,17 +743,13 @@ class IndexController extends BaseController
 				$aryUidsSet[] = $id;
 		}
 
+		// if speed is null
+		if ( empty($aryData['speed']) )
+			$aryData['speed'] = 850;
+
 		$aryData['ac'] = $aryUidsSet;
 		$aryData['acc'] = count( $aryUidsSet );
 		return $aryData;
-	}
-
-	/**
-	 * Get next usb match user
-	 */
-	public function getUsbTarUser()
-	{
-		
 	}
 
 	/**
@@ -697,7 +758,8 @@ class IndexController extends BaseController
 	public function clearLog()
 	{
 		$strRunModel = RunModel::model()->getRunModel();
-		$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+		//$strCheckTar = $strRunModel == 'L' ? 'tty' : '';
+		$strCheckTar = $strRunModel == 'L' ? 'lsusb' : 'lsusb';
 		$aryUsbCache = UsbModel::model()->getUsbCheckResult( $strRunModel , $strCheckTar );
 		$aryUsb = $aryUsbCache['usb'];
 
