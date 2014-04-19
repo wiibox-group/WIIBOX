@@ -9,7 +9,7 @@ WIIBOX open source
 
 ###目前已经开放 raspberry 方案，官方 img 可在此处下载：<br/>
 ```ObjectiveC
-http://pan.baidu.com/s/1bnzSiuz
+http://pan.baidu.com/s/1sjPieM5
 ```
 （ 新版v2.1.3，此版本已重新编译浮点运算处理，增强了稳定性，目前已通过稳定性测试200小时以上，需要8G以上SD卡 ）<br/>
 <br/>
