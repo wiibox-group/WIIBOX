@@ -730,6 +730,8 @@ class IndexController extends BaseController
 
 			// high speed
 			$doubleHighSpeed = 0;
+			foreach ( $arySpeedData as $key=>$data )
+				$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
 
 			// parse data
 			foreach ( $arySpeedData as $key=>$data )
@@ -738,10 +740,8 @@ class IndexController extends BaseController
 				if ( $now - $data['LAST'] > 300 )
 					$boolIsNeedRestart = true;
 
-				$doubleHighSpeed = floatval( $data['S'] );
-
 				// if speed too low
-				if ( $doubleHighSpeed > 0 && floatval( $data['S'] ) - $doubleHighSpeed * 0.67 < 0 )
+				if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
 					$boolIsNeedRestart = true;
 
 				$intHistoryA = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['A'];
