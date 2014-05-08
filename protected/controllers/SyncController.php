@@ -52,7 +52,7 @@ class SyncController extends BaseController
 		$countData = json_decode( $redis->readByKey( 'speed.count.log' ) , 1 );
 
 		// get run model
-		$strRunModel = RunModel::model()->getRunModel();
+		$strRunModel = RunModel::model()->getRunMode();
 
 		// get alived machine count
 		$intCountMachine = max( count( $checkState['alived']['BTC'] )+count( $checkState['died']['BTC'] ) , count( $checkState['alived']['LTC'] )+count( $checkState['died']['LTC'] ) );

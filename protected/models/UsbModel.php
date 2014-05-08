@@ -103,6 +103,30 @@ class UsbModel extends CModel
 
 			return $aryUsbCache;
 		}
+		else if ( $_strCheckTar === 'spi' )
+		{
+			$aryApiData = SocketModel::request( 'devs' );
+
+			// list usb
+			$aryUsb = array();
+			foreach ( $aryApiData as $data ) 
+			{
+				if ( !isset( $data['ASC'] ) ) 
+				{   
+					if ( !is_array( $data ) && strpos( $data , 'spidev' ) === 0 ) 
+						$aryUsb[] = $data;
+					continue;
+				}
+
+				$aryUsb[] = 'ASC'.$data['ASC'];
+			}
+
+			$aryUsbCache = array();
+			$aryUsbCache['usb'] = $aryUsb;
+			$aryUsbCache['time'] = time();
+
+			return $aryUsbCache;
+		}
 
 		return $aryUsbCache;
 	}

@@ -31,7 +31,7 @@ class RunModel extends CModel
 	/**
 	 * get current model
 	 */
-	public function getRunModel()
+	public function getRunMode()
 	{
 		if ( isset( $this->_model ) )
 			return $this->_model;
@@ -45,7 +45,8 @@ class RunModel extends CModel
 			if ( !empty( $modelVal ) )
 				$aryModel = json_decode( $modelVal , 1 );
 			
-			return empty( $aryModel ) ? 'L' : $aryModel['model'];
+			$strModel = empty( $aryModel ) ? 'L' : $aryModel['model'];
+			return $strModel;
 		}
 	}
 
