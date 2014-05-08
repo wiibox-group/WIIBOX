@@ -131,7 +131,7 @@ class SocketModel extends CModel
 			return $data;
 		}
 
-		return array('spidev0.0','spidev0.1');
+		return array('spidev');
 	}
 
 //end class
