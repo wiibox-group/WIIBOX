@@ -54,7 +54,7 @@ class CWidgetCaptcha extends CWidget
 	 */
 	public function renderChangeImageLink()
 	{
-		echo '<span id="jqChangeCaptcha">看不请?换一张</span>';
+		echo '<span id="jqChangeCaptcha">'.CUtil::i18n('framework,cwidgetCaptcha_imageLink_change').'</span>';
 		$url = Nbt::app()->createUrl( 'captcha/index' );
 		echo '<script>$(function(){ $("#jqChangeCaptcha").click(function(){ $("#jqCaptcha").attr("src","'.$url.(REWRITE_MODE===true?'?':'&').'random="+Math.random()); }); });</script>';
 	}

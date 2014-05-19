@@ -8,7 +8,7 @@ class CWidgetSwfUpload extends CWidget
 	public $handleCallbackJsDir = "";
 	public $filesize = "100 MB";
 	public $filetypes = "*.*";
-	public $filetypesDescription = "所有文件";
+	public $filetypesDescription = "";
 	public $fileUploadLimit = 1;
 	public $fileQueueLimit = 1;
 	public $postData = array();
@@ -19,6 +19,7 @@ class CWidgetSwfUpload extends CWidget
 	public function init()
 	{
 		parent::init();
+		$this -> filetypesDescription = CUtil::i18n('framework,cwidgetSwfupload_filetypes');
 	}
 	
 	/**

@@ -59,7 +59,7 @@ class BaseController extends CController
 			//ajax请求，输出ajax格式信息
 			if( Nbt::app()->request->isAjaxRequest )
 			{
-				echo $this->encodeAjaxData( false , array() , '您没有登录' );
+				echo $this->encodeAjaxData( false , array() , CUtil::i18n('controllers,user_login_notLogin') );
 				exit();
 			}
 			else

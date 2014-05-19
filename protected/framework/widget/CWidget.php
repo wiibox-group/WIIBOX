@@ -49,7 +49,7 @@ abstract class CWidget extends CComponents
 				require( $_viewFile_2 );
 		}
 		else
-			throw new CException( "找不到部件视图:{$_viewFile_}" );
+			throw new CException( CUtil::i18n('exception,view_notFound').$_viewFile_ );
 	}
 	
 //end class	

@@ -52,7 +52,7 @@ class CHttpSession extends CApplicationComponents
 		@session_start();
 		if(NBT_DEBUG && session_id()=='')
 		{
-			$message="打开SESSION失败";
+			$message = CUtil::i18n('framework,chttpSession_openFail');
 			if(function_exists('error_get_last'))
 			{
 				$error=error_get_last();
@@ -151,7 +151,7 @@ class CHttpSession extends CApplicationComponents
 		if(is_dir($value))
 			session_save_path($value);
 		else
-			throw new CException("设置SESSION保存路径失败，该路径{$value}不是一个正确的路径");
+			throw new CException(CUtil::i18n('exception,exec_session_adsAddFaild').$value.CUtil::i18n('exception,exec_session_errorAds'));
 	}
 
 	/**

@@ -67,12 +67,17 @@ var actions = {
 var actionSuccess = {
 	templates : {
 		// usb-port : /dev/ttyUSB0 , usb-text : 新USB挖矿设备，请选择挖矿模式。
-		newusb : '<div id="newusb-{usb-port}" class="panel panel-primary"><div class="panel-heading"><h3 class="panel-title">设备: {usb-port}</h3></div><div class="panel-body">{usb-text}<br><br><button type="button" class="btn btn-sm btn-default btn-run-ltc" tar="{usb-port}">运行SCRYPT</button>&nbsp;<button type="button" class="btn btn-sm btn-default btn-run-btc" tar="{usb-port}">运行SHA</button></div></div>',
+		newusb : '<div id="newusb-{usb-port}" class="panel panel-primary"><div class="panel-heading"><h3 class="panel-title">'
+				+basei18n.mess_equipment+'{usb-port}</h3></div><div class="panel-body">{usb-text}<br><br><button type="button" class="btn btn-sm btn-default btn-run-ltc" tar="{usb-port}">'
+				+basei18n.mess_scrypt_running+'</button>&nbsp;<button type="button" class="btn btn-sm btn-default btn-run-btc" tar="{usb-port}">'
+				+basei18n.mess_sha_running+'</button></div></div>',
 		// usb-port : /dev/ttyUSB0 , usb-run-tip-type : default|waining , usb-text : 正在运行SHA [正常]|目标运行SHA [已停止] , usb-restart-text : 重启|立即启动
-		btcstate : '<div id="btcstate-{usb-port}" class="panel panel-{usb-run-tip-type}"><div class="panel-heading"><h3 class="panel-title">设备: {usb-port}</h3></div><div class="panel-body">{usb-text}<br></div></div>',
+		btcstate : '<div id="btcstate-{usb-port}" class="panel panel-{usb-run-tip-type}"><div class="panel-heading"><h3 class="panel-title">'
+				+basei18n.mess_equipment+' {usb-port}</h3></div><div class="panel-body">{usb-text}<br></div></div>',
 ///<br><button type="button" class="btn btn-sm btn-danger btn-run-restart" tar="{usb-port}">{usb-restart-text}</button>&nbsp;<button type="button" class="btn btn-sm btn-default btn-run-ltc" tar="{usb-port}">运行SCRYPT</button>
 		// usb-port : /dev/ttyUSB0 , usb-run-tip-type : default|waining , usb-text : 正在运行SCRYPT [正常]|目标运行SCRYPT [已停止] , usb-restart-text : 重启|立即启动
-		ltcstate : '<div id="ltcstate-{usb-port}" class="panel panel-{usb-run-tip-type}"><div class="panel-heading"><h3 class="panel-title">设备: {usb-port}</h3></div><div class="panel-body">{usb-text}<br></div></div>',
+		ltcstate : '<div id="ltcstate-{usb-port}" class="panel panel-{usb-run-tip-type}"><div class="panel-heading"><h3 class="panel-title">'
+				+basei18n.mess_equipment+' {usb-port}</h3></div><div class="panel-body">{usb-text}<br></div></div>',
 //<br><button type="button" class="btn btn-sm btn-danger btn-run-restart" tar="{usb-port}">{usb-restart-text}</button>&nbsp;<button type="button" class="btn btn-sm btn-default btn-run-btc" tar="{usb-port}">运行SHA</button>
 		// data-tip : 还未发现新挖矿设备!|暂无设备运行!
 		nulldata : '<div class="alert alert-success important-tip">{data-tip}</div>'
@@ -80,24 +85,24 @@ var actionSuccess = {
 	restart_home_success : function( data ){
 		if ( data === -1 )
 		{
-			$('#action-restart-tip').html( '正在执行重启操作...' );
+			$('#action-restart-tip').html( basei18n.mess_restart_optionIng );
 			return;
 		}
 		else if ( data == 200 )
-			$('#action-restart-tip').html( '重启成功！' );
+			$('#action-restart-tip').html( basei18n.mess_restart_success);
 		else
-			$('#action-restart-tip').html( '重启失败，再试试！' );
+			$('#action-restart-tip').html( basei18n.mess_restart_faild );
 	},
 	restart_success : function( data ){
 		if ( data === -1 )
 		{
-			$('#action-restart').html( '正在重启...' );
+			$('#action-restart').html( basei18n.mess_restart_ing );
 			return;
 		}
 		else if ( data == 200 )
-			$('#action-restart').html( '立即重启' );
+			$('#action-restart').html( basei18n.mess_restart_atRestart );
 		else
-			$('#action-restart').html( '再次重启(失败)' );
+			$('#action-restart').html( basei18n.mess_restart_again );
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
@@ -109,13 +114,13 @@ var actionSuccess = {
 	shutdown_success : function( data ){
 		if ( data === -1 )
 		{
-			$('#action-stop').html( '正在停止...' );
+			$('#action-stop').html( basei18n.mess_stop_ing );
 			return;
 		}
 		else if ( data == 200 )
-			$('#action-stop').html( '停止运行' );
+			$('#action-stop').html( basei18n.mess_running_stop );
 		else
-			$('#action-stop').html( '重试停止(失败)' );
+			$('#action-stop').html( basei18n.mess_again_stop );
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
@@ -124,13 +129,13 @@ var actionSuccess = {
 	supermode_success : function( data ){
 		if ( data === -1 )
 		{
-			$('#action-super').html( '超频中...' );
+			$('#action-super').html( basei18n.mess_overclocking );
 			return;
 		}
 		else if ( data == 200 )
-			$('#action-super').html( '超频运行' );
+			$('#action-super').html( basei18n.mess_overclocking_running );
 		else
-			$('#action-super').html( '重试超频(失败)' );
+			$('#action-super').html( basei18n.mess_overclocking_again );
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
@@ -139,13 +144,13 @@ var actionSuccess = {
 	normalmode_success : function( data ){
 		if ( data === -1 )
 		{
-			$('#action-run').html( '正在启动...' );
+			$('#action-run').html( basei18n.mess_start_ing );
 			return;
 		}
 		else if ( data == 200 )
-			$('#action-run').html( '正常运行' );
+			$('#action-run').html( basei18n.mess_running_normal );
 		else
-			$('#action-run').html( '重新运行(失败)' );
+			$('#action-run').html( basei18n.mess_running_again );
 
 		actions.setting.runstate = false;
 		resetTopBt.check();
@@ -223,7 +228,7 @@ var actionSuccess = {
 		// start btc machine check....
 		if ( Object.keys( btc_machine ).length === 0 || in_array( btc_machine , null_data ) )
 		{
-			html_btc = replaceAll( '{data-tip}' , '暂无SHA设备!' , this.templates.nulldata );
+			html_btc = replaceAll( '{data-tip}' , basei18n.mess_shaEquipment_notFound , this.templates.nulldata );
 		}
 		else
 		{
@@ -236,7 +241,7 @@ var actionSuccess = {
 
 				var tmp_str = replaceAll( '{usb-port}' , key_set , this.templates.btcstate );
 				tmp_str = replaceAll( '{usb-run-tip-type}' , btc_machine[key] === 1 ? 'default' : 'warning' , tmp_str );
-				tmp_str = replaceAll( '{usb-text}' , btc_machine[key] === 1 ? '正在运行SHA [正常]' : '目标运行SHA [已停止]' , tmp_str );
+				tmp_str = replaceAll( '{usb-text}' , btc_machine[key] === 1 ? basei18n.mess_shaRunning_normal : basei18n.mess_shaRunning_stop , tmp_str );
 				//tmp_str = replaceAll( '{usb-restart-text}' , btc_machine[key] === 1 ? '重启' : '立即启动' , tmp_str );
 				html_btc += tmp_str;
 
@@ -262,7 +267,7 @@ var actionSuccess = {
 		// start ltc machine check....
 		if ( Object.keys( ltc_machine ).length === 0 || in_array( ltc_machine , null_data ) )
 		{
-			html_ltc = replaceAll( '{data-tip}' , '暂无SCRYPT设备!' , this.templates.nulldata );
+			html_ltc = replaceAll( '{data-tip}' , basei18n.mess_scryptEquipment_notFound , this.templates.nulldata );
 		}
 		else
 		{
@@ -275,7 +280,7 @@ var actionSuccess = {
 
 				var tmp_str = replaceAll( '{usb-port}' , key_set , this.templates.ltcstate );
 				tmp_str = replaceAll( '{usb-run-tip-type}' , ltc_machine[key] === 1 ? 'default' : 'warning' , tmp_str );
-				tmp_str = replaceAll( '{usb-text}' , ltc_machine[key] === 1 ? '正在运行SCRYPT [正常]' : '目标运行SCRYPT [已停止]' , tmp_str );
+				tmp_str = replaceAll( '{usb-text}' , ltc_machine[key] === 1 ? basei18n.mess_scryptRunning_normal : basei18n.mess_scryptRunning_stop , tmp_str );
 				//tmp_str = replaceAll( '{usb-restart-text}' , ltc_machine[key] === 1 ? '重启' : '立即启动' , tmp_str );
 				html_ltc += tmp_str;
 

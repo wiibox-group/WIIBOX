@@ -44,13 +44,13 @@ class PortController extends BaseController
 			if ( empty( $strTarAdd ) || $strTarAdd !== $strLocalAdd )
 			{
 				$data = '500';
-				throw new CModelException( '我不是你要找的矿机！' );
+				throw new CModelException( CUtil::i18n( 'exception,miningMachine_found_faild' ) );
 			}
 			else
 			{
 				$data['ip'] = $strLocalAdd;
 				$data['key'] = KEY;
-				$msg = '我就是矿机！';
+				$msg = CUtil::i18n( 'controllers,monitor_check_isMiningMachine' );
 			}
 			$isok = 1;
 		}
@@ -60,7 +60,7 @@ class PortController extends BaseController
 		}
 		catch ( CException $e )
 		{
-			$msg = NBT_DEBUG ? $e->getMessage() : '系统错误';
+			$msg = NBT_DEBUG ? $e->getMessage() : CUtil::i18n( 'exception,sys_error' );
 		}
 
 		$data = $this->encodeAjaxData( $isok , $data , $msg );
@@ -121,9 +121,9 @@ class PortController extends BaseController
 		UtilApi::callCancelbind( md5($mac_addr->mac_addr.'-'.$strRKEY) );
 
 		if ( $boolResult === true )
-			UtilMsg::saveTipToSession( '取消绑定成功，请重新扫描绑定！' );
+			UtilMsg::saveTipToSession( CUtil::i18n( 'exception,bound_cancel_success' ) );
 		else
-			UtilMsg::saveErrorTipToSession( '取消绑定失败，再试试！' );
+			UtilMsg::saveErrorTipToSession( CUtil::i18n('exception,bound_cancel_faild') );
 
 		$this->redirect( array( 'index/index' ) );
 	}

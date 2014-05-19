@@ -20,7 +20,7 @@ class MonitorController extends BaseController
 	 */
 	public function actionIndex()
 	{
-		$this->replaceSeoTitle( 'WIIBOX 监控中心' );
+		$this->replaceSeoTitle( CUtil::i18n( 'controllers,monitor_index_seoTitle' ) );
 
 		$aryData = array();
 		$this->render( 'index' , $aryData );

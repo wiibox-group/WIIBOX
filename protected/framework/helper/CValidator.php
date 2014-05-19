@@ -341,7 +341,7 @@ class CValidator
 		$objWidgetCaptchaRenderImage = new CWidgetCaptchaRenderImage();
 		if( !$objWidgetCaptchaRenderImage->validate( $_val ) )
 		{
-			$_message = "不正确";
+			$_message = CUtil::i18n('framework,cvalidator_captcha_error');
 			return false;
 		}
 		return true;

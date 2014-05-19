@@ -20,7 +20,7 @@ class UpgradeController extends BaseController
 	 */
 	public function actionIndex()
 	{
-		$this->replaceSeoTitle( 'BTC & LTC 升级中心' );
+		$this->replaceSeoTitle( CUtil::i18n( 'controllers,upgrade_index_seoTitle' ) );
 
 		$aryData = array();
 		$this->render( 'index' , $aryData );
@@ -61,16 +61,16 @@ class UpgradeController extends BaseController
 		try
 		{
 			if ( $aryVersionData['ISOK'] !== 1 || empty( $aryVersionData['DATA']['v'] ) )
-				throw new CModelException( '当前版本无需升级！' );
+				throw new CModelException( CUtil::i18n( 'exception,version_upgrad_withoutUpgrad' ) );
 
 			// get up to version
 			$strVersion = $aryVersionData['DATA']['v'];
 
 			if ( empty( $strVersion ) )
-				throw new CModelException( '升级失败，参数不正确！' );
+				throw new CModelException( CUtil::i18n( 'exception,version_upgrad_upgradFaild' ) );
 
 			if ( $strVersion <= CUR_VERSION )
-				throw new CModelException( '当前版本无需升级！' );
+				throw new CModelException( CUtil::i18n( 'exception,version_upgrad_withoutUpgrad' ) );
 
 			// execute upgrade
 			$command = SUDO_COMMAND."cd ".WEB_ROOT.";".SUDO_COMMAND."wget ".MAIN_DOMAIN."/down/v{$strVersion}.zip;".SUDO_COMMAND."unzip -o v{$strVersion}.zip;".SUDO_COMMAND."rm -rf v{$strVersion}.zip;";
@@ -84,7 +84,7 @@ class UpgradeController extends BaseController
 		}
 		catch ( CException $e )
 		{
-			$msg = NBT_DEBUG ? $e->getMessage() : '系统错误';
+			$msg = NBT_DEBUG ? $e->getMessage() : CUtil::i18n( 'exception,sys_error' );
 		}
 
 		header('Content-Type: text/html; charset=utf-8');

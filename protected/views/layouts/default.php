@@ -23,6 +23,8 @@
 </script>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/bootstrap.min.js"></script>
+
+<script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/language/<?php echo CUtil::getLanguage();?>/base.config.js"></script>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/base.js"></script>
 <?php if( NBT_DEBUG ):?>
 <script language="javascript" type="text/javascript" src="<?php echo $this->baseUrl;?>/js/dump.js"></script>

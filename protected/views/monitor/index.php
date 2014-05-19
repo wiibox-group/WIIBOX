@@ -1,10 +1,16 @@
   <div class="page-header">
-	<h1>SHA 运行状态<div class="pull-right"><h4>当前版本：<?php echo CUR_VERSION; ?></h4></div></h1>
+	<h1><?php echo CUtil::i18n('vmonitor,sha_runStatus');?>
+		<div class="pull-right">
+			<h4>
+				<?php echo CUtil::i18n('vmonitor,this_version').CUR_VERSION; ?>
+			</h4>
+		</div>
+	</h1>
   </div>
   <div id="btc-machine-container" class="row"></div>
 
   <div class="page-header">
-	<h1>SCRYPT 运行状态</h1>
+	<h1><?php echo CUtil::i18n('vmonitor,scrypt_runStatus');?></h1>
   </div>
   <div id="ltc-machine-container" class="row"></div>
 <script type="text/javascript">

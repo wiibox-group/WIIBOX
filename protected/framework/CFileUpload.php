@@ -20,15 +20,20 @@ class CFileUpload extends CApplicationComponents
 	/**允许的文件名最大长度*/
 	private $_intMaxFileName = 100;
 	/**$_FILES错误定义*/
-	private $_aryUploadError = array(
-							        0=>"文件上传成功",
-							        1=>"上传的文件超过了 php.ini 文件中的 upload_max_filesize directive 里的设置",
-							        2=>"上传的文件超过了 HTML form 文件中的 MAX_FILE_SIZE directive 里的设置",
-							        3=>"上传的文件仅为部分文件",
-							        4=>"没有文件上传",
-							        6=>"缺少临时文件夹"
-								);
-								
+	private $_aryUploadError = array();
+	
+	public function init()
+	{
+		parent::init();
+		$this -> _aryAllowedExtension = array(
+				0=>CUtil::i18n('framework,cfileUpload_uploadError0'),
+				1=>CUtil::i18n('framework,cfileUpload_uploadError1'),
+				2=>CUtil::i18n('framework,cfileUpload_uploadError2'),
+				3=>CUtil::i18n('framework,cfileUpload_uploadError3'),
+				4=>CUtil::i18n('framework,cfileUpload_uploadError4'),
+				6=>CUtil::i18n('framework,cfileUpload_uploadError5'),
+		);
+	}
 	/**
 	 * 设置从$_FILES中取出上传数据的键名
 	 *
@@ -98,15 +103,15 @@ class CFileUpload extends CApplicationComponents
 	{
 		//属性校验
 		if( empty( $this->_fileUploadName ) )
-			throw new CException( '没有设置$_FILES的KEY' );
+			throw new CException( CUtil::i18n( 'exception,exec_set_notSet' ) );
 		if( empty( $this->_intMaxSize ) )
-			throw new CException( '没有设置上传文件大小的最大值' );
+			throw new CException( CUtil::i18n( 'exception,exec_file_noSetloadSize' ) );
 		if( empty( $this->_aryAllowedExtension ) )
-			throw new CException( '没有设置允许上传的文件类型' );
+			throw new CException( CUtil::i18n( 'exception,exec_file_noSetUploadType' ) );
 		if( empty( $this->_fileAbsPath ) )
-			throw new CException( '没有设置文件的保存位置的固定部份' );
+			throw new CException( CUtil::i18n( 'exception,exec_file_noSetUploadFixedAds' ));
 		if( empty( $this->_fileSavePath ) )
-			throw new CException( '没有设置文件的保存位置' );
+			throw new CException( CUtil::i18n( 'exception,exec_file_noSetUploadAds' ));
 		
 		//PHP上传环境大小校验
 		$POST_MAX_SIZE = ini_get('post_max_size');
@@ -114,9 +119,9 @@ class CFileUpload extends CApplicationComponents
 		$multiplier = ($unit == 'M' ? 1048576 : ($unit == 'K' ? 1024 : ($unit == 'G' ? 1073741824 : 1)));
 		$intSysMaxsize = $multiplier*(int)$POST_MAX_SIZE;
 		if((int)$_SERVER['CONTENT_LENGTH'] > $intSysMaxsize && $POST_MAX_SIZE)
-			throw new CException( "上传的文件大小不能超过{$intSysMaxsize}{$unit}" );
+			throw new CException( CUtil::i18n( 'exception,exec_file_sizeCannotExceed' ).$intSysMaxsize.$unit);
 		if( !isset($_FILES[$this->_fileUploadName]) )
-			throw new CException( '没有找到上传的文件数据$_FILES['.$this->_fileUploadName.']' );
+			throw new CException( CUtil::i18n( 'exception,exec_upload_FileNotFound' ).$_FILES['.$this->_fileUploadName.']);
 		
 		//上传错误
 		$FILE = $_FILES[$this->_fileUploadName];
@@ -125,17 +130,17 @@ class CFileUpload extends CApplicationComponents
 		
 		//临时文件不是一个合法的上传文件
 		if( !isset($FILE["tmp_name"] ) || !@is_uploaded_file( $FILE["tmp_name"] ) )
-			throw new CException( "不合法的上传文件" );
+			throw new CException( CUtil::i18n( 'exception,exec_file_fileIllegal' ) );
 		
 		if( !isset( $FILE['name'] ) )
-			throw new CException( '$_FILE没有name' );
+			throw new CException( '$_FILE'.CUtil::i18n('exception,exec_sys_none').'name' );
 		
 		//校验上传文件大小
 		$intFileSize = @filesize( $FILE["tmp_name"] );
 		if( !$intFileSize || $intFileSize > $this->_intMaxSize )
-			throw new CModelException( "文件大小超过了系统所允许上传的大小！" );		
+			throw new CModelException( CUtil::i18n( 'exception,exec_file_sizeExceedMaxSize' ) );		
 		if( $intFileSize <= 0 )
-			throw new CModelException( "文件太小了！" );
+			throw new CModelException( CUtil::i18n('exception,exec_file_tooSmallFile'));
 		
 		//文件名校验
 		/*$strFileName = preg_replace('/[^'.$this->_strAllowedFileName.']|\.+$/i', "", basename($FILE['name']));		
@@ -146,7 +151,7 @@ class CFileUpload extends CApplicationComponents
 		$aryPathInfo = pathinfo( $FILE['name'] );
 		$aryPathInfo['extension'] = strtolower( trim( $aryPathInfo['extension'] ) );
 		if( !in_array( $aryPathInfo['extension'] , $this->_aryAllowedExtension ) )
-			throw new CModelException( "不被允许上传的文件类型！允许上传的文件类型有:".implode( ',' , $this->_aryAllowedExtension ) );
+			throw new CModelException( CUtil::i18n('exception,exec_file_allowedTypes').implode( ',' , $this->_aryAllowedExtension ) );
 		
 		//得到完整的文件保存路径【拼接文件扩展名】
 		$this->_fileSavePath .= ".{$aryPathInfo['extension']}";
@@ -155,10 +160,10 @@ class CFileUpload extends CApplicationComponents
 		//创建目录		
 		$arySavePathInfo = pathinfo( $savefilepath );
 		if( !file_exists( $arySavePathInfo['dirname'] ) && !@mkdir( $arySavePathInfo['dirname'] , 0755 , true ) )
-			throw new CException( "无法创建目录{$arySavePathInfo['dirname']}" );
+			throw new CException( CUtil::i18n( 'exception,exec_file_unTomkdir' ).$arySavePathInfo['dirname'] );
 		//保存文件到指定位置
 		if( !@move_uploaded_file( $FILE["tmp_name"] , $savefilepath ) )
-			throw new CModelException( "上传文件失败" );
+			throw new CModelException( CUtil::i18n( 'exception,exec_upload_Failed' ));
 		
 		$aryReturn = array();
 		$aryReturn['pathr'] = $this->_fileSavePath;

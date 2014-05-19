@@ -16,7 +16,8 @@ class CUtil
 	 */
 	public static function getSex( $_intV = 9999 )
 	{
-		$aryData = array( self::SEX_MAN=>'男' , self::SEX_WOMEN=>'女' );
+		$aryData = array( self::SEX_MAN=>CUtil::i18n('framework,cutil_gender_boy') 
+						, self::SEX_WOMEN=>CUtil::i18n('framework,cutil_gender_girl') );
 		if( is_null( $_intV ) )
 			return $aryData;
 		else
@@ -165,8 +166,10 @@ class CUtil
 	 * @return string
 	 */
 	public function tranTime( $_timestamp ){
-		$rtime = date("Y年m月d日 H:i:s", $_timestamp);
-		$rtime = str_replace( date('Y年') , '' , $rtime );
+		$rtime = date("Y".CUtil::i18n('framework,cutil_time_year')."m"
+				.CUtil::i18n('framework,cutil_time_month')."d"
+				.CUtil::i18n('framework,cutil_time_day')." H:i:s", $_timestamp);
+		$rtime = str_replace( date('Y'.CUtil::i18n('framework,cutil_time_year')) , '' , $rtime );
 		$htime = date("H:i:s", $_timestamp);
 
 		$now = time();
@@ -179,25 +182,25 @@ class CUtil
 
 		if ($time < 60)
 		{
-			$str = '刚刚';
+			$str = CUtil::i18n('framework,cutil_time_just');
 		}
 		elseif ($time < 60 * 60)
 		{
 			$min = floor($time/60);
-			$str = $min.'分钟前';
+			$str = $min.CUtil::i18n('framework,cutil_time_minuteAgo');
 		}
 		elseif ($time < 60 * 60 * 24)
 		{
 			$h = floor($time/(60*60));
-			$str = $h.'小时前';
+			$str = $h.CUtil::i18n('framework,cutil_time_hourAgo');
 		}
 		elseif ($timey < $_timestamp)
 		{
-			$str = '昨天 '.$htime;
+			$str = CUtil::i18n('framework,cutil_time_yesterday').$htime;
 		}
 		elseif ($timeby < $_timestamp)
 		{
-			$str = '前天 '.$htime;
+			$str = CUtil::i18n('framework,cutil_time_beforeYesterday').$htime;
 		}
 		else
 		{
@@ -222,6 +225,32 @@ class CUtil
 
 		return true;
 	}
+	
+	/**
+	 * 根据key获取指定的值
+	 * 
+	 * @param String $_strkey 文件key值,格式('文件前缀,文件中key值')
+	 * @return String 该key所对应的value值
+	 * 
+	 * @author zhangyi
+	 * @date 2014-5-15
+	 */
+	public static function i18n($_strkey)
+	{
+		return Nbt::app()->language->i18n($_strkey);
+	}
+	
+	/**
+	 * 获取语言
+	 * 
+	 * @author zhangyi
+	 * @date 2014-5-15
+	 */
+	public static function getLanguage()
+	{
+		return Nbt::app() -> language -> getLanguage();
+	}
+	
 
 //end class
 }

@@ -265,5 +265,18 @@ abstract class CApplication extends CComponents
 		return $this->components['request'];
 	}	
 	
+	/**
+	 *
+	 * @return CLanguage object
+	 */
+	public function getLanguage()
+	{
+		if( !isset( $this -> components['language'] ))
+		{
+			$this -> components['language'] = new CLanguage();
+		}
+		return $this -> components['language'];
+	}
+	
 //end class
 }

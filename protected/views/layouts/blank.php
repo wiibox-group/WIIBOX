@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>BTC&LTC 挖矿设置</title>
+<title><?php echo CUtil::i18n('vlayout,btc&Ltc_setting')?></title>
 
 <link href="<?php echo $this->baseUrl; ?>css/index.css" rel="StyleSheet" type="text/css">
 <script src="<?php echo $this->baseUrl; ?>js/jquery.min.js" type="text/javascript"></script>

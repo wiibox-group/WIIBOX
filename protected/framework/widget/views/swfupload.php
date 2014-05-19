@@ -33,7 +33,7 @@
 			button_width: "150",
 			button_height: "29",
 			button_placeholder_id: "spanButtonPlaceHolder",
-			button_text: '<span class="theFont">选择文件并上传</span>',
+			button_text: '<span class="theFont"><?php echo CUtil::i18n("framework,swfupload_choseFile"); ?></span>',
 			button_text_style: ".theFont { font-size: 16; }",
 			button_text_left_padding: 12,
 			button_text_top_padding: 3,
@@ -57,5 +57,5 @@
 <!--<div id="divStatus">0 Files Uploaded</div>-->
 <div id="jqSelectFiles">
 	<span id="spanButtonPlaceHolder"></span>
-	<input id="btnCancel" type="button" value="　取消上传　" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+	<input id="btnCancel" type="button" value="<?php echo CUtil::i18n('framework,swfupload_cancelUpload'); ?>" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
 </div>

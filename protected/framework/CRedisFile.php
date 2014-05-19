@@ -57,7 +57,7 @@ class CRedisFile extends CApplicationComponents
 	public function readFile( $_strFileName = '' )
 	{
 		if ( empty( $_strFileName ) )
-			 throw new CModelException( '文件名不能为空！' );
+			 throw new CModelException(CUtil::i18n('exception,exec_file_nameNotNull'));
 
 		if ( file_exists( $this->_store_url.$_strFileName ) )
 			return file_get_contents( $this->_store_url.$_strFileName );
@@ -68,7 +68,7 @@ class CRedisFile extends CApplicationComponents
 	public function getFile( $_strFileName = '' )
 	{
 		if ( empty( $_strFileName ) )
-			 throw new CModelException( '文件名不能为空！' );
+			 throw new CModelException( CUtil::i18n('exception,exec_file_nameNotNull') );
 
 		$file = fopen( $this->_store_url.$_strFileName , 'w' );
 		return $file;
@@ -77,7 +77,7 @@ class CRedisFile extends CApplicationComponents
 	public function writeFile( $_fileTar = null , $_strVal = '' )
 	{
 		if ( empty( $_fileTar ) )
-			throw new CModelException( '文件不可写！' );
+			throw new CModelException( CUtil::i18n('exception,exec_file_banWrite') );
 
 		return fwrite( $_fileTar , $_strVal );
 	}
@@ -85,7 +85,7 @@ class CRedisFile extends CApplicationComponents
 	public function closeFile( $_fileTar = null )
 	{
 		if ( empty( $_fileTar ) )
-			throw new CModelException( '文件不可用，无法关闭！' );
+			throw new CModelException( CUtil::i18n('exception,exec_file_banClose') );
 
 		fclose( $_fileTar );
 	}
@@ -93,7 +93,7 @@ class CRedisFile extends CApplicationComponents
 	public function deleteFile( $_strFileName = '' )
 	{
 		if ( empty( $_strFileName ) )
-			 throw new CModelException( '文件名不能为空！' );
+			 throw new CModelException( CUtil::i18n('exception,exec_file_nameNotNull') );
 
 		if ( file_exists( $this->_store_url.$_strFileName ) )
 			return unlink( $this->_store_url.$_strFileName );

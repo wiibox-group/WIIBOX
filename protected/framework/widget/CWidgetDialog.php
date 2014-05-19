@@ -8,7 +8,7 @@ class CWidgetDialog extends CWidget
 	public $id = "";
 	public $triggerId = "";
 	public $url = "";
-	public $title="上传文件";
+	public $title = '';
 	public $intWidth = 400;
 	public $intHeight = 100;
 	
@@ -19,6 +19,7 @@ class CWidgetDialog extends CWidget
 	public function init()
 	{
 		parent::init();
+		$this -> title = CUtil::i18n('framework,cwidgetDialog_init_title');
 	}
 	
 	/**
@@ -28,11 +29,11 @@ class CWidgetDialog extends CWidget
 	public function run()
 	{
 		if( empty( $this->id ) )
-			throw new CException( "CWidget->id 未定义" );
+			throw new CException( "CWidget->id ".CUtil::i18n('framework,cwidgetDialog_run_undefined'));
 		if( empty( $this->triggerId ) )
-			throw new CException( "CWidget->triggerId 未定义" );
+			throw new CException( "CWidget->triggerId ".CUtil::i18n('framework,cwidgetDialog_run_undefined'));
 		if( empty( $this->url ) )
-			throw new CException( "CWidget->url 未定义" );
+			throw new CException( "CWidget->url ".CUtil::i18n('framework,cwidgetDialog_run_undefined'));
 			
 		$aryData = array();
 		$this->render( 'dialog' , $aryData );

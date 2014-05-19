@@ -55,7 +55,7 @@ class IndexController extends BaseController
 	{
 		try
 		{
-			$this->replaceSeoTitle( 'WIIBOX 挖矿设置' );
+			$this->replaceSeoTitle( CUtil::i18n( 'controllers,index_index_seoTitle' ) );
 
 			// open redis
 			$redis = $this->getRedis();
@@ -115,7 +115,7 @@ class IndexController extends BaseController
 
 				$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
 				if ( $boolCheck === false )
-					throw new CModelException( 'SCRYPT配置不能有空数据！' );
+					throw new CModelException( CUtil::i18n( 'exception,scrypt_setting_haveNullData' ));
 
 				// store data
 				$redis->writeByKey( 'btc.setting' , json_encode( $aryBTCData ) );
@@ -123,7 +123,7 @@ class IndexController extends BaseController
 				$redis->saveData();
 				
 				$aryTipData['status'] = 'success';
-				$aryTipData['text'] = '保存成功!';
+				$aryTipData['text'] = CUtil::i18n('controllers,index_saveData_success');
 			}
 
 		} catch ( Exception $e ) { 
