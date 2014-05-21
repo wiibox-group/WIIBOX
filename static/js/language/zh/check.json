@@ -1,0 +1,23 @@
+{
+	"title": "控制器自检",
+	"subTitle1": "寻找控制器",
+	"btn1": "控制器闪灯",
+	"btn2": "停止闪灯",
+	"btn3": "开始自检",
+	"subTitle2": "WILLBOX自检",
+	"state1": "未检测",
+	"state2": "正常",
+	"state3": "异常",
+	"state4": "失败",
+	"list1": "矿机检测",
+	"list2": "矿机数量",
+	"list3": "WIIBOX程序",
+	"list4": "定时器",
+	"list5": "系统时区",
+	"list6": "到全网网络环境",
+	"list7": "同步网络环境",
+	"list8": "网络延时",
+	"list9": "IP地址检测",
+	"list10": "MAC地址检测",
+	"list11": "WIIBOX版本"
+}
