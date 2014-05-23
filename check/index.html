@@ -7,159 +7,163 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>控制板自检</title>
     <link rel="stylesheet" type="text/css" href="/static/assets/style/style.min.css" />
-    <script src="/static/libs/jquery/jquery-1.8.3.min.js"></script>
-    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
     <!--[if lt IE 9]>
-		<script src="/staic/libs/html5shiv/html5shiv.min.js"></script>
-		<script src="/static/libs/respond/respond.min.js"></script>
-	<![endif]-->
+        <script src="/staic/libs/html5shiv/html5shiv.min.js"></script>
+        <script src="/static/libs/respond/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body>
-    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/">WIIBOX设置</a>
-            </div>
+    <div class="page-check">
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">{{menu1}}</a>
+                </div>
 
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/">设置中心</a>
-                    </li>
-                    <li class="active"><a>自检</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown">
-                            <span id="lanNow">简体中文</span><b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a data-value="zh">简体中文</a>
-                            </li>
-                            <li>
-                                <a data-value="en">English</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="container page-check">
-        <div class="page-header">
-            <h1>控制器自检</h1>
-        </div>
-
-        <div class="jumbotron">
-            <div class="form-signin">
-                <div class="page-header">
-                    <h3>寻找控制器</h3>
-                </div>
-                <div style="width:195px;float:left;">
-                    <button id="button-find" tt="控制器闪灯" class="btn btn-lg btn-primary btn-block">控制器闪灯</button>
-                </div>
-                <div style="width:195px;float:left;margin-left:10px;">
-                    <button id="button-find-stop" tt="停止闪灯" class="btn btn-lg btn-danger btn-block">停止闪灯</button>
-                </div>
-                <div style="clear:both"></div>
-                <div style="width:100%;height:30px;"></div>
-                <div class="page-header">
-                    <h3>WIIBOX自检</h3>
-                </div>
-                <div id="check-result">
-                    <ul class="nav nav-pills nav-stacked">
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-lsusb-1">
-                                <span class="badge pull-right">未检测</span>
-                                矿机检测
-                            </a>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">{{menu2}}</a>
                         </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-lsusb-2">
-                                <span class="badge pull-right">未检测</span>
-                                矿机数量
-                            </a>
+                        <li class="active"><a>{{menu3}}</a>
                         </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-program">
-                                <span class="badge pull-right">未检测</span>
-                                WIIBOX程序
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <span id="langNow">简体中文</span><b class="caret"></b>
                             </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-timer">
-                                <span class="badge pull-right">未检测</span>
-                                定时器
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-date-1">
-                                <span class="badge pull-right">未检测</span>
-                                系统时区
-                            </a>
-                        </li>
-                        <!--
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-date-2">
-							<span class="badge pull-right">未检测</span>
-							系统时间
-						</a>
-					</li>
-					-->
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-network-1">
-                                <span class="badge pull-right">未检测</span>
-                                到全网网络环境
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-network-2">
-                                <span class="badge pull-right">未检测</span>
-                                同步网络环境
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-network-3">
-                                <span class="badge pull-right">未检测</span>
-                                网络延时
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-ip-1">
-                                <span class="badge pull-right">未检测</span>
-                                IP地址检测
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-ip-2">
-                                <span class="badge pull-right">未检测</span>
-                                MAC地址检测
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a class="check-item waiting-check" id="check-result-version">
-                                <span class="badge pull-right">未检测</span>
-                                WIIBOX版本
-                            </a>
+                            <ul id="languageMenu" class="dropdown-menu">
+                                <li>
+                                    <a data-lang="zh">简体中文</a>
+                                </li>
+                                <li>
+                                    <a data-lang="en">English</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
-                <div class="page-header"></div>
-                <button id="button-check" class="btn btn-lg btn-danger btn-block">开始自检</button>
             </div>
         </div>
-        <div class="page-header"></div>
-        <p class="footer">Power by <a target="_blank" href="http://www.wiibox.net">wiibox</a>.</p>
+        <div class="container">
+            <div class="page-header">
+                <h1>{{title}}</h1>
+            </div>
+
+            <div class="jumbotron">
+                <div class="form-selftest">
+                    <div class="page-header">
+                        <h3>{{subTitle1}}</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button id="button-find" data-name="{{btn1}}" class="btn btn-lg btn-primary btn-block">{{btn1}}</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button id="button-find-stop" data-name="{{btn2}}" class="btn btn-lg btn-danger btn-block">{{btn2}}</button>
+                        </div>
+                    </div>
+                    <div style="width:100%;height:30px;"></div>
+                    <div class="page-header">
+                        <h3>{{subTitle2}}</h3>
+                    </div>
+                    <div id="check-result">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-lsusb-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list1}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-lsusb-2">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list2}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-program">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list3}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-timer">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list4}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-date-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list5}}
+                                </a>
+                            </li>
+                            <!--
+                <li class="active">
+                    <a class="check-item waiting-check" id="check-result-date-2">
+                        <span class="badge pull-right">未检测</span>
+                        系统时间
+                    </a>
+                </li>
+                -->
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-network-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list6}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-network-2">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list7}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-network-3">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list8}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-ip-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list9}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-ip-2">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list10}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-version">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list11}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="page-header"></div>
+                    <button id="button-check" class="btn btn-lg btn-danger btn-block">{{btn3}}</button>
+                </div>
+            </div>
+            <div class="page-header"></div>
+            <p class="footer">Power by <a target="_blank" href="http://www.wiibox.net">wiibox</a>.</p>
+        </div>
     </div>
+    <script src="/static/libs/jquery/jquery-1.8.3.min.js"></script>
+    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/libs/jquery-cookie/jquery.cookie.js"></script>
+    <script src="/static/libs/handlebars/handlebars-v1.3.0.js"></script>
     <script src="/static/js/check.js"></script>
 </body>
 

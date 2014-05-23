@@ -38,12 +38,22 @@ body {
   font-size: 14px;
   margin: 10px 0;
 }
-.page-check .form-signin .page-header {
+.page-check {
+  display: none;
+}
+.page-check .navbar .dropdown a {
+  cursor: pointer;
+}
+.page-check .form-selftest {
+  width: 600px;
+  margin: 0 auto;
+}
+.page-check .form-selftest .page-header {
   padding-bottom: 9px;
   border-bottom: 1px solid #c0c0c0;
   margin-top: 20px;
 }
-.page-check .page-header h3 {
+.page-check .form-selftest .page-header h3 {
   margin: 0;
 }
 .page-check .check-item {
