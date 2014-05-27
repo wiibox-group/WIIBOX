@@ -12,9 +12,12 @@
 </head>
 
 <body>
-	<input type="hidden" id="config" data-nbt="<?php echo NBT_DEBUG ? 1 : 0;?>" data-path="<?php echo $this->baseUrl;?>" data-restart="<?php echo $this->createUrl( 'index/restart' ); ?>" data-restarttarget="<?php echo $this->createUrl( 'index/restartTarget' ); ?>" data-shutdown="<?php echo $this->createUrl( 'index/shutdown' ); ?>" data-supermodel="<?php echo $this->createUrl( 'index/mode' ); ?>" data-usbstate="<?php echo $this->createUrl( 'index/usbstate' ); ?>" data-usbset="<?php echo $this->createUrl( 'index/usbset' ); ?>" data-check="<?php echo $this->createUrl( 'index/check' ); ?>" >
+	<input type="hidden" id="urlConfig" data-nbt="<?php echo NBT_DEBUG ? 1 : 0;?>" data-path="<?php echo $this->baseUrl;?>" data-restart="<?php echo $this->createUrl( 'index/restart' ); ?>" data-restarttarget="<?php echo $this->createUrl( 'index/restartTarget' ); ?>" data-shutdown="<?php echo $this->createUrl( 'index/shutdown' ); ?>" data-supermodel="<?php echo $this->createUrl( 'index/mode' ); ?>" data-usbstate="<?php echo $this->createUrl( 'index/usbstate' ); ?>" data-usbset="<?php echo $this->createUrl( 'index/usbset' ); ?>" data-check="<?php echo $this->createUrl( 'index/check' ); ?>" >
 	<script src="<?php echo $this->baseUrl;?>/static/libs/jquery/jquery-1.8.3.min.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/libs/bootstrap/js/bootstrap.min.js"></script>
+	<script src="<?php echo $this->baseUrl;?>/static/libs/handlebars/handlebars-v1.3.0.js"></script>
+	<script src="<?php echo $this->baseUrl;?>/static/libs/highcharts/highcharts.js"></script>
+	<script src="<?php echo $this->baseUrl;?>/static/libs/nprogress/nprogress.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/js/language/<?php echo CUtil::getLanguage();?>/base.config.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/js/base.js"></script>
 	<?php if( NBT_DEBUG ):?>
@@ -25,7 +28,7 @@
 	<script src="<?php echo $this->baseUrl;?>/static/libs/respond/respond.min.js"></script>
 	<![endif]-->
 	<?php include NBT_VIEW_PATH.'/layouts/_header.php';?>
-	<?php $this->widget('EWidgetSessionTipMsg'); ?>
+	<?php $this->widget('EWidgetSessionTipMsg');?>
 	<?php echo $content;?>
 	<?php include NBT_VIEW_PATH.'/layouts/_footer.php';?>
 	<?php include NBT_VIEW_PATH.'/systems/debug.php';?>

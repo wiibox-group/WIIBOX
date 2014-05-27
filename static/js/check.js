@@ -13,22 +13,23 @@
         $.cookie('willLanguage', userLang);
         lang = (userLang.indexOf('zh') !== -1) ? 'zh' : 'en';
     }
-    getContent(lang);
+
+    makePage(lang);
 
 
     //获取响应语言的数据并填充到模版中
 
-    function getContent(langFile) {
+    function makePage(langFile) {
         $.ajax({
             type: "get",
             url: '/static/js/language/' + langFile + '/check.json',
+            dataType: 'json',
             success: function(data) {
                 if(data){
                     var tpl = $('.page-check').html(),
                         temp = Handlebars.compile(tpl);
                     $('.page-check').html(temp(data))
                                     .css('display', 'block');
-
                     init(data);
                 }
             },
@@ -48,7 +49,6 @@
             $.cookie('willLanguage', $(this).data('lang'));
             window.location.reload();
         });
-
 
 
         var actions = {
@@ -335,5 +335,4 @@
         });
 
     }
-
 })(window.jQuery);

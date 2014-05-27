@@ -1,10 +1,125 @@
 @import '/static/libs/bootstrap/css/bootstrap.min.css';
+/* Make clicks pass-through */
+#nprogress {
+  pointer-events: none;
+}
+#nprogress .bar {
+  background: #29d;
+  position: fixed;
+  z-index: 1031;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+}
+/* Fancy blur effect */
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px #29d, 0 0 5px #29d;
+  opacity: 1.0;
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+  -ms-transform: rotate(3deg) translate(0px, -4px);
+  transform: rotate(3deg) translate(0px, -4px);
+}
+/* Remove these to get rid of the spinner */
+#nprogress .spinner {
+  display: block;
+  position: fixed;
+  z-index: 1031;
+  top: 15px;
+  right: 15px;
+}
+#nprogress .spinner-icon {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: solid 2px transparent;
+  border-top-color: #29d;
+  border-left-color: #29d;
+  border-radius: 50%;
+  -webkit-animation: nprogress-spinner 400ms linear infinite;
+  animation: nprogress-spinner 400ms linear infinite;
+}
+@-webkit-keyframes nprogress-spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes nprogress-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
 html,
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, "微软雅黑", sans-serif !important;
 }
 body {
   padding: 70px 0 30px;
+}
+.navbar-nav li a {
+  cursor: pointer;
+}
+.nav-btn-group {
+  padding: 8px 0 0 0;
+}
+@media (max-width: 768px) {
+  .nav-btn-group {
+    padding: 0 0 0 15px;
+  }
+}
+.footer {
+  text-align: center;
+}
+.footer p {
+  margin-bottom: 0;
+}
+.page-login {
+  display: none;
+}
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 .page-index .dropdown-menu li a {
   cursor: pointer;
@@ -27,16 +142,16 @@ body {
   padding: 10px 0;
   text-align: center;
 }
-.footer {
-  text-align: center;
-}
-.footer p {
-  margin-bottom: 0;
-}
 .input-area input {
   height: 42px;
   font-size: 14px;
   margin: 10px 0;
+}
+.page-monitor #status-table thead th,
+.page-monitor #status-table tbody th,
+.page-monitor #status-table thead td,
+.page-monitor #status-table tbody td {
+  text-align: center;
 }
 .page-check {
   display: none;

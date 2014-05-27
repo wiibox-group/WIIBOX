@@ -5,8 +5,8 @@
     			'localMonitoring' => '本地监控',
     			'remoteMonitoring' => '远程监控',
     			'selfTest' => '自检',
-    			'restartNow' => '立即重启',
+    			'restartNow' => '重启',
     			'running' => '正在运行',
-    			'runningStop' => '停止运行',
+    			'runningStop' => '停止10秒',
     			'btc&Ltc_setting' => 'BTC&LTC 挖矿设置',
     );

@@ -31,27 +31,30 @@
 					</a>
 				</li>
 				<li>
-					<a href="/check/index.html"">
+					<a href="/check/index.html">
 						<?php echo CUtil::i18n('vlayout,selfTest');?>
 					</a>
 				</li>
 			</ul>
-			<ul id="action-header" class="nav navbar-nav navbar-right">
-				<li>
-					<a href="javascript:;" id="action-restart">
-						<?php echo CUtil::i18n('vlayout,restartNow');?>
-					</a>
+			<ul class="nav navbar-nav navbar-right">
+				<li class="nav-btn-group">
+					<div class="btn-group action-btns">
+						<button id="actionRestart" type="button" class="btn btn-default">
+							<?php echo CUtil::i18n('vlayout,restartNow');?>
+						</button>
+					  	<!-- <button id="actionSuper" type="button" class="btn btn-default">
+					  		<?php echo CUtil::i18n('vlayout,running');?>
+					  	</button> -->
+					  	<button id="actionStop" type="button" class="btn btn-default">
+					  		<?php echo CUtil::i18n('vlayout,runningStop');?>
+					  	</button>
+					</div>
+					<button  id="statePill" class="btn btn-success" disabled >
+						<?php echo CUtil::i18n('vlayout,running');?>
+					</button>
 				</li>
-	    		<?php/*<li><a href="javascript:;" id="action-run">正常运行</a></li>*/?>
-	    		<li>
-	    			<a href="javascript:;" id="action-super">
-	    				<?php echo CUtil::i18n('vlayout,running');?>
-	    			</a>
-	    		</li>
 				<li>
-					<a href="javascript:;" id="action-stop">
-						<?php echo CUtil::i18n('vlayout,runningStop');?>
-					</a>
+					<a>退出</a>
 				</li>
 			</ul>
 		</div>

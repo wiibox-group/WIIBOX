@@ -31,10 +31,9 @@
 
 				<input type="hidden" id="run_speed" name="run_speed" value="<?php echo $speed; ?>" />
 				<div class="btn-group">
-					<button type="button" class="btn btn-default"><?php echo CUtil::i18n('vindex,runFrequency')?> <span id="speed-cur"><?php echo $speed; ?></span>M</button>
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-						<span class="caret"></span>
-						<span class="sr-only">Toggle Dropdown</span>
+					    <?php echo CUtil::i18n('vindex,runFrequency')?><span id="speed-cur"><?php echo $speed; ?></span>M
+					    &nbsp;<span class="caret"></span>
 					</button>
 					<ul id="speed-select-options" class="dropdown-menu" role="menu">
 						<li>
@@ -82,7 +81,6 @@
 					</ul>
 				</div>
 				<span style="font-size:15px;">&nbsp;&nbsp;(<?php echo CUtil::i18n('vindex,frequencyTip');?>)</span>
-				<p>&nbsp;</p>
 				<?/*
 					<div>挖矿模式</div>
 					<div class="btn-group" style="padding-bottom:10px;">
@@ -93,16 +91,14 @@
 				*/?>
 			</div>
 			<p>
-				<button class="btn btn-lg btn-primary btn-block" type="submit"><?php echo CUtil::i18n('vindex,setting_save');?></button>
-			</p>
-			<p>&nbsp;</p>
-			<p>
-			  	<div id="action-restart-tip" class="alert alert-info important-tip">
+				<div id="action-restart-tip" class="alert alert-warning important-tip">
 			  		<strong><?php echo CUtil::i18n('vindex,importantOption');?></strong>
 			  		&nbsp;&nbsp;&nbsp;&nbsp;
 			  		<?php echo CUtil::i18n('vindex,setting_save_tip');?>
 			  	</div>
-			  <button class="btn btn-lg btn-danger btn-block" onclick="actions.restart_home()" type="button" ><?php echo CUtil::i18n('vindex,restartProgram');?></button>
+			</p>
+			<p>
+				<button class="btn btn-lg btn-primary btn-block" type="submit"><?php echo CUtil::i18n('vindex,setting_save');?></button>
 			</p>
 	    </form>
 	</div>
