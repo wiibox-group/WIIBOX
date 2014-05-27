@@ -1,509 +1,170 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>控制板自检</title>
+<!DOCTYPE html>
+<html>
 
-<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
-<link rel="stylesheet" type="text/css" href="/css/index.css"/>
-<script language="javascript" type="text/javascript" src="/js/jquery.min.js"></script>
-<script language="javascript" type="text/javascript" src="/js/bootstrap.min.js"></script>
-<!--[if lt IE 9]>
-<script language="javascript" type="text/javascript" src="/js/html5shiv.min.js"></script>
-<script language="javascript" type="text/javascript" src="/js/respond.min.js"></script>
-<![endif]-->
-<style type="text/css">
-	.form-signin .page-header{
-		padding-bottom: 9px;
-		border-bottom: 1px solid #c0c0c0;
-		margin-top:20px;
-	}
-	.page-header h3{
-		margin:0;
-	}
-	.check-item{
-		font-size:14px;
-		line-height:18px;
-	}
-	.nav-pills>li.active>a.waiting-check, .nav-pills>li.active>a.waiting-check:hover, .nav-pills>li.active>a.waiting-check:focus{
-		background-color:#666;
-	}
-	.nav-pills>li.active>a.check-error, .nav-pills>li.active>a.check-error:hover, .nav-pills>li.active>a.check-error:focus{
-		background-color:#d2322d;
-	}
-	ul.nav-pills li{
-		padding:2px 0;
-	}
-</style>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>控制板自检</title>
+    <link rel="stylesheet" type="text/css" href="/static/assets/style/style.min.css" />
+    <!--[if lt IE 9]>
+        <script src="/staic/libs/html5shiv/html5shiv.min.js"></script>
+        <script src="/static/libs/respond/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body>
-	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="sr-only">Toggle navigation</span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="/">WIIBOX设置</a>
-			</div>
+    <div class="page-check">
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">{{menu1}}</a>
+                </div>
 
-			<div class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-					<li><a href="/">设置中心</a></li>
-					<li class="active"><a>自检</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/">{{menu2}}</a>
+                        </li>
+                        <li class="active"><a>{{menu3}}</a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown">
+                                <span id="langNow">简体中文</span><b class="caret"></b>
+                            </a>
+                            <ul id="languageMenu" class="dropdown-menu">
+                                <li>
+                                    <a data-lang="zh">简体中文</a>
+                                </li>
+                                <li>
+                                    <a data-lang="en">English</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="page-header">
+                <h1>{{title}}</h1>
+            </div>
 
-	<div class="container">
-		<div class="page-header">
-			<h1>控制器自检</h1>
-		</div>
-		
-		<div class="jumbotron">
-			<div class="form-signin">
-				<div class="page-header">
-					<h3>寻找控制器</h3>
-				</div>
-				<div style="width:195px;float:left;">
-					<button id="button-find" tt="控制器闪灯" class="btn btn-lg btn-primary btn-block">控制器闪灯</button>
-				</div>
-				<div style="width:195px;float:left;margin-left:10px;">
-					<button id="button-find-stop" tt="停止闪灯" class="btn btn-lg btn-danger btn-block">停止闪灯</button>
-				</div>
-				<div style="clear:both"></div>
-				<div style="width:100%;height:30px;"></div>
-				<div class="page-header">
-					<h3>WIIBOX自检</h3>
-				</div>
-				<div id="check-result">
-				<ul class="nav nav-pills nav-stacked">
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-lsusb-1">
-							<span class="badge pull-right">未检测</span>
-							矿机检测
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-lsusb-2">
-							<span class="badge pull-right">未检测</span>
-							矿机数量
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-program">
-							<span class="badge pull-right">未检测</span>
-							WIIBOX程序
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-timer">
-							<span class="badge pull-right">未检测</span>
-							定时器
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-date-1">
-							<span class="badge pull-right">未检测</span>
-							系统时区
-						</a>
-					</li>
-					<!--
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-date-2">
-							<span class="badge pull-right">未检测</span>
-							系统时间
-						</a>
-					</li>
-					-->
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-network-1">
-							<span class="badge pull-right">未检测</span>
-							到全网网络环境
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-network-2">
-							<span class="badge pull-right">未检测</span>
-							同步网络环境
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-network-3">
-							<span class="badge pull-right">未检测</span>
-							网络延时
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-ip-1">
-							<span class="badge pull-right">未检测</span>
-							IP地址检测
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-ip-2">
-							<span class="badge pull-right">未检测</span>
-							MAC地址检测
-						</a>
-					</li>
-					<li class="active">
-						<a class="check-item waiting-check" id="check-result-version">
-							<span class="badge pull-right">未检测</span>
-							WIIBOX版本
-						</a>
-					</li>
-				</ul>
-				</div>
-				<div class="page-header"></div>
-				<button id="button-check" class="btn btn-lg btn-danger btn-block">开始自检</button>
-			</div>
-		</div>
-		<div class="page-header"></div>
-		<p class="footer">Power by <a target="_blank" href="http://www.wiibox.net">wiibox</a>.</p>
-	</div>
+            <div class="jumbotron">
+                <div class="form-selftest">
+                    <div class="page-header">
+                        <h3>{{subTitle1}}</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button id="button-find" data-name="{{btn1}}" class="btn btn-lg btn-primary btn-block">{{btn1}}</button>
+                        </div>
+                        <div class="col-md-6">
+                            <button id="button-find-stop" data-name="{{btn2}}" class="btn btn-lg btn-danger btn-block">{{btn2}}</button>
+                        </div>
+                    </div>
+                    <div style="width:100%;height:30px;"></div>
+                    <div class="page-header">
+                        <h3>{{subTitle2}}</h3>
+                    </div>
+                    <div id="check-result">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-lsusb-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list1}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-lsusb-2">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list2}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-program">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list3}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-timer">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list4}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-date-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list5}}
+                                </a>
+                            </li>
+                            <!--
+                <li class="active">
+                    <a class="check-item waiting-check" id="check-result-date-2">
+                        <span class="badge pull-right">未检测</span>
+                        系统时间
+                    </a>
+                </li>
+                -->
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-network-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list6}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-network-2">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list7}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-network-3">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list8}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-ip-1">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list9}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-ip-2">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list10}}
+                                </a>
+                            </li>
+                            <li class="active">
+                                <a class="check-item waiting-check" id="check-result-version">
+                                    <span class="badge pull-right">{{state0}}</span>
+                                    {{list11}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="page-header"></div>
+                    <button id="button-check" class="btn btn-lg btn-danger btn-block">{{btn3}}</button>
+                </div>
+            </div>
+            <div class="page-header"></div>
+            <p class="footer">Power by <a target="_blank" href="http://www.wiibox.net">wiibox</a>.</p>
+        </div>
+    </div>
+    <script src="/static/libs/jquery/jquery-1.8.3.min.js"></script>
+    <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/libs/jquery-cookie/jquery.cookie.js"></script>
+    <script src="/static/libs/handlebars/handlebars-v1.3.0.js"></script>
+    <script src="/static/js/check.js"></script>
 </body>
 
-<script type="text/javascript">
-var actions = {
-	setting : {
-		url_find			: '/index.php?r=check/find',
-		url_find_stop		: '/index.php?r=check/stopFind',
-		url_lsusb			: '/index.php?r=check/lsusb',
-		url_check			: '/index.php?r=index/check',
-		url_timer			: '/index.php?r=check/timer',
-		url_date			: '/index.php?r=check/date',
-		url_version			: '/index.php?r=check/version',
-		url_network			: '/index.php?r=check/network',
-		url_ip				: '/index.php?r=check/ip'
-	},
-	// send post to server
-	sendPost : function( callback , tourl , senddata ){
-		// set default data
-		if ( typeof( senddata ) == 'undefined' ) senddata = {};
-
-		$.ajax({
-			type	: "GET",
-			url		: tourl+"&rand="+Math.random(),
-			data 	: senddata,
-			success : function( r ){
-				r = eval( '('+r+')' );
-				eval( "actionSuccess."+callback+"( r )" );
-			},
-			fail	: function(){
-				eval( "actionFail."+callback+"( r )" );
-			}
-		});
-	}
-};
-
-var actionSuccess = {
-	findResult : function( data )
-	{
-		// run find success
-		$('#button-find').html( $('#button-find').attr('tt') + ' (成功)' );
-		$('#button-find-stop').html( $('#button-find-stop').attr('tt') );
-	},
-	findStopResult : function( data )
-	{
-		// run find stop success
-		$('#button-find').html( $('#button-find').attr('tt') );
-		$('#button-find-stop').html( $('#button-find-stop').attr('tt') + ' (成功)' );
-	},
-	lsusbResult : function( data )
-	{
-		$('#check-result-lsusb-1,#check-result-lsusb-2').removeClass('waiting-check');
-		checkOptionFinish( 'lsusb' );
-		if ( data == null )	
-		{
-			actionFail.lsusbResult( data );
-			return;
-		}
-
-		if ( data.COMMAND === 1 )
-		{
-			$('#check-result-lsusb-1 span').html( '正常' );
-		}
-		else
-		{
-			$('#check-result-lsusb-1').addClass( 'check-error' );
-			$('#check-result-lsusb-1 span').html( '异常' );
-		}
-
-		if ( data.MILL > 0 )
-		{
-			$('#check-result-lsusb-2 span').html( data.MILL );
-		}
-		else
-		{
-			$('#check-result-lsusb-2').addClass( 'check-error' );
-			$('#check-result-lsusb-2 span').html( '0' );
-		}
-	},
-	checkResult : function( data )
-	{
-		$('#check-result-program').removeClass('waiting-check');
-		checkOptionFinish( 'check' );
-		if ( data == null )	
-		{
-			actionFail.checkResult( data );
-			return;
-		}
-
-		$('#check-result-program span').html( '正常' );
-		
-	},
-	timerResult : function( data )
-	{
-		$('#check-result-timer').removeClass('waiting-check');
-		checkOptionFinish( 'timer' );
-		if ( data == null )	
-		{
-			actionFail.timerResult( data );
-			return;
-		}
-
-		if ( data.COMMAND === 1 && data.FILE === 1 )
-		{
-			$('#check-result-timer span').html( '正常' );
-		}
-		else
-		{
-			$('#check-result-timer').addClass( 'check-error' );
-			$('#check-result-timer span').html( '异常' );
-		}
-	},
-	dateResult : function( data )
-	{
-		$('#check-result-date-1,#check-result-date-2').removeClass('waiting-check');
-		checkOptionFinish( 'date' );
-		if ( data == null )	
-		{
-			actionFail.dateResult( data );
-			return;
-		}
-
-		if ( data.ZONE === 1 )
-		{
-			$('#check-result-date-1 span').html( '正常' );
-		}
-		else
-		{
-			$('#check-result-date-1').addClass( 'check-error' );
-			$('#check-result-date-1 span').html( '异常' );
-		}
-
-		var d = new Date();
-		cur = d.getTime()/1000;
-		offset = d.getTimezoneOffset() * 60;
-		cur = offset + cur + 8*3600;
-		if ( data.TIME > 0 && cur - data.TIME < 30 && cur - data.TIME > -30 )
-		{
-			$('#check-result-date-2 span').html( '正常' );
-		}
-		else
-		{
-			$('#check-result-date-2').addClass( 'check-error' );
-			$('#check-result-date-2 span').html( '异常' );
-		}
-	},
-	versionResult : function( data )
-	{
-		$('#check-result-version').removeClass('waiting-check');
-		checkOptionFinish( 'version' );
-		if ( data == null )	
-		{
-			actionFail.versionResult( data );
-			return;
-		}
-
-		$('#check-result-version span').html( data.VERSION );
-	},
-	networkResult : function( data )
-	{
-		$('#check-result-network-1,#check-result-network-2,#check-result-network-3').removeClass('waiting-check');
-		checkOptionFinish( 'network' );
-		if ( data == null )	
-		{
-			actionFail.networkResult( data );
-			return;
-		}
-
-		if ( data.NET === 1 )
-		{
-			$('#check-result-network-1 span').html( '正常' );
-		}
-		else
-		{
-			$('#check-result-network-1').addClass( 'check-error' );
-			$('#check-result-network-1 span').html( '异常' );
-		}
-
-		if ( data.WIIBOX === 1 )
-		{
-			$('#check-result-network-2 span').html( '正常' );
-		}
-		else
-		{
-			$('#check-result-network-2').addClass( 'check-error' );
-			$('#check-result-network-2 span').html( '异常' );
-		}
-
-		if ( data.WIIBOX_DELAY != '' )
-		{
-			$('#check-result-network-3 span').html( data.WIIBOX_DELAY );
-		}
-		else
-		{
-			$('#check-result-network-3').addClass( 'check-error' );
-			$('#check-result-network-3 span').html( '异常' );
-		}
-	},
-	ipResult : function( data )
-	{
-		$('#check-result-ip-1,#check-result-ip-2').removeClass('waiting-check');
-		checkOptionFinish( 'ip' );
-		if ( data == null )	
-		{
-			actionFail.ipResult( data );
-			return;
-		}
-
-		if ( data.IP != '' )
-		{
-			$('#check-result-ip-1 span').html( data.IP );
-		}
-		else
-		{
-			$('#check-result-ip-1').addClass( 'check-error' );
-			$('#check-result-ip-1 span').html( '异常' );
-		}
-
-		if ( data.MAC != '' )
-		{
-			$('#check-result-ip-2 span').html( data.MAC );
-		}
-		else
-		{
-			$('#check-result-ip-2').addClass( 'check-error' );
-			$('#check-result-ip-2 span').html( '异常' );
-		}
-	}
-};
-
-var actionFail = {
-	findResult : function( data )
-	{
-		// run find fail
-		$('#button-find').html( $('#button-find').attr('tt') + ' (失败)' );
-		$('#button-find-stop').html( $('#button-find-stop').attr('tt') );
-	},
-	findStopResult : function( data )
-	{
-		// run find stop fail
-		$('#button-find').html( $('#button-find').attr('tt') );
-		$('#button-find-stop').html( $('#button-find-stop').attr('tt') + ' (失败)' );
-	},
-	lsusbResult : function( data )
-	{
-		checkOptionFinish( 'lsusb' );
-		$('#check-result-lsusb-1,#check-result-lsusb-2').addClass( 'check-error' );
-		$('#check-result-lsusb-1 span,#check-result-lsusb-2 span').html( '异常' );
-	},
-	checkResult : function( data )
-	{
-		checkOptionFinish( 'check' );
-		$('#check-result-program').addClass( 'check-error' );
-		$('#check-result-program span').html( '异常' );
-	},
-	timerResult : function( data )
-	{
-		checkOptionFinish( 'time' );
-		$('#check-result-timer').addClass( 'check-error' );
-		$('#check-result-timer span').html( '异常' );
-	},
-	dateResult : function( data )
-	{
-		checkOptionFinish( 'date' );
-		$('#check-result-date-1,#check-result-date-2').addClass( 'check-error' );
-		$('#check-result-date-1 span,#check-result-date-2 span').html( '异常' );
-	},
-	versionResult : function( data )
-	{
-		checkOptionFinish( 'version' );
-		$('#check-result-version').addClass( 'check-error' );
-		$('#check-result-version span').html( '异常' );
-	},
-	networkResult : function( data )
-	{
-		checkOptionFinish( 'network' );
-		$('#check-result-network-1,#check-result-network-2,#check-result-network-3').addClass( 'check-error' );
-		$('#check-result-network-1 span,#check-result-network-2 span,#check-result-network-3 span').html( '异常' );
-	},
-	ipResult : function( data )
-	{
-		checkOptionFinish( 'ip' );
-		$('#check-result-ip-1,#check-result-ip-2').addClass( 'check-error' );
-		$('#check-result-ip-1 span,#check-result-ip-2 span').html( '异常' );
-	}
-};
-
-function checkOptionFinish( tar )
-{
-	eval( "check_options."+tar+" = 1;" );
-	for ( var option in check_options )
-	{
-		eval( "var tmp_val = check_options."+option+";" );
-		if ( tmp_val === 0  )
-			return;
-	}
-
-	ischecking = false;
-	$( '#button-check' ).html( '重新检测' );
-}
-
-$('#button-find').click(function(){
-	actions.sendPost( 'findResult' , actions.setting.url_find , {} );
-});
-
-$('#button-find-stop').click(function(){
-	actions.sendPost( 'findStopResult' , actions.setting.url_find_stop , {} );
-});
-
-var ischecking = false;
-var check_options = {
-	lsusb	: 0,
-	check	: 0,
-	timer	: 0,
-	date	: 0,
-	network	: 0,
-	ip		: 0,
-	version	: 0
-};
-
-$('#button-check').click(function(){
-	if ( ischecking === true )
-		return;
-
-	$('.check-item').removeClass( 'check-error' ).removeClass( 'waiting-check' ).addClass( 'waiting-check' );
-
-	ischecking = true;
-	for ( var option in check_options )
-		eval( "check_options."+option+" = 0;" );
-	
-	$(this).html( '正在努力检测...' );
-	$('.check-item span').html( '检测中...' );
-
-	actions.sendPost( 'lsusbResult' , actions.setting.url_lsusb , {} );
-	actions.sendPost( 'checkResult' , actions.setting.url_check , {} );
-	actions.sendPost( 'timerResult' , actions.setting.url_timer , {} );
-	actions.sendPost( 'dateResult' , actions.setting.url_date , {} );
-	actions.sendPost( 'versionResult' , actions.setting.url_version , {} );
-	actions.sendPost( 'networkResult' , actions.setting.url_network , {} );
-	actions.sendPost( 'ipResult' , actions.setting.url_ip , {} );
-});
-</script>
+</html>
