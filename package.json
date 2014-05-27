@@ -1,0 +1,13 @@
+{
+    "name": "WIIBOX",
+    "version": "2.1.3",
+    "description": "WIIBOX open source",
+    "contributors": [{
+        "name": "biallo",
+        "email": "bialloworld@gmail.com"
+    }],
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-less": "~0.7.0"
+    }
+}
