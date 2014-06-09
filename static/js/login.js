@@ -6,6 +6,7 @@
         $.ajax({
             type: "get",
             url: '/static/js/language/' + lang + '/login.json',
+            dataType: 'json',
             success: function(data) {
                 if (data) {
                     var tpl = $('.page-login').html(),
