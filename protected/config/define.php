@@ -8,7 +8,7 @@
 define('WEB_ROOT',dirname(dirname(dirname(__FILE__))));
 
 //主域名设置
-define( 'MAIN_DOMAIN' , 'http://sync.wiibox.net' );
+define( 'MAIN_DOMAIN' , 'http://dig.com' );
 define( 'MAIN_DOMAIN_KEY' , '123qwe!@#' );
 
 //是否开启地址重写
@@ -21,6 +21,10 @@ define( 'NBT_BEGIN_MICROTIME' , microtime(true) );
 //邮件地址
 define('MAIL_TO_WGB','wengebin@hotmail.com');
 
+define('UUSERNAME' , 'wiibox');
+define('UPASSWORD' , 'wiibox');
+define('UKEY', 'wiibox');
+
 //Redis连接
 define( 'REDIS_CONNECT_ADD' , '127.0.0.1' );
 define( 'REDIS_CONNECT_PORT' , '6379' );
@@ -29,4 +33,4 @@ define( 'REDIS_DISTRICT_NAME' , 'www' );
 //是否开启缓存
 define( 'CACHE_STATUS' , true );
 
-define( 'SUDO_COMMAND' , 'sudo ' );
+define( 'SUDO_COMMAND' , 'sudo' );

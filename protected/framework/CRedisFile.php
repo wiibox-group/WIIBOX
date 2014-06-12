@@ -53,6 +53,18 @@ class CRedisFile extends CApplicationComponents
 		// 设置后缀
 		$this->setSuffix( $_suffix );
 	}
+	
+	/**
+	 * 获取storeUrl
+	 * @return string
+	 * 
+	 * @author zhangyi
+	 * @date 2014-5-28
+	 */
+	public function getStoreUrl()
+	{
+		return $this -> _store_url;
+	}
 
 	public function readFile( $_strFileName = '' )
 	{
@@ -171,6 +183,19 @@ class CRedisFile extends CApplicationComponents
 	protected function calculateKey( $_key = '' )
 	{
 		return ( $this->_needDistrict === 1 ? REDIS_DISTRICT_NAME.'.' : '' ).$this->_keyPrefix.$_key.$this->_keySuffix.'.d';
+	}
+	
+	/**
+	 * 获取文件路径
+	 * @param string $_key 指定的key
+	 * @return string 文件完整地址
+	 * 
+	 * @author zhangyi
+	 * @date 2014-5-28
+	 */
+	public function getFilePath( $_key = '' )
+	{
+		return $this -> _store_url.'/'.$this -> calculateKey( $_key );
 	}
 
 	/**

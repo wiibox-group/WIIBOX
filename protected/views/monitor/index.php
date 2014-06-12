@@ -3,7 +3,7 @@
 	<div class="page-header">
 		<h1><?php echo CUtil::i18n('vmonitor,hashrate_title');?></h1>
 	</div>
-	<div class="hashrate"></div>
+	<div class="hashrate" data-url="<?php echo $this -> createUrl('speed/speedData')?>"></div>
 	
 	<div class="page-header">
 		<h1><?php echo CUtil::i18n('vmonitor,status_title');?>

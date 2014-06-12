@@ -12,5 +12,7 @@ return array(
 		'monitor_index_seoTitle' => 'WIIBOX 监控中心',
 		'monitor_check_isMiningMachine' => '我就是矿机!',
 		'upgrade_index_seoTitle' => 'BTC & LTC 升级中心',
-		
+		'login_index_seoTitle' => '用户登入',
+		'login_index_loginFaild' => '登入失败',
+		'login_index_pwdWrong' => '密码错误',		
 );

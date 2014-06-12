@@ -1,6 +1,6 @@
 {
     "title": "请登录",
-    "input1": "邮箱",
+    "input1": "用户名",
     "input2": "密码",
     "remember": "记住我",
     "btn": "登录"

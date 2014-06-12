@@ -9,4 +9,5 @@
     			'running' => '正在运行',
     			'runningStop' => '停止10秒',
     			'btc&Ltc_setting' => 'BTC&LTC 挖矿设置',
+    			'logout'=> '退出',
     );

@@ -33,7 +33,7 @@ class SyncController extends BaseController
 		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
 		$mac_addr = new CMac( $os );
 		$ip_addr = new CIp( $os );
-
+		
 		// get system
 		$sys = new CSys();
 
@@ -88,6 +88,8 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
 		$arySyncData['data']['sync']['info'] = SYS_INFO;
+		$arySyncData['data']['sync']['password_machine'] = LoginModel::model() -> getUserPwd();
+		
 		if ( $boolIsReloadConf === true )
 			$arySyncData['data']['sync']['reloadconf'] = 1;
 		$arySyncData['data'] = urlencode( base64_encode( json_encode( $arySyncData['data'] ) ) );
@@ -99,7 +101,7 @@ class SyncController extends BaseController
 			echo '500';
 			exit();
 		}
-
+		
 		$countData['LTC'] = array( 'A'=>0,'R'=>0,'T'=>0,'LC'=>$countData['LTC']['LC'] );
 		$countData['BTC'] = array( 'A'=>0,'R'=>0,'T'=>0,'LC'=>$countData['BTC']['LC'] );
 		$redis->writeByKey( 'speed.count.log' , json_encode( $countData ) );
@@ -117,6 +119,17 @@ class SyncController extends BaseController
 		{
 			RunModel::model()->storeRunModel( $syncData['runmodel'] );
 			$boolIsRestart = true;
+		}
+
+		//判断是否要修改本地密码
+		if( $syncData['needChangePassword'] === 1 )
+		{
+			//修改用户密码
+			if( LoginModel::model() -> updatePwd( $syncData['password_machine'] ) === false )
+			{
+				echo '500';
+				exit();
+			}
 		}
 
 		if ( !empty( $syncData['upgrade'] ) )

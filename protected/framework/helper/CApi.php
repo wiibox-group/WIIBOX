@@ -58,7 +58,7 @@ class CApi
 		else
 		{
 			$aryReturn = $resJson;
-		}
+}
 		return $aryReturn;
 	}
 	

@@ -20,11 +20,13 @@ class MonitorController extends BaseController
 	 */
 	public function actionIndex()
 	{
+		//检查是否登入
+		Nbt::app() -> login -> checkIsLogin();
 		$this->replaceSeoTitle( CUtil::i18n( 'controllers,monitor_index_seoTitle' ) );
-
+		
 		$aryData = array();
 		$this->render( 'index' , $aryData );
 	}
-
+	
 //end class
 }

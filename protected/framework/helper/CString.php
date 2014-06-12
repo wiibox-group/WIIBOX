@@ -59,6 +59,15 @@ class CString
 	}
 	
 	/**
+	 * 控制器密码加密
+	 * @param string $_strPwd 密码
+	 */
+	public static function encodeMachinePassword( $_strPwd = '' )
+	{
+		return md5( "wiibox-".$_strPwd );
+	}
+	
+	/**
 	* Passport 加密函数
 	*
 	* @param	 string	 等待加密的原字串

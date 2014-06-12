@@ -54,7 +54,7 @@
 					</button>
 				</li>
 				<li>
-					<a>退出</a>
+					<a href="<?php echo $this -> createUrl( 'login/logout' );?>"><?php echo CUtil::i18n('vlayout,logout');?></a>
 				</li>
 			</ul>
 		</div>
