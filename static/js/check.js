@@ -1,6 +1,6 @@
 (function($) {
 
-    var cookieLang = $.cookie('willLanguage'),
+    var cookieLang = $.cookie('wiiboxLanguage'),
         userLang = navigator.language || navigator.userLanguage, //当前浏览器的语言
         lang = '',
         fullName = {
@@ -10,12 +10,11 @@
     if (cookieLang) {
         lang = (cookieLang.indexOf('zh') !== -1) ? 'zh' : 'en';
     } else {
-        $.cookie('willLanguage', userLang);
+        $.cookie('wiiboxLanguage', userLang);
         lang = (userLang.indexOf('zh') !== -1) ? 'zh' : 'en';
     }
 
     makePage(lang);
-
 
     //获取响应语言的数据并填充到模版中
 
@@ -46,7 +45,7 @@
 
         //切换语言
         $('#languageMenu').on('click', '>li>a', function() {
-            $.cookie('willLanguage', $(this).data('lang'));
+            $.cookie('wiiboxLanguage', $(this).data('lang'));
             window.location.reload();
         });
 

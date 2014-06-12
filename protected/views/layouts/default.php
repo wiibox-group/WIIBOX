@@ -28,7 +28,9 @@
 	<script src="<?php echo $this->baseUrl;?>/static/libs/respond/respond.min.js"></script>
 	<![endif]-->
 	<?php include NBT_VIEW_PATH.'/layouts/_header.php';?>
-	<?php $this->widget('EWidgetSessionTipMsg');?>
+	<div class="container">
+		<?php $this->widget('EWidgetSessionTipMsg');?>
+	</div>
 	<?php echo $content;?>
 	<?php include NBT_VIEW_PATH.'/layouts/_footer.php';?>
 	<?php include NBT_VIEW_PATH.'/systems/debug.php';?>

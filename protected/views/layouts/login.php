@@ -14,9 +14,11 @@
 	<![endif]-->
 </head>
 
-<body>
+<body class="body-login">
 	<input type="hidden" id="i18n" value="<?php echo CUtil::getLanguage();?>">
-	<?php $this->widget('EWidgetSessionTipMsg'); ?>
+	<div class="container tip-msg">
+		<?php $this->widget('EWidgetSessionTipMsg'); ?>
+	</div>
 	<?php echo $content;?>
 	<script src="<?php echo $this->baseUrl;?>/static/libs/jquery/jquery-1.8.3.min.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/libs/bootstrap/js/bootstrap.min.js"></script>
