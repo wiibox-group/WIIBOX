@@ -45,18 +45,29 @@
 					  	<!-- <button id="actionSuper" type="button" class="btn btn-default">
 					  		<?php echo CUtil::i18n('vlayout,running');?>
 					  	</button> -->
-					  	<button id="actionStop" type="button" class="btn btn-default">
-					  		<?php echo CUtil::i18n('vlayout,runningStop');?>
-					  	</button>
+					  	
 					</div>
 					<button  id="statePill" class="btn btn-success" disabled >
 						<?php echo CUtil::i18n('vlayout,running');?>
 					</button>
 				</li>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown">
+						<span id="langNow"><?php echo CUtil::i18n('vlayout,languge') ?></span><b class="caret"></b>
+					</a>
+					<ul id="languageMenu" class="dropdown-menu">
+						<li>
+							<a data-lang="zh" href="">简体中文</a>
+						</li>
+						<li>
+							<a data-lang="en" href="">English</a>
+						</li>
+					</ul>
+				</li>
 				<li>
 					<a href="<?php echo $this -> createUrl( 'login/logout' );?>"><?php echo CUtil::i18n('vlayout,logout');?></a>
 				</li>
-			</ul>
+			</ul>			
 		</div>
 	</div>
 </div>
