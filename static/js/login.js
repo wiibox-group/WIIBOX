@@ -1,28 +1,24 @@
 (function($) {
 
     //获取响应语言的数据并填充到模版中
-    function makePage() {
-        var lang = $('#i18n').val();
-        $.ajax({
-            type: "get",
-            url: '/static/js/language/' + lang + '/login.json',
-            dataType: 'json',
-            success: function(data) {
-                if (data) {
-                    var tpl = $('.page-login').html(),
-                        temp = Handlebars.compile(tpl);
-                    $('.page-login').html(temp(data))
-                        .css('display', 'block');
-                    init(data);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert(textStatus + '||' + errorThrown);
+    var lang = $('#i18n').val();
+    $.ajax({
+        type: "get",
+        url: '/static/js/language/' + lang + '/login.json',
+        dataType: 'json',
+        success: function(data) {
+            if (data) {
+                var tpl = $('.page-login').html(),
+                    temp = Handlebars.compile(tpl);
+                $('.page-login').html(temp(data))
+                    .css('display', 'block');
+                init(data);
             }
-        });
-    }
-
-    makePage();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            alert(textStatus + '||' + errorThrown);
+        }
+    });
 
     function init(langData) {
         //form的验证事件

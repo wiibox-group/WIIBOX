@@ -19,6 +19,14 @@
     //获取响应语言的数据并填充到模版中
 
     function makePage(langFile) {
+
+        //修改页面title
+        if(langFile === 'zh'){
+            document.title = '控制板自检';
+        }else{
+            document.title = 'Controller Self-test';
+        }
+
         $.ajax({
             type: "get",
             url: '/static/js/language/' + langFile + '/check.json',
@@ -71,12 +79,12 @@
                     type: "GET",
                     url: tourl + "&rand=" + Math.random(),
                     data: senddata,
-                    success: function(r) {
-                        r = eval('(' + r + ')');
-                        eval("actionSuccess." + callback + "( r )");
+                    dataType: 'json',
+                    success: function(data) {
+                        eval("actionSuccess." + callback + "(data)");
                     },
                     fail: function() {
-                        eval("actionFail." + callback + "( r )");
+                        eval("actionFail." + callback + "(data)");
                     }
                 });
             }

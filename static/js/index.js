@@ -10,10 +10,10 @@
         $('#run_speed').val(value);
     });
 
-    $('.runmodel-bt').on('click', function() {
-        $('.runmodel-bt').removeClass('active');
-        $(this).addClass('active');
-        $('#runmodel-input').val($(this).attr('tar'));
-    });
+    // $('.runmodel-bt').on('click', function() {
+    //     $('.runmodel-bt').removeClass('active');
+    //     $(this).addClass('active');
+    //     $('#runmodel-input').val($(this).attr('tar'));
+    // });
 
 })(window.jQuery);
