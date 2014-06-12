@@ -134,7 +134,7 @@ body {
 .input-area input {
   line-height: 2;
   height: auto;
-  font-size: 14px;
+  font-size: 12px;
   margin: 10px 0;
 }
 .form-signin {
@@ -164,7 +164,7 @@ body {
   cursor: pointer;
 }
 .page-check .form-selftest {
-  width: 600px;
+  max-width: 600px;
   margin: 0 auto;
 }
 .page-check .form-selftest .page-header {
@@ -178,16 +178,10 @@ body {
 .page-check .check-item {
   font-size: 14px;
   line-height: 18px;
+  background: #666 !important;
 }
-.page-check .nav-pills > li.active > a.waiting-check,
-.page-check .nav-pills > li.active > a.waiting-check:hover,
-.page-check .nav-pills > li.active > a.waiting-check:focus {
-  background-color: #666;
-}
-.page-check .nav-pills > li.active > a.check-error,
-.page-check .nav-pills > li.active > a.check-error:hover,
-.page-check .nav-pills > li.active > a.check-error:focus {
-  background-color: #d2322d;
+.page-check .check-error {
+  background: #d2322d !important;
 }
 .page-check ul.nav-pills li {
   padding: 2px 0;

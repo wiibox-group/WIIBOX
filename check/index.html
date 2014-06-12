@@ -63,11 +63,8 @@
                         <h3>{{subTitle1}}</h3>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
-                            <button id="button-find" data-name="{{btn1}}" class="btn btn-lg btn-primary btn-block">{{btn1}}</button>
-                        </div>
-                        <div class="col-md-6">
-                            <button id="button-find-stop" data-name="{{btn2}}" class="btn btn-lg btn-danger btn-block">{{btn2}}</button>
+                        <div class="col-md-12">
+                            <button id="btnFind" data-state="1" class="btn btn-lg btn-primary btn-block">{{btn1}}</button>
                         </div>
                     </div>
                     <div style="width:100%;height:30px;"></div>
@@ -77,75 +74,67 @@
                     <div id="check-result">
                         <ul class="nav nav-pills nav-stacked">
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-lsusb-1">
+                                <a class="check-item" id="resultLsusb1">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list1}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-lsusb-2">
+                                <a class="check-item" id="resultLsusb2">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list2}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-program">
+                                <a class="check-item" id="resultProgram">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list3}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-timer">
+                                <a class="check-item" id="resultTimer">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list4}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-date-1">
+                                <a class="check-item" id="resultDate">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list5}}
                                 </a>
                             </li>
-                            <!--
-                <li class="active">
-                    <a class="check-item waiting-check" id="check-result-date-2">
-                        <span class="badge pull-right">未检测</span>
-                        系统时间
-                    </a>
-                </li>
-                -->
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-network-1">
+                                <a class="check-item" id="resultNetwork1">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list6}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-network-2">
+                                <a class="check-item" id="resultNetwork2">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list7}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-network-3">
+                                <a class="check-item" id="resultNetwork3">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list8}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-ip-1">
+                                <a class="check-item" id="resultIp">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list9}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-ip-2">
+                                <a class="check-item" id="resultMac">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list10}}
                                 </a>
                             </li>
                             <li class="active">
-                                <a class="check-item waiting-check" id="check-result-version">
+                                <a class="check-item" id="resultVersion">
                                     <span class="badge pull-right">{{state0}}</span>
                                     {{list11}}
                                 </a>
@@ -153,7 +142,7 @@
                         </ul>
                     </div>
                     <div class="page-header"></div>
-                    <button id="button-check" class="btn btn-lg btn-danger btn-block">{{btn3}}</button>
+                    <button id="btnCheck" class="btn btn-lg btn-primary btn-block">{{btn3}}</button>
                 </div>
             </div>
             <div class="page-header"></div>
@@ -164,6 +153,7 @@
     <script src="/static/libs/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/libs/jquery-cookie/jquery.cookie.js"></script>
     <script src="/static/libs/handlebars/handlebars-v1.3.0.js"></script>
+    <script src="/static/libs/nprogress/nprogress.js"></script>
     <script src="/static/js/check.js"></script>
 </body>
 

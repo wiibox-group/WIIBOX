@@ -14,332 +14,301 @@
         lang = (userLang.indexOf('zh') !== -1) ? 'zh' : 'en';
     }
 
-    makePage(lang);
-
-    //获取响应语言的数据并填充到模版中
-
-    function makePage(langFile) {
-
-        //修改页面title
-        if(langFile === 'zh'){
-            document.title = '控制板自检';
-        }else{
-            document.title = 'Controller Self-test';
-        }
-
-        $.ajax({
-            type: "get",
-            url: '/static/js/language/' + langFile + '/check.json',
-            dataType: 'json',
-            success: function(data) {
-                if(data){
-                    var tpl = $('.page-check').html(),
-                        temp = Handlebars.compile(tpl);
-                    $('.page-check').html(temp(data))
-                                    .css('display', 'block');
-                    init(data);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                alert(textStatus + '||' + errorThrown);
-            }
-        });
+    //修改页面title
+    if (lang === 'zh') {
+        document.title = '控制板自检';
+    } else {
+        document.title = 'Controller Self-test';
     }
+
+    /*
+     * 获取相应语言的数据并填充到模版中
+     */
+    $.ajax({
+        type: "get",
+        url: '/static/js/language/' + lang + '/check.json',
+        dataType: 'json',
+        success: function(data) {
+            if (data) {
+                var tpl = $('.page-check').html(),
+                    temp = Handlebars.compile(tpl);
+                $('.page-check').html(temp(data))
+                    .css('display', 'block');
+
+                init(data);
+            }
+        }
+    });
+
 
     function init(langData) {
 
-        //设置当前所用的语言
+        //当前所用语言
         $('#langNow').text(fullName[lang]);
 
-        //切换语言
+        /*
+         * 切换语言按钮
+         */
         $('#languageMenu').on('click', '>li>a', function() {
             $.cookie('wiiboxLanguage', $(this).data('lang'));
             window.location.reload();
         });
 
+        /*
+         * 控制器闪灯按钮
+         */
+        $('#btnFind').on('click', function() {
+            $(this).attr('disabled', true);
+            controlFlash(+$(this).data('state'));
+        });
 
-        var actions = {
-            setting: {
-                url_find: '/index.php?r=check/find',
-                url_find_stop: '/index.php?r=check/stopFind',
-                url_lsusb: '/index.php?r=check/lsusb',
-                url_check: '/index.php?r=index/check',
-                url_timer: '/index.php?r=check/timer',
-                url_date: '/index.php?r=check/date',
-                url_version: '/index.php?r=check/version',
-                url_network: '/index.php?r=check/network',
-                url_ip: '/index.php?r=check/ip'
-            },
-            // send post to server
-            sendPost: function(callback, tourl, senddata) {
-                // set default data
-                if (typeof(senddata) == 'undefined') senddata = {};
 
-                $.ajax({
-                    type: "GET",
-                    url: tourl + "&rand=" + Math.random(),
-                    data: senddata,
-                    dataType: 'json',
-                    success: function(data) {
-                        eval("actionSuccess." + callback + "(data)");
-                    },
-                    fail: function() {
-                        eval("actionFail." + callback + "(data)");
-                    }
-                });
-            }
-        };
+        /*
+         * 控制器闪灯/停止闪灯
+         * type: 1闪灯 0停止闪灯
+         */
 
-        var actionSuccess = {
-            findResult: function(data) {
-                // run find success
-                $('#button-find').html($('#button-find').data('name') + ' (' + langData.success + ')');
-                $('#button-find-stop').html($('#button-find-stop').data('name'));
-            },
-            findStopResult: function(data) {
-                // run find stop success
-                $('#button-find').html($('#button-find').data('name'));
-                $('#button-find-stop').html($('#button-find-stop').data('name') + ' (' + langData.success + ')');
-            },
-            lsusbResult: function(data) {
-                $('#check-result-lsusb-1,#check-result-lsusb-2').removeClass('waiting-check');
-                checkOptionFinish('lsusb');
-                if (data == null) {
-                    actionFail.lsusbResult(data);
-                    return;
-                }
+        function controlFlash(type) {
+            var url = '/index.php?r=check/find',
+                clas = 'btn-danger',
+                text = langData.btn2, //“停止闪灯”
+                state = 0;
 
-                if (data.COMMAND === 1) {
-                    $('#check-result-lsusb-1 span').html(langData.normal);
-                } else {
-                    $('#check-result-lsusb-1').addClass('check-error');
-                    $('#check-result-lsusb-1 span').html(langData.abnormal);
-                }
-
-                if (data.MILL > 0) {
-                    $('#check-result-lsusb-2 span').html(data.MILL);
-                } else {
-                    $('#check-result-lsusb-2').addClass('check-error');
-                    $('#check-result-lsusb-2 span').html('0');
-                }
-            },
-            checkResult: function(data) {
-                $('#check-result-program').removeClass('waiting-check');
-                checkOptionFinish('check');
-                if (data == null) {
-                    actionFail.checkResult(data);
-                    return;
-                }
-
-                $('#check-result-program span').html(langData.normal);
-
-            },
-            timerResult: function(data) {
-                $('#check-result-timer').removeClass('waiting-check');
-                checkOptionFinish('timer');
-                if (data == null) {
-                    actionFail.timerResult(data);
-                    return;
-                }
-
-                if (data.COMMAND === 1 && data.FILE === 1) {
-                    $('#check-result-timer span').html(langData.normal);
-                } else {
-                    $('#check-result-timer').addClass('check-error');
-                    $('#check-result-timer span').html(langData.abnormal);
-                }
-            },
-            dateResult: function(data) {
-                $('#check-result-date-1,#check-result-date-2').removeClass('waiting-check');
-                checkOptionFinish('date');
-                if (data == null) {
-                    actionFail.dateResult(data);
-                    return;
-                }
-
-                if (data.ZONE === 1) {
-                    $('#check-result-date-1 span').html(langData.normal);
-                } else {
-                    $('#check-result-date-1').addClass('check-error');
-                    $('#check-result-date-1 span').html(langData.abnormal);
-                }
-
-                var d = new Date();
-                cur = d.getTime() / 1000;
-                offset = d.getTimezoneOffset() * 60;
-                cur = offset + cur + 8 * 3600;
-                if (data.TIME > 0 && cur - data.TIME < 30 && cur - data.TIME > -30) {
-                    $('#check-result-date-2 span').html(langData.normal);
-                } else {
-                    $('#check-result-date-2').addClass('check-error');
-                    $('#check-result-date-2 span').html(langData.abnormal);
-                }
-            },
-            versionResult: function(data) {
-                $('#check-result-version').removeClass('waiting-check');
-                checkOptionFinish('version');
-                if (data == null) {
-                    actionFail.versionResult(data);
-                    return;
-                }
-
-                $('#check-result-version span').html(data.VERSION);
-            },
-            networkResult: function(data) {
-                $('#check-result-network-1,#check-result-network-2,#check-result-network-3').removeClass('waiting-check');
-                checkOptionFinish('network');
-                if (data == null) {
-                    actionFail.networkResult(data);
-                    return;
-                }
-
-                if (data.NET === 1) {
-                    $('#check-result-network-1 span').html(langData.normal);
-                } else {
-                    $('#check-result-network-1').addClass('check-error');
-                    $('#check-result-network-1 span').html(langData.abnormal);
-                }
-
-                if (data.WIIBOX === 1) {
-                    $('#check-result-network-2 span').html(langData.normal);
-                } else {
-                    $('#check-result-network-2').addClass('check-error');
-                    $('#check-result-network-2 span').html(langData.abnormal);
-                }
-
-                if (data.WIIBOX_DELAY != '') {
-                    $('#check-result-network-3 span').html(data.WIIBOX_DELAY);
-                } else {
-                    $('#check-result-network-3').addClass('check-error');
-                    $('#check-result-network-3 span').html(langData.abnormal);
-                }
-            },
-            ipResult: function(data) {
-                $('#check-result-ip-1,#check-result-ip-2').removeClass('waiting-check');
-                checkOptionFinish('ip');
-                if (data == null) {
-                    actionFail.ipResult(data);
-                    return;
-                }
-
-                if (data.IP != '') {
-                    $('#check-result-ip-1 span').html(data.IP);
-                } else {
-                    $('#check-result-ip-1').addClass('check-error');
-                    $('#check-result-ip-1 span').html(langData.abnormal);
-                }
-
-                if (data.MAC != '') {
-                    $('#check-result-ip-2 span').html(data.MAC);
-                } else {
-                    $('#check-result-ip-2').addClass('check-error');
-                    $('#check-result-ip-2 span').html(langData.abnormal);
-                }
-            }
-        };
-
-        var actionFail = {
-            findResult: function(data) {
-                // run find fail
-                $('#button-find').html($('#button-find').data('name') + '(' + langData.fail + ')');
-                $('#button-find-stop').html($('#button-find-stop').data('name'));
-            },
-            findStopResult: function(data) {
-                // run find stop fail
-                $('#button-find').html($('#button-find').data('name'));
-                $('#button-find-stop').html($('#button-find-stop').data('name') + '(' + langData.fail + ')');
-            },
-            lsusbResult: function(data) {
-                checkOptionFinish('lsusb');
-                $('#check-result-lsusb-1,#check-result-lsusb-2').addClass('check-error');
-                $('#check-result-lsusb-1 span,#check-result-lsusb-2 span').html(langData.abnormal);
-            },
-            checkResult: function(data) {
-                checkOptionFinish('check');
-                $('#check-result-program').addClass('check-error');
-                $('#check-result-program span').html(langData.abnormal);
-            },
-            timerResult: function(data) {
-                checkOptionFinish('time');
-                $('#check-result-timer').addClass('check-error');
-                $('#check-result-timer span').html(langData.abnormal);
-            },
-            dateResult: function(data) {
-                checkOptionFinish('date');
-                $('#check-result-date-1,#check-result-date-2').addClass('check-error');
-                $('#check-result-date-1 span,#check-result-date-2 span').html(langData.abnormal);
-            },
-            versionResult: function(data) {
-                checkOptionFinish('version');
-                $('#check-result-version').addClass('check-error');
-                $('#check-result-version span').html(langData.abnormal);
-            },
-            networkResult: function(data) {
-                checkOptionFinish('network');
-                $('#check-result-network-1,#check-result-network-2,#check-result-network-3').addClass('check-error');
-                $('#check-result-network-1 span,#check-result-network-2 span,#check-result-network-3 span').html(langData.abnormal);
-            },
-            ipResult: function(data) {
-                checkOptionFinish('ip');
-                $('#check-result-ip-1,#check-result-ip-2').addClass('check-error');
-                $('#check-result-ip-1 span,#check-result-ip-2 span').html(langData.abnormal);
-            }
-        };
-
-        function checkOptionFinish(tar) {
-            eval("check_options." + tar + " = 1;");
-            for (var option in check_options) {
-                eval("var tmp_val = check_options." + option + ";");
-                if (tmp_val === 0)
-                    return;
+            if (type === 0) {
+                url = '/index.php?r=check/stopFind';
+                clas = 'btn-primary';
+                text = langData.btn1; //“控制器闪灯”
+                state = 1;
             }
 
-            ischecking = false;
-            $('#button-check').html(langData.btn3Retry);
+            $.ajax({
+                type: 'get',
+                url: url,
+                dataType: 'json',
+                beforeSend: function() {
+                    NProgress.start();
+                },
+                success: function(data) {
+                    $('#btnFind').text(text)
+                        .removeClass('btn-danger')
+                        .addClass(clas);
+                },
+                error: function() {
+                    $('#btnFind').append('(' + langData.fail + ')');
+                },
+                complete: function() {
+                    NProgress.done();
+                    $('#btnFind').attr('disabled', false)
+                        .data('state', state);
+
+                }
+            });
+
         }
 
-        $('#button-find').on('click', function() {
-            actions.sendPost('findResult', actions.setting.url_find, {});
+
+        /*
+         * 自检按钮
+         */
+        $('#btnCheck').on('click', function() {
+            $(this).attr('disabled', true)
+                .addClass('btn-warning')
+                .text(langData.btn3Ing);
+            selfTest();
         });
 
-        $('#button-find-stop').on('click', function() {
-            actions.sendPost('findStopResult', actions.setting.url_find_stop, {});
-        });
 
-        var ischecking = false;
-        var check_options = {
-            lsusb: 0,
-            check: 0,
-            timer: 0,
-            date: 0,
-            network: 0,
-            ip: 0,
-            version: 0
-        };
+        /*
+         * 开始自检
+         */
 
-        $('#button-check').on('click', function() {
-            if (ischecking === true){
-                return;
+        function selfTest() {
+            var testNum = 0,
+                options = [{
+                    key: 'lsusb',
+                    url: '/index.php?r=check/lsusb'
+                }, {
+                    key: 'check',
+                    url: '/index.php?r=index/check'
+                }, {
+                    key: 'timer',
+                    url: '/index.php?r=check/timer'
+                }, {
+                    key: 'date',
+                    url: '/index.php?r=check/date'
+                }, {
+                    key: 'version',
+                    url: '/index.php?r=check/version'
+                }, {
+                    key: 'network',
+                    url: '/index.php?r=check/network'
+                }, {
+                    key: 'ip',
+                    url: '/index.php?r=check/ip'
+                }];
+
+            NProgress.start();
+            $('.check-item').removeClass('check-error')
+                .removeClass('check-warning');
+            $('.check-item>span').text(langData.state1);
+            
+            $.each(options, function(index, item) {
+                $.ajax({
+                    type: 'get',
+                    url: item.url,
+                    dataType: 'json',
+                    success: function(data) {
+                        console.log(item.key);
+                        console.log(data);
+                        result(item.key, data);
+                    },
+                    error: function() {
+                        result(item.key);
+                    },
+                    complete: function() {
+                        testNum++;
+                        if (testNum === 6) {
+                            NProgress.done();
+                            $('#btnCheck').attr('disabled', false)
+                                .removeClass('btn-warning')
+                                .text(langData.btn3Retry);
+                        }
+                    }
+                });
+            });
+
+
+            /*
+             * 结果处理
+             */
+
+            function result(key, data) {
+
+                switch (key) {
+                    case 'lsusb': //矿机检测 & 矿机数量
+                        if (data) {
+                            if (data.COMMAND === 1) {
+                                $('#resultLsusb1>span').text(langData.normal);
+                            } else {
+                                abnormal('resultLsusb1');
+                            }
+
+                            if (data.MILL > 0) {
+                                $('#resultLsusb2>span').text(data.MILL);
+                            } else {
+                                $('#resultLsusb2').addClass('check-error')
+                                    .find('>span')
+                                    .text(0);
+                            }
+                        } else {
+                            abnormal('resultLsusb1');
+                            abnormal('resultLsusb2');
+                        }
+                        break;
+
+                    case 'check': //wiibox程序
+                        if (data) {
+                            $('#resultProgram>span').text(langData.normal);
+                        } else {
+                            abnormal('resultProgram');
+                        }
+                        break;
+
+                    case 'timer': //定时器
+                        if (data) {
+                            if (data.COMMAND === 1 && data.FILE === 1) {
+                                $('#resultTimer>span').text(langData.normal);
+                            } else {
+                                abnormal('resultTimer');
+                            }
+                        } else {
+                            abnormal('resultTimer');
+                        }
+                        break;
+
+                    case 'date': //系统市区
+                        if (data) {
+                            if (data.ZONE === 1) {
+                                $('#resultDate>span').text(langData.normal);
+                            } else {
+                                abnormal('resultDate');
+                            }
+                        } else {
+                            abnormal('resultDate');
+                        }
+                        break;
+
+                    case 'network': //到全网网络环境 & 同步网络环境 & 网络延时
+                        if (data) {
+                            if (data.NET === 1) {
+                                $('#resultNetwork1>span').text(langData.normal);
+                            } else {
+                                abnormal('resultNetwork1');
+                            }
+
+                            if (data.WIIBOX === 1) {
+                                $('#resultNetwork>span').text(langData.normal);
+                            } else {
+                                abnormal('resultNetwork2');
+                            }
+
+                            if (data.WIIBOX_DELAY !== '') {
+                                $('#resultNetwork3>span').text(data.WIIBOX_DELAY);
+                            } else {
+                                abnormal('resultNetwork3');
+                            }
+                        } else {
+                            abnormal('resultNetwork1');
+                            abnormal('resultNetwork2');
+                            abnormal('resultNetwork3');
+                        }
+                        break;
+
+                    case 'ip': //IP地址检测 & MAC地址检测
+                        if (data) {
+                            if (data.IP != '') {
+                                $('#resultIp>span').text(data.IP);
+                            } else {
+                                abnormal('resultIp');
+                            }
+
+                            if (data.MAC != '') {
+                                $('#resultMac>span').text(data.MAC);
+                            } else {
+                                abnormal('resultMac');
+                            }
+                        } else {
+                            abnormal('resultIp');
+                            abnormal('resultMac');
+                        }
+                        break;
+
+                    case 'version': //WIIBOX版本
+                        if (data) {
+                            $('#resultVersion>span').text(data.VERSION);
+                        } else {
+                            abnormal('resultVersion');
+                        }
+                        break;
+                }
+
+
+                /*
+                 * 异常消息处理
+                 */
+
+                function abnormal(id) {
+                    $('#' + id).addClass('check-error')
+                        .find('>span')
+                        .text(langData.abnormal);
+                }
+
+
             }
 
-            $('.check-item').removeClass('check-error').removeClass('waiting-check').addClass('waiting-check');
+        }
 
-            ischecking = true;
-            for (var option in check_options){
-                eval("check_options." + option + " = 0;");
-            }
 
-            $(this).html(langData.btn3Ing);
-            $('.check-item span').html(langData.state1);
-
-            actions.sendPost('lsusbResult', actions.setting.url_lsusb, {});
-            actions.sendPost('checkResult', actions.setting.url_check, {});
-            actions.sendPost('timerResult', actions.setting.url_timer, {});
-            actions.sendPost('dateResult', actions.setting.url_date, {});
-            actions.sendPost('versionResult', actions.setting.url_version, {});
-            actions.sendPost('networkResult', actions.setting.url_network, {});
-            actions.sendPost('ipResult', actions.setting.url_ip, {});
-        });
 
     }
 })(window.jQuery);
