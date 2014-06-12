@@ -98,15 +98,9 @@ class SpeedController extends BaseController
 					//判断是否需要同步数据
 					if( $this -> _nowTime == $pointTime )
 					{
-						//由于此程序未发布到树莓派上,此处获取数据代码仅供测试
-						$aryData = $objSpeedModel -> getSpeedDataByCurl();
-						$aryData = $aryData['DATA'];
-						$strRunModel = $aryData['run'];
-						$arySpeedData = $aryData['value'];
-						
 						//正式获取数据代码
-						//$arySpeedData = $objSpeedModel -> getSpeedDataByApi();
-						//$strRunModel = RunModel::model() -> getRunModel();
+						$arySpeedData = $objSpeedModel -> getSpeedDataByApi();
+						$strRunModel = RunModel::model() -> getRunModel();
 						
 						//获取总算力
 						$intSumSpeed = 0;

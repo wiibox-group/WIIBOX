@@ -19,14 +19,30 @@ class CLanguage {
     
 	/** 支持的语言类型 */
     public $_aryLanguage = array('zh','en');
+
+    /** cookie名称 */
+    private $_cookieName = 'wiiboxLanguage';
+    
     /**
      * 初始化
      */
     public function __construct()
 	{
-        $aryUrl = explode('.', $_SERVER['HTTP_HOST']);
-        if((in_array($aryUrl[0], $this -> _aryLanguage)) === true)
-            $this->_language = $aryUrl[0];
+        $strCookieLanguage = $_COOKIE[ $this -> _cookieName ];
+
+		//判断cookie中是否存在语言,如果存在则直接从cookie中进行读取
+		if( empty( $strCookieLanguage ) )
+		{
+			$this -> getRequestBrowserLanguage();
+			setcookie( $this -> _cookieName , $this -> _language , time()+3600*24*365 );
+		}else
+		{
+			$this -> _language = $strCookieLanguage;
+		}
+		
+		//判断当前语言是否在指定支持语言范围内
+		if( !in_array( $this -> _language , $this -> _aryLanguage ) )
+			$this -> _language = 'en';
     }
 
     /**
@@ -76,7 +92,8 @@ class CLanguage {
      * @date 2014-3-28
      * @return array
      */
-    public function getAryByFile($_file = '') {
+    public function getAryByFile($_file = '')
+    {
         if (file_exists($_file))
             return require($_file);
         else{
@@ -104,4 +121,27 @@ class CLanguage {
     {
         return $this -> _language;
     }
+    
+    /**
+     * 获取当前访问网站浏览器语言,暂只支持(zh , en )解析
+     *
+     * @return 当前浏览器语言
+     * @author zhangyi
+     * @date 2014-06-08
+     *
+     */
+    public function getRequestBrowserLanguage()
+    {
+    	$lang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 4);
+    	if (preg_match("/zh-c/i", $lang))
+    		$this -> _language = 'zh';
+    	else if (preg_match("/zh/i", $lang))
+    		$this -> _language = 'zh';
+    	else if (preg_match("/en/i", $lang))
+    		$this -> _language = 'en';
+    	else
+    		$this -> _language = 'en';
+    	return $this -> _language;
+    }
+    
 }
