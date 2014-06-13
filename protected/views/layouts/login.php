@@ -20,11 +20,9 @@
 		<?php $this->widget('EWidgetSessionTipMsg'); ?>
 	</div>
 	<?php echo $content;?>
-	<script src="<?php echo $this->baseUrl;?>/static/libs/jquery/jquery-1.8.3.min.js"></script>
-	<script src="<?php echo $this->baseUrl;?>/static/libs/bootstrap/js/bootstrap.min.js"></script>
-	<script src="<?php echo $this->baseUrl;?>/static/libs/handlebars/handlebars-v1.3.0.js"></script>
-	<script src="<?php echo $this->baseUrl;?>/static/libs/jquery-html5Validate/jquery-html5Validate-min.js"></script>
-	<script src="<?php echo $this->baseUrl;?>/static/js/login.js"></script>
+
+	<script src="<?php echo $this->baseUrl;?>/static/js/login.min.js"></script>
+
 </body>
 
 </html>

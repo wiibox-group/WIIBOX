@@ -15,7 +15,7 @@
 		</h1>
 	</div>
 	<div class="table-responsive">
-		<table id="status-table" class="table table-hover table-bordered table-striped">
+		<table id="statusTable" class="table table-hover table-bordered table-striped">
 			<thead>
 				<tr>
 					<th><?php echo CUtil::i18n('vmonitor,status_device');?></th>
@@ -32,5 +32,3 @@
 	</div>
 	
 </div>
-
-<script src="/static/js/monitor.js"></script>

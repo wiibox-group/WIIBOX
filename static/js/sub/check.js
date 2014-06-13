@@ -10,8 +10,8 @@
     if (cookieLang) {
         lang = (cookieLang.indexOf('zh') !== -1) ? 'zh' : 'en';
     } else {
-        $.cookie('wiiboxLanguage', userLang);
         lang = (userLang.indexOf('zh') !== -1) ? 'zh' : 'en';
+        $.cookie('wiiboxLanguage', lang, {path: '/'});
     }
 
     //修改页面title
@@ -50,7 +50,7 @@
          * 切换语言按钮
          */
         $('#languageMenu').on('click', '>li>a', function() {
-            $.cookie('wiiboxLanguage', $(this).data('lang'));
+            $.cookie('wiiboxLanguage', $(this).data('lang'), {path: '/'});
             window.location.reload();
         });
 
@@ -148,8 +148,7 @@
                 }];
 
             NProgress.start();
-            $('.check-item').removeClass('check-error')
-                .removeClass('check-warning');
+            $('.check-item').removeClass('check-error check-warning');
             $('.check-item>span').text(langData.state1);
             
             $.each(options, function(index, item) {

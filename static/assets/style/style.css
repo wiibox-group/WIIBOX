@@ -125,36 +125,27 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-.page-index .dropdown-menu li a {
-  cursor: pointer;
-}
-.input-area {
-  padding: 10px 0;
-}
-.input-area input {
-  line-height: 2;
-  height: auto;
-  font-size: 12px;
-  margin: 10px 0;
-}
-.form-signin {
-  max-width: 400px;
+.page-index .form-setting {
+  max-width: 620px;
   margin: 0 auto;
 }
-.important-tip {
-  font-size: 16px;
-  padding: 10px 0;
-  text-align: center;
+.page-index .form-setting .form-title {
+  margin-bottom: 10px;
 }
-.input-area input {
-  height: 42px;
-  font-size: 14px;
-  margin: 10px 0;
+.page-index .form-setting .form-control {
+  font-size: 12px;
+  padding: 20px 12px;
 }
-.page-monitor #status-table thead th,
-.page-monitor #status-table tbody th,
-.page-monitor #status-table thead td,
-.page-monitor #status-table tbody td {
+.page-index .form-setting .dropdown-menu li a {
+  cursor: pointer;
+}
+.page-index .form-setting .alert {
+  margin-top: 30px;
+}
+.page-monitor #statusTable thead th,
+.page-monitor #statusTable tbody th,
+.page-monitor #statusTable thead td,
+.page-monitor #statusTable tbody td {
   text-align: center;
 }
 .page-check {

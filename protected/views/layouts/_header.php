@@ -1,8 +1,7 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse"
-				data-target=".navbar-collapse">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -41,11 +40,7 @@
 					<div class="btn-group action-btns">
 						<button id="actionRestart" type="button" class="btn btn-default">
 							<?php echo CUtil::i18n('vlayout,restartNow');?>
-						</button>
-					  	<!-- <button id="actionSuper" type="button" class="btn btn-default">
-					  		<?php echo CUtil::i18n('vlayout,running');?>
-					  	</button> -->
-					  	
+						</button>					  	
 					</div>
 					<button  id="statePill" class="btn btn-success" disabled >
 						<?php echo CUtil::i18n('vlayout,running');?>
@@ -57,10 +52,10 @@
 					</a>
 					<ul id="languageMenu" class="dropdown-menu">
 						<li>
-							<a data-lang="zh" href="">简体中文</a>
+							<a data-lang="zh">简体中文</a>
 						</li>
 						<li>
-							<a data-lang="en" href="">English</a>
+							<a data-lang="en">English</a>
 						</li>
 					</ul>
 				</li>
