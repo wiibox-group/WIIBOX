@@ -94,7 +94,7 @@
                         .addClass(clas);
                 },
                 error: function() {
-                    $('#btnFind').append('(' + langData.fail + ')');
+                    $('#btnFind').text(text + '(' + langData.fail + ')');
                 },
                 complete: function() {
                     NProgress.done();

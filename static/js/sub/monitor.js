@@ -97,7 +97,7 @@
                 dataType: 'json',
                 timeout: 10000,
                 success: function(data) {
-                    if (data.alived.length || data.died.length) {
+                    if (data.alived.BTC.length || data.alived.LTC.length || data.died.BTC.length || data.died.LTC.length) {
                         var tpl = '{{#each alived.BTC}}<tr><td>B:{{this}}</td><td>' + basei18n.running + '</td><td>SHA</td></tr>{{/each}}';
                         tpl += '{{#each alived.LTC}}<tr><td>L:{{this}}</td><td>' + basei18n.running + '</td><td>SCRYPT</td></tr>{{/each}}';
                         tpl += '{{#each died.BTC}}<tr><td>B:{{this}}</td><td>' + basei18n.stopped + '</td><td>SHA</td></tr>{{/each}}';
