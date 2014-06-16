@@ -39,6 +39,20 @@ class UtilApi
 	{
 		return CApi::callApi( MAIN_DOMAIN."/sync" , $_aryData , MAIN_DOMAIN_KEY , true );
 	}
+	
+	/**
+	 * 同步本地速度
+	 * 
+	 * @param string $_aryData
+	 * @return array 返回值
+	 * 
+	 * @author zhangyi
+	 * @date 2014-6-13
+	 */
+	public static function callSyncSpeedData( $_aryData = '' )
+	{
+		return CApi::callApi( MAIN_DOMAIN.'/syncSpeed' , $_aryData , MAIN_DOMAIN_KEY, true );
+	}
 
 	/**
 	 * 解除绑定

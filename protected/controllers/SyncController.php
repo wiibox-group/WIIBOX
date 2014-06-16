@@ -211,6 +211,74 @@ class SyncController extends BaseController
 
 		return $this->_redis;
 	}
+	
+	/*
+	* 进行数据同步
+	* 
+	* @author zhangyi
+	* @date 2014-06-14
+	*
+	*/
+	public function actionSyncSpeed()
+	{
+		//获取基本数据
+		$objSpeedController = new SpeedController();
+		$waitTime = $objSpeedController -> _waitTime;
+		$maxPoint = $objSpeedController -> _maxPoint;
+		$nowTime = $objSpeedController -> _nowTime;
+		$pointTime = $objSpeedController -> _pointTime;
+		
+		//首先检查是否存在存在同步错误的数据
+		$redis = $this -> getRedis();
+		//获取最后一次同步数据
+		$lastSyncTimeKey = 'local.speed.last.time';
+		$lastSyncTime = $redis -> readByKey( $lastSyncTimeKey );
+		$lastSyncTime = intval( $lastSyncTime );
+		$syncWrongData = $redis -> readByKey( 'local.speed.wrong.data' );
 
+		$arySyncData = array();
+		$strRKEY = RunModel::model() -> getKEys();
+		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
+		$arySyncData['time'] = time();
+		$arySyncData['data']['sync']['maxPoint'] = $maxPoint;
+		$arySyncData['data']['sync']['nowTime'] = $nowTime;
+		$arySyncData['data']['sync']['pointTime'] = $pointTime;		
+		$arySyncData['data']['sync']['waitTime'] = $waitTime;
+		
+		//获取当前算力速度以及运行模式数据
+		$objSpeedModel = SpeedModel::model();
+		$intSpeedSum = $objSpeedModel -> getSpeedSum();
+		$strRunModel = $objSpeedModel -> getRunModel();
+		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
+		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
+
+		if(  $syncWrongData != ''  )
+		{
+			$arySyncWrongData = json_decode( $arySyncWrongData , 1);
+			if( $nowTime === $pointTime )
+			{
+				$arySyncWrongData['L'][$pointTime] = array( $pointTime , $intSpeedL );
+				$arySyncWrongData['B'][$pointTime] = array( $pointTime , $intSpeedB );
+			}
+			$arySyncData['data']['sync']['data'] = $arySyncWrongData;
+		}else
+		{
+			if( $nowTime == $pointTime && ($nowTime - $lastSyncTime) >= $waitTime )
+			{
+				$aryData = array(
+							'L' => array( $pointTime => array( $pointTime , $intSpeedL , date('Y-m-d H:i:s' , time())) ),
+							'B' => array( $pointTime => array( $pointTime , $intSpeedB ) )
+							);
+				$arySyncData['data']['sync']['data'] = $aryData;
+				$redis -> writeByKey( $lastSyncTimeKey , ''.$nowTime  ); 
+			}else
+			{
+				return true;
+			}
+		}
+		$arySyncData['data'] = urlencode( base64_encode(json_encode( $arySyncData['data'] )));
+		// sync data
+		$aryCallBack = UtilApi::callSyncSpeedData( $arySyncData );
+	}
 //end class
 }

@@ -11,19 +11,19 @@ class SpeedController extends BaseController
 	public $_redis;
 	
 	/** 图表最多显示多少个点 **/
-	private $_maxPoint =  145;
+	public $_maxPoint = 100;
 	
 	/** 间隔时间 ( 按 分钟 计算  ) **/
-	private $_waitTime = 10;
+	public $_waitTime = 2;
 	
 	/** 点时间 */
-	private $_pointTime = 0;
+	public $_pointTime = 0;
 	
 	/** 当前时间 */
-	private $_nowTime = 0;
+	public $_nowTime = 0;
 	
 	/** 运行模式 */
-	private $_runModel = array(
+	public $_runModel = array(
 							'L' => 'L',
 							'B' => 'B'
 	);
@@ -98,18 +98,17 @@ class SpeedController extends BaseController
 					//判断是否需要同步数据
 					if( $this -> _nowTime == $pointTime )
 					{
-						//正式获取数据代码
-						$arySpeedData = $objSpeedModel -> getSpeedDataByApi();
-						$strRunModel = RunModel::model() -> getRunModel();
+						//由于此程序未发布到树莓派上,此处获取数据代码仅供测试
+						$intSpeedSum = $objSpeedModel -> getSpeedSum();	
+						$strRunModel = 'L';
 						
-						//获取总算力
-						$intSumSpeed = 0;
-						foreach ( $arySpeedData as $info )
-							$intSumSpeed += $info['S'];
+						//正式获取数据代码
+						//$arySpeedData = $objSpeedModel -> getSpeedDataByApi();
+						//$strRunModel = $objSpeed -> getRunModel();
 						
 						//填充当前时间段数据
-						$intSpeedB = $strRunModel === 'B' ? $intSumSpeed * 1024 : 0;
-						$intSpeedL = $strRunModel === 'L' ? $intSumSpeed * 1024 : 0;
+						$intSpeedB = $strRunModel === 'B' ? $intSpeedSum * 1024 : 0;
+						$intSpeedL = $strRunModel === 'L' ? $intSpeedSum * 1024 : 0;
 						
 						$aryPointsDataB[$pointTime] = array( $pointTime , $intSpeedB );
 						$aryPointsDataL[$pointTime] = array( $pointTime , $intSpeedL );
