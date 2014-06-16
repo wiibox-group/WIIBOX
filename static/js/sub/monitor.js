@@ -102,10 +102,9 @@
                         tpl += '{{#each alived.LTC}}<tr><td>L:{{this}}</td><td>' + basei18n.running + '</td><td>SCRYPT</td></tr>{{/each}}';
                         tpl += '{{#each died.BTC}}<tr><td>B:{{this}}</td><td>' + basei18n.stopped + '</td><td>SHA</td></tr>{{/each}}';
                         tpl += '{{#each died.LTC}}<tr><td>L:{{this}}</td><td>' + basei18n.stopped + '</td><td>SCRYPT</td></tr>{{/each}}';
-                        tpl += 'test';
                         var temp = Handlebars.compile(tpl);
-                        $('#status-table>tbody').html(temp(data));
-                    }else{
+                        $('#statusTable>tbody').html(temp(data));
+                    } else {
                         $('#statusTable>tbody').html('<tr><td colspan="3">-</td></tr>');
                     }
                 },
