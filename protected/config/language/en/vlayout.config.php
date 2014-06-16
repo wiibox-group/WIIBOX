@@ -1,15 +1,14 @@
 <?php
     return array(
-    			'wiibox_setting' => 'WIIBOX Setting',
-    			'setting_center' => 'Setting Center',
+    			'wiibox_setting' => 'WIIBOX',
+    			'setting_center' => 'Settings',
     			'localMonitoring' => 'Local Monitoring',
     			'remoteMonitoring' => 'Remote Monitoring',
     			'selfTest' => 'Self-test',
-    			'restartNow' => 'Restart Immediately',
+    			'restartNow' => 'Restart',
     			'running' => 'Running',
-    			'runningStop' => 'Stop 10 seconds',
     			'btc&Ltc_setting' => 'BTC&LTC Mining Setting',
-    			'logout'=> 'Log Out',
+    			'logout'=> 'Logout',
     			
     			// 2014-06-12 add by zhangyi
     			'languge' => 'English',

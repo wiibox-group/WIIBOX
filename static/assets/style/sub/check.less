@@ -1,33 +1,31 @@
 .page-check {
     display: none;
-    .navbar{
-        .dropdown{
-            a{
+    .navbar {
+        .dropdown {
+            a {
                 cursor: pointer;
             }
         }
     }
     .form-selftest {
-        width: 600px;
+        max-width: 600px;
         margin: 0 auto;
         .page-header {
             padding-bottom: 9px;
             border-bottom: 1px solid #c0c0c0;
-            margin-top:20px;
+            margin-top: 20px;
             h3 {
-                margin:0;
+                margin: 0;
             }
         }
     }
     .check-item {
-        font-size:14px;
-        line-height:18px;
+        font-size: 14px;
+        line-height: 18px;
+        background: #666 !important;
     }
-    .nav-pills>li.active>a.waiting-check, .nav-pills>li.active>a.waiting-check:hover, .nav-pills>li.active>a.waiting-check:focus {
-        background-color:#666;
-    }
-    .nav-pills>li.active>a.check-error, .nav-pills>li.active>a.check-error:hover, .nav-pills>li.active>a.check-error:focus {
-        background-color:#d2322d;
+    .check-error {
+        background: #d2322d !important;
     }
     ul.nav-pills li {
         padding:2px 0;

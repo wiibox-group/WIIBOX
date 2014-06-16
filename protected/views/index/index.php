@@ -14,28 +14,40 @@
 		<?php echo CUtil::i18n('vindex,worker_apart');?>
 	</div>
 	<div class="jumbotron">
-		<form class="form-signin" role="form" method="POST" action="<?php echo $this->createUrl( 'index/index' ); ?>">
+		<form class="form-setting" role="form" method="post" action="<?php echo $this->createUrl( 'index/index' ); ?>">
 			<?php if ( !empty( $tip['status'] ) ) : ?>
-			<div id="action-tip" class="alert <?php echo $aryStatus[$tip['status']]; ?> important-tip"><?php echo $tip['text']; ?></div>
+			<div id="actionTip" class="alert <?php echo $aryStatus[$tip['status']]; ?> important-tip"><?php echo $tip['text']; ?></div>
 			<?php endif; ?>
-			<div class="input-area">
-				<div><?php echo CUtil::i18n('vindex,sha_setting');?></div>
+			<div class="form-title"><?php echo CUtil::i18n('vindex,sha_setting');?></div>
+			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,sha_MinePoolAddress')?>" name="address_btc" value="<?php echo $btc['ad']; ?>" type="text" <?php echo empty($btc['ad']) ? 'autofocus' : ''; ?>/>
+			</div>
+			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,sha_workerNum')?>" name="account_btc" value="<?php echo $btc['ac']; ?>" type="text" />
+			</div>
+			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,sha_workerPwd')?>" name="password_btc" value="<?php echo $btc['pw']; ?>" type="text" />
-
+			</div>
+			<div class="form-title">
 				<div><?php echo CUtil::i18n('vindex,scrypt_setting'); ?></div>
+			</div>
+			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,scrypt_MinePoolAddress'); ?>" name="address_ltc" value="<?php echo $ltc['ad']; ?>" type="text" />
+			</div>
+			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerNum'); ?>" name="account_ltc" value="<?php echo $ltc['ac']; ?>" type="text" />
+			</div>
+			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerPwd'); ?>" name="password_ltc" value="<?php echo $ltc['pw']; ?>" type="text" />
-
+			</div>
+			<div class="form-group">
 				<input type="hidden" id="run_speed" name="run_speed" value="<?php echo $speed; ?>" />
 				<div class="btn-group">
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 					    <?php echo CUtil::i18n('vindex,runFrequency')?><span id="speed-cur"><?php echo $speed; ?></span>M
 					    &nbsp;<span class="caret"></span>
 					</button>
-					<ul id="speed-select-options" class="dropdown-menu" role="menu">
+					<ul id="selectSpeed" class="dropdown-menu" role="menu">
 						<li>
 							<a data-value="700">700M</a>
 						</li>
@@ -80,28 +92,14 @@
 						</li>
 					</ul>
 				</div>
-				<span style="font-size:15px;">&nbsp;&nbsp;(<?php echo CUtil::i18n('vindex,frequencyTip');?>)</span>
-				<?/*
-					<div>挖矿模式</div>
-					<div class="btn-group" style="padding-bottom:10px;">
-						<input type="hidden" id="runmodel-input" name="runmodel" value="<?php echo $runmodel; ?>"/>
-						<button type="button" tar="L" class="runmodel-bt btn btn-default<?php echo $runmodel === 'L' ? ' active' : '' ?>">SCRYPT单挖</button>
-						<button type="button" tar="LB" class="runmodel-bt btn btn-default<?php echo $runmodel === 'LB' ? ' active' : '' ?>">SCRYPT/SHA双挖</button>
-					</div>
-				*/?>
+				<span>&nbsp;&nbsp;(<?php echo CUtil::i18n('vindex,frequencyTip');?>)</span>
 			</div>
-			<p>
-				<div id="action-restart-tip" class="alert alert-warning important-tip">
-			  		<strong><?php echo CUtil::i18n('vindex,importantOption');?></strong>
-			  		&nbsp;&nbsp;&nbsp;&nbsp;
-			  		<?php echo CUtil::i18n('vindex,setting_save_tip');?>
-			  	</div>
-			</p>
-			<p>
-				<button class="btn btn-lg btn-primary btn-block" type="submit"><?php echo CUtil::i18n('vindex,setting_save');?></button>
-			</p>
+			<div class="alert alert-warning text-center">
+		  		<strong><?php echo CUtil::i18n('vindex,importantOption');?></strong>
+		  		&nbsp;&nbsp;&nbsp;&nbsp;
+		  		<?php echo CUtil::i18n('vindex,setting_save_tip');?>
+		  	</div>
+			<button class="btn btn-lg btn-primary btn-block" type="submit"><?php echo CUtil::i18n('vindex,setting_save');?></button>
 	    </form>
 	</div>
 </div>
-
-<script src="/static/js/index.js"></script>

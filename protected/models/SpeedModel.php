@@ -89,7 +89,7 @@ class SpeedModel extends CModel
 	public function getSpeedDataByCurl()
 	{
 		
-		$url = 'http://192.168.1.113/index.php?r=index/getSpeed';
+		$url = 'http://192.168.1.161/index.php?r=index/getSpeed';
 		// 初始化一个 cURL 对象
 		$curl = curl_init();
 		// 设置你需要抓取的URL
@@ -118,7 +118,8 @@ class SpeedModel extends CModel
 	 */
 	public function getCheckDataCurl()
 	{
-		$url = 'http://192.168.1.113/index.php?r=index/check';
+		$url = 'http://192.168.1.161/index.php?r=index/check';
+
 		// 初始化一个 cURL 对象
 		$curl = curl_init();
 		// 设置你需要抓取的URL
