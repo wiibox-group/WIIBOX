@@ -20,6 +20,15 @@
 
 
         /*
+         * 关闭UTC
+         */
+        Highcharts.setOptions({
+            global: {
+                useUTC: false
+            }
+        });
+
+        /*
          * Hashrate统计图
          */
 
@@ -35,8 +44,7 @@
                     enabled: false
                 },
                 xAxis: {
-                    type: 'datetime',
-
+                    type: 'datetime'
                 },
                 yAxis: {
                     title: {
