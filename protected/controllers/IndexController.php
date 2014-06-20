@@ -21,25 +21,41 @@ class IndexController extends BaseController
 
 	// default speed
 	private $_defaultSpeed = array(
-				'GS_D_V2' => '850',
-				'GS_S_V2' => '850',
-				'GS_S_V3' => '850',
-				'A2_S_V1' => '1280',
-				'GS_A1_S_V1' => '850',
+				'GS_D_V2'		=> '850',
+				'GS_S_V2'		=> '825',
+				'GS_S_V3'		=> '850',
+				'A2_S_V1'		=> '1280',
+				'GS_A1_S_V1'	=> '850',
+				'FC_S_V1'		=> '300',
+				'DIF_S_V1'		=> '850',
 			);
 
 	// default check mode for single mode
 	private $_checkMode_S = array(
-				'OPENWRT_GS_D_V2' => 'tty',
-				'RASPBERRY_GS_S_V2' => 'lsusb',
-				'OPENWRT_GS_S_V3' => 'tty',
-				'RASPBERRY_A2_S_V1' => 'spi-ltc',
-				'RASPBERRY_GS_A1_S_V1' => 'spi-btc',
+				'OPENWRT_GS_D_V2'		=> 'tty',
+				'RASPBERRY_GS_S_V2'		=> 'lsusb-api',
+				'OPENWRT_GS_S_V3'		=> 'tty',
+				'RASPBERRY_A2_S_V1'		=> 'spi-ltc',
+				'RASPBERRY_GS_A1_S_V1'	=> 'spi-btc',
+				'RASPBERRY_FC_S_V1'		=> 'tty-btc',
+				'OPENWRT_DIF_S_V1'		=> 'lsusb-api',
+				'RASPBERRY_DIF_S_V1'	=> 'lsusb-api',
 			);
 
 	// default check mode for dule mode
 	private $_checkMode_D = array(
-				'OPENWRT_GS_D_V2' => 'lsusb',
+				'OPENWRT_GS_D_V2'		=> 'lsusb',
+			);
+
+	// default work time interval
+	private $_defaultInterval = array(
+				'GS_D_V2'		=> 120,
+				'GS_S_V2'		=> 120,
+				'GS_S_V3'		=> 120,
+				'A2_S_V1'		=> 300,
+				'GS_A1_S_V1'	=> 300,
+				'FC_S_V1'		=> 300,
+				'DIF_S_V1'		=> 300,
 			);
 
 	/**
@@ -96,11 +112,11 @@ class IndexController extends BaseController
 
 				$intSpeed = isset( $_POST['run_speed'] ) ? intval( $_POST['run_speed'] ) : $intDefaultSpeed;
 
-				$strGetRunModel = isset( $_POST['runmodel'] ) ? htmlspecialchars( $_POST['runmodel'] ) : '';
-				if ( !empty( $strGetRunModel ) && in_array( $strGetRunModel , array( 'L' , 'LB' ) ) )
+				$strGetRunMode = isset( $_POST['runmodel'] ) ? htmlspecialchars( $_POST['runmodel'] ) : '';
+				if ( !empty( $strGetRunMode ) && in_array( $strGetRunMode , array( 'L' , 'LB' ) ) )
 				{
-					RunModel::model()->storeRunModel( $strGetRunModel );
-					$strRunMode = $strGetRunModel;
+					RunModel::model()->storeRunMode( $strGetRunMode );
+					$strRunMode = $strGetRunMode;
 				}
 
 				$aryBTCData['ad'] = $strBTCAddress;
@@ -115,9 +131,18 @@ class IndexController extends BaseController
 				$aryLTCData['speed'] = $intSpeed;
 				//$aryLTCData['su'] = isset( $aryLTCData['su'] ) ? $aryLTCData['su'] : 1;
 
-				$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
-				if ( $boolCheck === false )
-					throw new CModelException( CUtil::i18n( 'exception,scrypt_setting_haveNullData' ));
+				if ( in_array( $strRunMode , array( 'L' ) ) )
+				{
+					$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
+					if ( $boolCheck === false )
+						throw new CModelException( CUtil::i18n( 'exception,scrypt_setting_haveNullData' ));
+				}
+				else if ( in_array( $strRunMode , array( 'B' ) ) )
+				{
+					$boolCheck = CUtil::isParamsEmpty( $aryBTCData );
+					if ( $boolCheck === false )
+						throw new CModelException( CUtil::i18n( 'exception,sha_setting_haveNullData' ));
+				}
 
 				// store data
 				$redis->writeByKey( 'btc.setting' , json_encode( $aryBTCData ) );
@@ -201,9 +226,9 @@ class IndexController extends BaseController
 		{
 			$aryBTCData = $this->getTarConfig( 'btc' );
 
-			switch ( $strCheckTar )
+			switch ( SYS_INFO )
 			{
-				case 'spi-btc':
+				case 'GS_A1_S_V1':
 					// get btc config
 					$aryLTCData = $this->getTarConfig( 'btc' );
 
@@ -211,7 +236,20 @@ class IndexController extends BaseController
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
 					$aryConfig['speed'] = $aryBTCData['speed'];
 
-					$this->restartBySpiBtc( $aryConfig );
+					$this->restartByA1( $aryConfig );
+
+					break;
+
+				case 'FC_S_V1':
+					// get btc config
+					$aryLTCData = $this->getTarConfig( 'btc' );
+
+					$aryConfig = $aryBTCData;
+					$aryConfig['ac'] = $aryBTCData['ac'][0];
+					$aryConfig['speed'] = $aryBTCData['speed'];
+					$aryConfig['usb'] = $aryUsb;
+
+					$this->restartByFc( $aryConfig );
 
 					break;
 
@@ -227,10 +265,10 @@ class IndexController extends BaseController
 			// get ltc config
 			$aryLTCData = $this->getTarConfig( 'ltc' );
 
-			switch ( $strCheckTar )
+			switch ( SYS_INFO )
 			{
-				// if tty mode
-				case 'tty':
+				case 'GS_D_V2':
+				case 'GS_S_V3':
 					$intUids = $aryLTCData['acc'];
 					foreach ( $aryUsb as $usb )
 					{
@@ -242,30 +280,44 @@ class IndexController extends BaseController
 						$aryConfig['mode'] = $strRunMode;
 						$aryConfig['su'] = $aryLTCData['su'];
 
-						$this->restartByUsb( $aryConfig , $usb , $strRunMode );
+						$this->restartByGS40Chips( $aryConfig , $usb , $strRunMode );
 						$intUids --;
 					}
 
 					break;
 
-				// if spi mode
-				case 'spi-ltc':
+				case 'A2_S_V1':
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
-					$this->restartBySpiLtc( $aryConfig );
+					$this->restartByA2( $aryConfig );
 
 					break;
 
-				// other mode
-				default:
+				case 'GS_S_V2':
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
 					$aryConfig['mode'] = $strRunMode;
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
-					$this->restartByUsb( $aryConfig , 'all' , $strRunMode );
+					$this->restartByGS40Chips( $aryConfig , 'all' , $strRunMode );
+
+					break;
+
+				case 'DIF_S_V1':
+					$aryConfig = $aryLTCData;
+					$aryConfig['ac'] = $aryLTCData['ac'][0];
+					$aryConfig['mode'] = $strRunMode;
+					$aryConfig['speed'] = $aryLTCData['speed'];
+
+					$this->restartByDIF128Chips( $aryConfig , 'all' , $strRunMode );
+
+					break;
+
+				// other mode
+				default:
+					break;
 			}
 		}
 
@@ -282,7 +334,7 @@ class IndexController extends BaseController
 	/**
 	 * restart program by spi
 	 */
-	public function restartBySpiLtc( $_aryConfig = array() , $_strSingleShutDown = '' )
+	public function restartByA2( $_aryConfig = array() , $_strSingleShutDown = '' )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -302,7 +354,7 @@ class IndexController extends BaseController
 	/**
 	 * restart program by spi-btc
 	 */
-	public function restartBySpiBtc( $_aryConfig = array() , $_strSingleShutDown = '' )
+	public function restartByA1( $_aryConfig = array() , $_strSingleShutDown = '' )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -320,9 +372,36 @@ class IndexController extends BaseController
 	}
 
 	/**
-	 * restart program by usb
+	 * restart program by tty-btc
 	 */
-	public function restartByUsb( $_aryConfig = array() , $_strUsb = '' , $_strUsbModel = '' , $_strSingleShutDown = '' )
+	public function restartByFc( $_aryConfig = array() , $_strSingleShutDown = '' )
+	{
+		if ( empty( $_aryConfig ) )
+			return false;
+
+		if ( !empty( $_aryConfig['usb'] ) )
+		{
+			$strUsbParam = '';
+			foreach ( $_aryConfig['usb'] as $usb )
+				$strUsbParam .= ' -S'.$usb;
+		}
+
+		$intRunSpeed = $_aryConfig['speed'];
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_fc {$strUsbParam} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --hashratio-freq={$intRunSpeed} --api-listen --api-allow W:127.0.0.1 --real-quiet >/dev/null 2>&1 &";
+
+		exec( $command );
+
+		// clear history log
+		$redis = $this->getRedis();
+		$redis->writeByKey( 'speed.history.log' , '{}' );
+
+		return true;
+	}
+
+	/**
+	 * restart program by GS 40 chips
+	 */
+	public function restartByGS40Chips( $_aryConfig = array() , $_strUsb = '' , $_strUsbModel = '' , $_strSingleShutDown = '' )
 	{
 		if ( empty( $_aryConfig ) || empty( $_strUsb ) || empty( $_strUsbModel ) )
 			return false;
@@ -333,31 +412,29 @@ class IndexController extends BaseController
 		if ( empty( $aryData ) )
 			return false;
 
-		/*
-		// get run level
-		$intRunLevel = $aryData['mode'] === 'LB-B' ? '11' : ($aryData['mode'] === 'L-B' ? '0' : '16');
+		$intRunSpeed = $aryData['speed'];
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
 
-		// get btc start command
-		if ( in_array( $aryData['mode'] , array( 'LB-B' ) ) )
-		{
-			$aryUsbCache = json_decode( $this->getRedis()->readByKey( 'usb.check.result' ) , 1 );
-			$intRunSpeed = $aryUsbCache['hasgd'] === 0 ? $aryData['speed'] : 700;
+		exec( $command );
+		return true;
+	}
 
-			$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer --dif --gridseed-options=baud=115200,freq={$intRunSpeed},chips=5,modules=1,usefifo=0,btc={$intRunLevel} --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} {$startUsb} >/dev/null 2>&1 &";
-		}
-		// get dule mode ltc start command
-		else if ( in_array( $startModel , array( 'LB' ) ) && in_array( $aryData['mode'] , array( 'LB-L' ) ) )
-			$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd{$modelLParam} --dif={$_strUsb} -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --dual >/dev/null 2>&1 &";
-		// get single mode ltc start command
-		else if ( in_array( $startModel , array( 'L' ) ) && in_array( $aryData['mode'] , array( 'L' ) ) )
-		{
-			$intRunSpeed = $aryData['speed'];
-			$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --dif --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
-		}
-		*/
+	/**
+	 * restart program by DIF 128 chips
+	 */
+	public function restartByDIF128Chips( $_aryConfig = array() , $_strUsb = '' , $_strUsbModel = '' , $_strSingleShutDown = '' )
+	{
+		if ( empty( $_aryConfig ) || empty( $_strUsb ) || empty( $_strUsbModel ) )
+			return false;
+
+		$aryData = $_aryConfig;
+		$startModel = $_strUsbModel;
+
+		if ( empty( $aryData ) )
+			return false;
 
 		$intRunSpeed = $aryData['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --dif --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_dif --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=128,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
 
 		exec( $command );
 		return true;
@@ -426,14 +503,14 @@ class IndexController extends BaseController
 
 		foreach ( $output as $r )
 		{
-			preg_match( '/.*(cgminer).*/' , $r , $match_btc );
+			preg_match( '/.*(cgminer|cgminer_fc).*/' , $r , $match_btc );
 			preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
 
 			// if LTC model
 			if ( !empty( $match_ltc[1] ) && $alivedLTC === false )
 				$alivedLTC = true;
 			// if BTC model
-			else if ( !empty( $match_btc[1] ) && empty( $match_ltc[1] ) && $alivedBTC === false )
+			else if ( !empty( $match_btc[1] ) && $alivedBTC === false )
 				$alivedBTC = true;
 		}
 
@@ -525,13 +602,12 @@ class IndexController extends BaseController
 				count( $aryData['alived']['LTC'] )+count( $aryData['died']['LTC'] ) );
 
 		// if need restart
-		if ( ( $strRunMode === 'LB' 
-					&&  $intCountMachine > 0 
-					&& ( count( $aryData['alived']['BTC'] ) === 0 
-						|| count( $aryData['alived']['LTC'] ) === 0 ) )
-				|| ( $strRunMode === 'L' 
+		if ( ( $strRunMode === 'L' 
 					&& $intCountMachine > 0 
 					&& count( $aryData['alived']['LTC'] ) === 0 ) 
+				|| ( $strRunMode === 'B' 
+					&& $intCountMachine > 0 
+					&& count( $aryData['alived']['BTC'] ) === 0 ) 
 		)
 			echo $this->actionRestart( true ) === true ? 1 : -1;
 		else
@@ -548,36 +624,64 @@ class IndexController extends BaseController
 
 		// get run model
 		$strRunMode = $this->getRunMode();
-		
-		if ( $strRunMode === 'L' )
+
+		// find new usb machine
+		$strCheckTar = $this->getCheckMode();
+		$aryUsbCache = UsbModel::model()->getUsbCheckResult( $strRunMode , $strCheckTar );
+		$aryUsb = $aryUsbCache['usb'];
+
+		// get running programe
+		$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep miner';
+		exec( $command , $grepout );
+
+		switch ( $strRunMode )
 		{
-			// find new usb machine
-			$strCheckTar = $this->getCheckMode();
-			$aryUsbCache = UsbModel::model()->getUsbCheckResult( $strRunMode , $strCheckTar );
-			$aryUsb = $aryUsbCache['usb'];
-
-			// get running programe
-			$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep miner';
-			exec( $command , $grepout );
-
-			$boolIsLTCAlived = false;
-			foreach ( $grepout as $r )
-			{
-				preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
-				if ( !empty( $match_ltc[1] ) )
+			case 'L':
+				$boolIsLTCAlived = false;
+				foreach ( $grepout as $r )
 				{
-					$boolIsLTCAlived = true;
-					break;
+					preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
+					if ( !empty( $match_ltc[1] ) )
+					{
+						$boolIsLTCAlived = true;
+						break;
+					}
 				}
-			}
 
-			if ( count( $aryUsb ) === 0 )
-				$this->actionShutdown( true );
+				if ( count( $aryUsb ) === 0 )
+					$this->actionShutdown( true );
 
-			if ( $boolIsLTCAlived === false && count( $aryUids ) > 0 )
-				$this->actionRestart( true );
+				if ( $boolIsLTCAlived === false && count( $aryUsb ) > 0 )
+					$this->actionRestart( true );
 
-			$usbData['OK'] = 1;
+				$usbData['OK'] = 1;
+				
+				break;
+
+			case 'B':
+				$boolIsBTCAlived = false;
+				foreach ( $grepout as $r )
+				{
+					preg_match( '/.*(cgminer|cgminer_fc).*/' , $r , $match_btc );
+					if ( !empty( $match_btc[1] ) )
+					{
+						$boolIsBTCAlived = true;
+						break;
+					}
+				}
+
+				if ( count( $aryUsb ) === 0 )
+					$this->actionShutdown( true );
+
+				if ( $boolIsBTCAlived === false && count( $aryUsb ) > 0 )
+					$this->actionRestart( true );
+
+				$usbData['OK'] = 1;
+
+				break;
+
+			default:
+				break;
 		}
 
 		if ( $_boolIsReturn === false )
@@ -590,42 +694,10 @@ class IndexController extends BaseController
 	}
 
 	/**
-	 * restart target usb
-	 */
-	public function actionRestartTarget( $_strUsb = '' , $_strModel = '' , $_strTo = '' , $_boolIsNoExist = false )
-	{
-		$setUsbKey = $_strUsb;
-
-		if ( empty( $setUsbKey ) )
-		{
-			if ( $_boolIsNoExist === true )
-				return false;
-			else
-				echo '500';exit;
-		}
-
-		// get config
-		$aryConfig = $this->getTarConfig( $_strModel );
-		$aryConfig['ac'] = $aryConfig['ac'][rand(0,$aryConfig['acc']-1)];
-		$aryConfig['mode'] = $_strTo;
-
-		$this->restartByUsb( $aryConfig , $setUsbKey , $_strTo , $setUsbKey );
-
-		if ( $_boolIsNoExist === true )
-				return true;
-			else
-				echo '500';exit;
-	}
-
-	/**
 	 * get super model state
 	 */
 	public function getSuperModelState()
 	{
-		/*
-		$aryBTCData = $this->getTarConfig( 'btc' );
-		return !empty( $aryBTCData ) && intval( $aryBTCData['su'] ) === 1 ? true : false;
-		*/
 		return true;
 	}
 
@@ -719,6 +791,8 @@ class IndexController extends BaseController
 		$strRunMode = $this->getRunMode();
 		// get check mode
 		$strCheckTar = $this->getCheckMode();
+		// get work time interval
+		$intWorkTimeInterval = $this->getDefaultInterval();
 
 		// get usb cache
 		$aryUsbCache = UsbModel::model()->getUsbCheckResult( $strRunMode , $strCheckTar );
@@ -750,234 +824,251 @@ class IndexController extends BaseController
 		$boolIsNeedRestart = false;
 		$newData = array('BTC'=>array(),'LTC'=>array());
 
-		// if spi sum mode
-		if ( $strCheckTar == 'spi-btc' )
+		switch ( $strCheckTar )
 		{
-			// get speed data
-			$arySpeedData = SpeedModel::getSpeedDataByApi();
+			// btc mode use spi agreement
+			case 'spi-btc':
+			// btc mode use tty agreement
+			case 'tty-btc':
 
-			// get history accept
-			$historyLog = $redis->readByKey( 'speed.history.log' );
-			$aryHistory = json_decode( $historyLog , 1 );
+				// get speed data
+				$arySpeedData = SpeedModel::getSpeedDataByApi();
 
-			// high speed
-			$doubleHighSpeed = 0;
-			foreach ( $arySpeedData as $key=>$data )
-				$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
+				// get history accept
+				$historyLog = $redis->readByKey( 'speed.history.log' );
+				$aryHistory = json_decode( $historyLog , 1 );
 
-			// parse data
-			foreach ( $arySpeedData as $key=>$data )
-			{
-				// more than 5 minutes restart
-				if ( $now - $data['LAST'] > 300 )
-					$boolIsNeedRestart = true;
+				// high speed
+				$doubleHighSpeed = 0;
+				foreach ( $arySpeedData as $key=>$data )
+					$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
 
-				// if speed too low
-				if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
-					$boolIsNeedRestart = true;
-
-				$intHistoryA = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['A'];
-				$countData['BTC']['A'] += intval( $data['A'] ) - $intHistoryA;
-
-				$intHistoryR = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['R'];
-				$countData['BTC']['R'] += intval( $data['R'] ) - $intHistoryR;
-
-				$aryHistory[$key]['A'] = intval($data['A']);
-				$aryHistory[$key]['R'] = intval($data['R']);
-			}
-
-			$countData['BTC']['LC'] = $now;
-
-			// write history log
-			$redis->writeByKey( 'speed.history.log' , json_encode( $aryHistory ) );
-
-			// end spi mode
-		}
-		// if spi mode
-		else if ( $strCheckTar == 'spi-ltc' )
-		{
-			// get speed data
-			$arySpeedData = SpeedModel::getSpeedDataByApi();
-
-			// get history accept
-			$historyLog = $redis->readByKey( 'speed.history.log' );
-			$aryHistory = json_decode( $historyLog , 1 );
-
-			// high speed
-			$doubleHighSpeed = 0;
-			foreach ( $arySpeedData as $key=>$data )
-				$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
-
-			// parse data
-			foreach ( $arySpeedData as $key=>$data )
-			{
-				// more than 5 minutes restart
-				if ( $now - $data['LAST'] > 300 )
-					$boolIsNeedRestart = true;
-
-				// if speed too low
-				if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
-					$boolIsNeedRestart = true;
-
-				$intHistoryA = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['A'];
-				$countData['LTC']['A'] += intval( $data['A'] ) - $intHistoryA;
-
-				$intHistoryR = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['R'];
-				$countData['LTC']['R'] += intval( $data['R'] ) - $intHistoryR;
-
-				$aryHistory[$key]['A'] = intval($data['A']);
-				$aryHistory[$key]['R'] = intval($data['R']);
-			}
-
-			$countData['LTC']['LC'] = $now;
-
-			// write history log
-			$redis->writeByKey( 'speed.history.log' , json_encode( $aryHistory ) );
-
-			// end spi mode
-		}
-		else
-		{
-			if ( in_array( $strRunMode , array( 'B' , 'LB' ) ) )
-				$newData['BTC'] = $speedData['BTC'];
-
-			if ( in_array( $strRunMode , array( 'L' , 'LB' ) ) )
-			{
-				foreach ( $speedData['LTC'] as $k=>$d )
+				// parse data
+				foreach ( $arySpeedData as $key=>$data )
 				{
-					if ( in_array( $k , $aryUsb ) )
-						$newData['LTC'][$k] = $d;
+					// more than 5 minutes restart
+					if ( $now - $data['LAST'] > $intWorkTimeInterval )
+						$boolIsNeedRestart = true;
+
+					// if speed too low
+					if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
+						$boolIsNeedRestart = true;
+
+					$intHistoryA = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['A'];
+					$countData['BTC']['A'] += intval( $data['A'] ) - $intHistoryA;
+
+					$intHistoryR = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['R'];
+					$countData['BTC']['R'] += intval( $data['R'] ) - $intHistoryR;
+
+					$aryHistory[$key]['A'] = intval($data['A']);
+					$aryHistory[$key]['R'] = intval($data['R']);
 				}
-			}
 
-			if ( in_array( $strRunMode , array( 'L' , 'LB' ) ) )
-			{
-				foreach ( $aryUsb as $usb )
-				{
-					if ( !array_key_exists( $usb , $newData['LTC'] ) )
-						$newData['LTC'][$usb] = array( 'A'=>0 , 'R'=>0 , 'T'=>$now);
-				}
-			}
-
-			$log_dir = '/tmp';
-			$btc_log_dir = $log_dir.'/btc';
-			$ltc_log_dir = $log_dir.'/ltc';
-
-			if ( file_exists( $btc_log_dir ) )
-				$btc_dir_source = opendir( $btc_log_dir );
-
-			$btc_need_check_time = false;
-			while ( isset( $btc_dir_source ) && ( $file  = readdir( $btc_dir_source ) ) !== false )
-			{
-				// get child directory
-				$sub_dir = $btc_log_dir.DIRECTORY_SEPARATOR.$file;
-				if ( $file == '.' || $file == '..' )
-					continue;
-				else
-				{
-					$val = file_get_contents( $sub_dir );
-					$valData = explode( '|', $val );
-					
-					if ( $valData[2] == 'A' )
-					{
-						$newData['BTC']['A'] ++;
-						$countData['BTC']['A'] ++;
-					}
-					else if ( $valData['2'] == 'R' )
-					{
-						$newData['BTC']['R'] ++;
-						$countData['BTC']['R'] ++;
-					}
-
-					$newData['BTC']['T'] = $now;
-					$countData['BTC']['T'] = $now;
-
-					unlink( $sub_dir );
-					$btc_need_check_time = true;
-				}
-			}
-			
-			if ( $btc_need_check_time === true || empty( $countData['BTC']['LC'] ) )
 				$countData['BTC']['LC'] = $now;
 
-			// is need restart
-			if ( in_array( $strRunMode , array( 'B' , 'LB' ) ) 
-					&& ( $btc_need_check_time 
-						|| $now - $countData['BTC']['LC'] > 600 
-						|| $now - $countData['BTC']['LC'] < 0 
-					) 
-			)
-			{
-				if ( $now - $newData['BTC']['T'] > 600 || $now - $newData['BTC']['T'] < 0 )
-					$boolIsNeedRestart = true;
-			}
+				// write history log
+				$redis->writeByKey( 'speed.history.log' , json_encode( $aryHistory ) );
 
-			if ( file_exists( $ltc_log_dir ) )
-				$ltc_dir_source = opendir( $ltc_log_dir );
+				// end btc mode
+				break;
 
-			$ltc_need_check_time = false;
-			while ( isset( $ltc_dir_source ) && ( $file  = readdir( $ltc_dir_source ) ) !== false )
-			{
-				// get child directory
-				$sub_dir = $ltc_log_dir.DIRECTORY_SEPARATOR.$file;
-				if ( $file == '.' || $file == '..' )
-					continue;
-				else
+			// ltc mode use usb but data from api
+			case 'lsusb-api':
+			// ltc mode use spi agreement
+			case 'spi-ltc':
+
+				// get speed data
+				$arySpeedData = SpeedModel::getSpeedDataByApi();
+
+				// get history accept
+				$historyLog = $redis->readByKey( 'speed.history.log' );
+				$aryHistory = json_decode( $historyLog , 1 );
+
+				// high speed
+				$doubleHighSpeed = 0;
+				foreach ( $arySpeedData as $key=>$data )
+					$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
+
+				// parse data
+				foreach ( $arySpeedData as $key=>$data )
 				{
-					$val = file_get_contents( $sub_dir );
-					$valData = explode( '|', $val );
-
-					// machine id
-					$id = $valData[0];
-
-					if ( !array_key_exists( $id , $newData['LTC'] ) )
-					{
-						unlink( $sub_dir );
-						continue;
-					}
-				
-					if ( $valData[2] == 'A' )
-					{
-						$newData['LTC'][$id]['A'] ++;
-						$countData['LTC']['A'] ++;
-					}
-					else if ( $valData['2'] == 'R' )
-					{
-						$newData['LTC'][$id]['R'] ++;
-						$countData['LTC']['R'] ++;
-					}
-
-					$newData['LTC'][$id]['T'] = $now;
-					$countData['LTC']['T'] = $now;
-
-					unlink( $sub_dir );
-					$ltc_need_check_time = true;
-				}
-			}
-			
-			
-			if ( $ltc_need_check_time === true || empty( $countData['LTC']['LC'] ) )
-				$countData['LTC']['LC'] = $now;
-				
-			if ( in_array( $strRunMode , array( 'L' , 'LB' ) ) && ( $ltc_need_check_time || $now - $countData['LTC']['LC'] > 600 || $now - $countData['LTC']['LC'] < 0 ) )
-			{
-				foreach ( $newData['LTC'] as $m )
-				{
-					if ( $now - $m['T'] > 600 || $now - $m['T'] < 0 )
-					{
+					// more than 5 minutes restart
+					if ( $now - $data['LAST'] > $intWorkTimeInterval )
 						$boolIsNeedRestart = true;
-						break;
+
+					// if speed too low
+					if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
+						$boolIsNeedRestart = true;
+
+					$intHistoryA = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['A'];
+					$countData['LTC']['A'] += intval( $data['A'] ) - $intHistoryA;
+
+					$intHistoryR = empty( $aryHistory[$key] ) ? 0 : $aryHistory[$key]['R'];
+					$countData['LTC']['R'] += intval( $data['R'] ) - $intHistoryR;
+
+					$aryHistory[$key]['A'] = intval($data['A']);
+					$aryHistory[$key]['R'] = intval($data['R']);
+				}
+
+				$countData['LTC']['LC'] = $now;
+
+				// write history log
+				$redis->writeByKey( 'speed.history.log' , json_encode( $aryHistory ) );
+
+				// end spi mode
+				break;
+
+			// other mode and agreement
+			default:
+				
+				if ( in_array( $strRunMode , array( 'B' , 'LB' ) ) )
+					$newData['BTC'] = $speedData['BTC'];
+
+				if ( in_array( $strRunMode , array( 'L' , 'LB' ) ) )
+				{
+					foreach ( $speedData['LTC'] as $k=>$d )
+					{
+						if ( in_array( $k , $aryUsb ) )
+							$newData['LTC'][$k] = $d;
+					}
+				}
+
+				if ( in_array( $strRunMode , array( 'L' , 'LB' ) ) )
+				{
+					foreach ( $aryUsb as $usb )
+					{
+						if ( !array_key_exists( $usb , $newData['LTC'] ) )
+							$newData['LTC'][$usb] = array( 'A'=>0 , 'R'=>0 , 'T'=>$now);
+					}
+				}
+
+				$log_dir = '/tmp';
+				$btc_log_dir = $log_dir.'/btc';
+				$ltc_log_dir = $log_dir.'/ltc';
+
+				if ( file_exists( $btc_log_dir ) )
+					$btc_dir_source = opendir( $btc_log_dir );
+
+				$btc_need_check_time = false;
+				while ( isset( $btc_dir_source ) && ( $file  = readdir( $btc_dir_source ) ) !== false )
+				{
+					// get child directory
+					$sub_dir = $btc_log_dir.DIRECTORY_SEPARATOR.$file;
+					if ( $file == '.' || $file == '..' )
+						continue;
+					else
+					{
+						$val = file_get_contents( $sub_dir );
+						$valData = explode( '|', $val );
+						
+						if ( $valData[2] == 'A' )
+						{
+							$newData['BTC']['A'] ++;
+							$countData['BTC']['A'] ++;
+						}
+						else if ( $valData['2'] == 'R' )
+						{
+							$newData['BTC']['R'] ++;
+							$countData['BTC']['R'] ++;
+						}
+
+						$newData['BTC']['T'] = $now;
+						$countData['BTC']['T'] = $now;
+
+						unlink( $sub_dir );
+						$btc_need_check_time = true;
 					}
 				}
 				
-				if ( $boolIsNeedRestart === false && ( $now - $countData['LTC']['LC'] > 600 || $now - $countData['LTC']['LC'] < 0 ) )
-					$boolIsNeedRestart = true;
-			}
+				if ( $btc_need_check_time === true || empty( $countData['BTC']['LC'] ) )
+					$countData['BTC']['LC'] = $now;
 
-			if ( empty( $speedData['lastlog'] ) )
-				$boolIsNeedRestart = false;
+				// is need restart
+				if ( in_array( $strRunMode , array( 'B' , 'LB' ) ) 
+						&& ( $btc_need_check_time 
+							|| $now - $countData['BTC']['LC'] > $intWorkTimeInterval 
+							|| $now - $countData['BTC']['LC'] < 0 
+						) 
+				)
+				{
+					if ( $now - $newData['BTC']['T'] > $intWorkTimeInterval || $now - $newData['BTC']['T'] < 0 )
+						$boolIsNeedRestart = true;
+				}
 
-			// end tty/lsusb mode
+				if ( file_exists( $ltc_log_dir ) )
+					$ltc_dir_source = opendir( $ltc_log_dir );
+
+				$ltc_need_check_time = false;
+				while ( isset( $ltc_dir_source ) && ( $file  = readdir( $ltc_dir_source ) ) !== false )
+				{
+					// get child directory
+					$sub_dir = $ltc_log_dir.DIRECTORY_SEPARATOR.$file;
+					if ( $file == '.' || $file == '..' )
+						continue;
+					else
+					{
+						$val = file_get_contents( $sub_dir );
+						$valData = explode( '|', $val );
+
+						// machine id
+						$id = $valData[0];
+
+						if ( !array_key_exists( $id , $newData['LTC'] ) )
+						{
+							unlink( $sub_dir );
+							continue;
+						}
+					
+						if ( $valData[2] == 'A' )
+						{
+							$newData['LTC'][$id]['A'] ++;
+							$countData['LTC']['A'] ++;
+						}
+						else if ( $valData['2'] == 'R' )
+						{
+							$newData['LTC'][$id]['R'] ++;
+							$countData['LTC']['R'] ++;
+						}
+
+						$newData['LTC'][$id]['T'] = $now;
+						$countData['LTC']['T'] = $now;
+
+						unlink( $sub_dir );
+						$ltc_need_check_time = true;
+					}
+				}
+				
+				
+				if ( $ltc_need_check_time === true || empty( $countData['LTC']['LC'] ) )
+					$countData['LTC']['LC'] = $now;
+					
+				if ( in_array( $strRunMode , array( 'L' , 'LB' ) ) 
+						&& ( $ltc_need_check_time 
+							|| $now - $countData['LTC']['LC'] > $intWorkTimeInterval 
+							|| $now - $countData['LTC']['LC'] < 0 ) 
+				)
+				{
+					foreach ( $newData['LTC'] as $m )
+					{
+						if ( $now - $m['T'] > $intWorkTimeInterval || $now - $m['T'] < 0 )
+						{
+							$boolIsNeedRestart = true;
+							break;
+						}
+					}
+					
+					if ( $boolIsNeedRestart === false 
+							&& ( $now - $countData['LTC']['LC'] > $intWorkTimeInterval 
+								|| $now - $countData['LTC']['LC'] < 0 ) 
+					)
+						$boolIsNeedRestart = true;
+				}
+
+				if ( empty( $speedData['lastlog'] ) )
+					$boolIsNeedRestart = false;
+
+				// end tty/lsusb mode
+				break;
 		}
 
 		// check memory
@@ -1037,6 +1128,14 @@ class IndexController extends BaseController
 	}
 
 	/**
+	 * Get default work time interval
+	 */
+	public function getDefaultInterval()
+	{
+		return empty( $this->_defaultInterval[SYS_INFO] ) ? 300 : $this->_defaultInterval[SYS_INFO];
+	}
+
+	/**
 	 * Get check mode
 	 */
 	public function getCheckMode()
@@ -1068,6 +1167,19 @@ class IndexController extends BaseController
 
 		return $this->_sys;
 	}
+
+	public function actionGetSpeed()
+     {
+         $isOk = 0;
+         $msg = '';
+         $aryData = array('run' => '' , 'value' => array() );
+         $aryData['value'] = SpeedModel::model() -> getSpeedDataByApi();
+         $aryData['run'] =  RunModel::model() -> getRunMode();
+         echo $this -> encodeAjaxData($isOk , $aryData , $msg , -1);
+ 
+     }
+
+
 
 //end class
 }

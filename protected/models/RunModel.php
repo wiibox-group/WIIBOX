@@ -10,6 +10,12 @@ class RunModel extends CModel
 	// redis object
 	private $_redis;
 
+	// default run mode
+	private $_defaultMode = array(
+				'GS_A1_S_V1' => 'B',
+				'FC_S_V1' => 'B',
+			);
+
 	/**
 	 * 初始化
 	 */
@@ -41,30 +47,38 @@ class RunModel extends CModel
 			$modelVal = $redis->readByKey( 'run.model' );
 			
 			// get model object
-			$aryModel = array();
+			$aryMode = array();
 			if ( !empty( $modelVal ) )
-				$aryModel = json_decode( $modelVal , 1 );
-			
-			$strModel = empty( $aryModel ) ? 'L' : $aryModel['model'];
-			return $strModel;
+				$aryMode = json_decode( $modelVal , 1 );
+
+			if ( !empty( $aryMode ) )
+				$strMode = $aryMode['model'];
+
+			if ( empty( $strMode ) )
+				$strMode = $this->_defaultMode[SYS_INFO];
+
+			if ( empty( $strMode ) )
+				$strMode = 'L';
+
+			return $strMode;
 		}
 	}
 
 	/**
 	 * store run model
 	 */
-	public function storeRunModel( $_strModel = 'L' )
+	public function storeRunMode( $_strModel = 'L' )
 	{
 		$redis = $this->getRedis();
 		$modelVal = $redis->readByKey( 'run.model' );
 
 		// get model object
-		$aryModel = array();
+		$aryMode = array();
 		if ( !empty( $modelVal ) )
-			$aryModel = json_decode( $modelVal , 1 );
+			$aryMode = json_decode( $modelVal , 1 );
 
-		$aryModel['model'] = $_strModel;
-		$redis->writeByKey( 'run.model' , json_encode( $aryModel ) );
+		$aryMode['model'] = $_strModel;
+		$redis->writeByKey( 'run.model' , json_encode( $aryMode ) );
 
 		return true;
 	}

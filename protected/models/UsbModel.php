@@ -32,15 +32,23 @@ class UsbModel extends CModel
 	/**
 	 * USB获得检测结果
 	 */
-	public function getUsbCheckResult( $_strRunModel = '' , $_strCheckTar = '' )
+	public function getUsbCheckResult( $_strRunMode = '' , $_strCheckTar = '' )
 	{
-		if ( empty( $_strRunModel ) )
+		if ( empty( $_strRunMode ) )
 			return array();
+
+		// parse target param
+		if ( !empty( $_strCheckTar ) )
+		{
+			$aryTars = explode( '-' , $_strCheckTar );
+			if ( count( $aryTars ) > 1 )
+				$_strCheckTar = $aryTars[0];
+		}
 
 		// is contain GD miner
 		$boolHasGD = false;
 
-		if ( ( in_array( $_strRunModel , array( 'B' , 'LB' ) ) && empty( $_strCheckTar ) ) || $_strCheckTar === 'lsusb' )
+		if ( ( in_array( $_strRunMode , array( 'B' , 'LB' ) ) && empty( $_strCheckTar ) ) || $_strCheckTar === 'lsusb' )
 		{
 			$redis = $this->getRedis();
 			$aryUsbCache = json_decode( $redis->readByKey( 'usb.check.result' ) , 1 );
@@ -75,7 +83,7 @@ class UsbModel extends CModel
 					}
 					else
 					{
-						preg_match( '/.*Bus\s(\d+)\sDevice\s(\d+).*SGS\sThomson\sMicroelectronics.*/' , $usb , $match_usb );
+						preg_match( '/.*Bus\s(\d+)\sDevice\s(\d+).*(SGS\sThomson\sMicroelectronics|Future\sTechnology\sDevices\sInternational).*/' , $usb , $match_usb );
 						if ( !empty( $match_usb[1] ) && !empty( $match_usb[2] ) )
 						{
 							$strId = intval( $match_usb[1] ).':'.intval( $match_usb[2] );
@@ -111,9 +119,9 @@ class UsbModel extends CModel
 			$aryUsb = array();
 			foreach ( $aryApiData as $data ) 
 			{
-				if ( !isset( $data['ASC'] ) ) 
-				{   
-					if ( !is_array( $data ) && strpos( $data , 'spidev' ) === 0 ) 
+				if ( !isset( $data['ASC'] ) )
+				{
+					if ( !is_array( $data ) && strpos( $data , 'spidev' ) === 0 )
 						$aryUsb[] = $data;
 					continue;
 				}
@@ -134,15 +142,15 @@ class UsbModel extends CModel
 	/**
 	 * check usb is changing
 	 */
-	public function getUsbChanging( $_strRunModel = '' , $_intSetTimer = 0 , $_strCheckTar = '' )
+	public function getUsbChanging( $_strRunMode = '' , $_intSetTimer = 0 , $_strCheckTar = '' )
 	{
-		if ( empty( $_strRunModel ) )
+		if ( empty( $_strRunMode ) )
 			return array();
 
-		$aryUsbCache = $this->getUsbCheckResult( $_strRunModel , $_strCheckTar );
+		$aryUsbCache = $this->getUsbCheckResult( $_strRunMode , $_strCheckTar );
 		$continue = true;
 
-		//$timer = in_array( $_strRunModel , array( 'B' , 'LB' ) ) ? 6 : 2;
+		//$timer = in_array( $_strRunMode , array( 'B' , 'LB' ) ) ? 6 : 2;
 		$timer = 6;
 		if ( $_intSetTimer > 0 )
 			$timer = $_intSetTimer;
@@ -156,7 +164,7 @@ class UsbModel extends CModel
 			$time_last --;
 
 			$search_time_start = time();
-			$newAryUsbCache = $this->getUsbCheckResult( $_strRunModel , $_strCheckTar );
+			$newAryUsbCache = $this->getUsbCheckResult( $_strRunMode , $_strCheckTar );
 			$search_time_end = time();
 
 			$time_last -= floor( $search_time_end - $search_time_start );
