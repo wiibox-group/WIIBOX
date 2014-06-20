@@ -171,7 +171,7 @@ class RunModel extends CModel
 	* @date 2014-06-13
 	*
 	*/
-	public function getKEys()
+	public function getKeys()
 	{
 		
 		// generate key

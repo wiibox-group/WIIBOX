@@ -14,7 +14,7 @@ class SpeedController extends BaseController
 	public $_maxPoint = 100;
 	
 	/** 间隔时间 ( 按 分钟 计算  ) **/
-	public $_waitTime = 2;
+	public $_waitTime = 4;
 	
 	/** 点时间 */
 	public $_pointTime = 0;
@@ -85,7 +85,8 @@ class SpeedController extends BaseController
 				$aryPointsDataL = $aryData['L'];
 				
 				//假如当前可同步时间 减去 最后一次同步时间 大于 间隔时间  则默认给中间空数据补白
-				$intLastTime = end( array_keys( $aryPointsDataL ) );
+				$aryPointsDataLKeys = array_keys( $aryPointsDataL );
+				$intLastTime = end( $aryPointsDataLKeys );
 				$pointTime = $this -> _pointTime;
 		
 				if( ($pointTime - $intLastTime) > $this -> _waitTime )
@@ -98,20 +99,15 @@ class SpeedController extends BaseController
 					//判断是否需要同步数据
 					if( $this -> _nowTime == $pointTime )
 					{
-						//由于此程序未发布到树莓派上,此处获取数据代码仅供测试
 						$intSpeedSum = $objSpeedModel -> getSpeedSum();	
-						$strRunModel = 'L';
-						
-						//正式获取数据代码
-						//$arySpeedData = $objSpeedModel -> getSpeedDataByApi();
-						//$strRunModel = $objSpeed -> getRunModel();
+						$strRunModel = RunModel::model() -> getRunModel();
 						
 						//填充当前时间段数据
-						$intSpeedB = $strRunModel === 'B' ? $intSpeedSum * 1024 : 0;
-						$intSpeedL = $strRunModel === 'L' ? $intSpeedSum * 1024 : 0;
+						$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
+						$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
 						
-						$aryPointsDataB[$pointTime] = array( $pointTime , $intSpeedB );
-						$aryPointsDataL[$pointTime] = array( $pointTime , $intSpeedL );
+						$aryPointsDataB[''.$pointTime] = array( $pointTime , $intSpeedB );
+						$aryPointsDataL[''.$pointTime] = array( $pointTime , $intSpeedL );
 						
 						//对空白数据进行补充
 						unset( $aryData );
@@ -172,13 +168,13 @@ class SpeedController extends BaseController
 			$point = $intPointTime - $intWaitTime * $i ;
 			if( array_key_exists( ''.$point , $aryPointsDataL ) )
 			{
-				$aryTempB[$point] = $aryPointsDataB[$point];
-				$aryTempL[$point] = $aryPointsDataL[$point];
+				$aryTempB[''.$point] = $aryPointsDataB[''.$point];
+				$aryTempL[''.$point] = $aryPointsDataL[''.$point];
 			}
 			else
 			{
-				$aryTempB[$point] = array( $point , 0 );
-				$aryTempL[$point] = array( $point , 0 );
+				$aryTempB[''.$point] = array( $point , 0 );
+				$aryTempL[''.$point] = array( $point , 0 );
 			}
 		}
 		unset( $_aryData , $aryPointsDataB , $aryPointsDataL , $intMaxPoint , $intNowTime , $intPointTime , $intWaitTime );
