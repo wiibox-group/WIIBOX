@@ -52,7 +52,7 @@ class SyncController extends BaseController
 		$countData = json_decode( $redis->readByKey( 'speed.count.log' ) , 1 );
 
 		// get run model
-		$strRunModel = RunModel::model()->getRunMode();
+		$strRunMode = RunModel::model()->getRunMode();
 
 		// get alived machine count
 		$intCountMachine = max( count( $checkState['alived']['BTC'] )+count( $checkState['died']['BTC'] ) , count( $checkState['alived']['LTC'] )+count( $checkState['died']['LTC'] ) );
@@ -69,7 +69,7 @@ class SyncController extends BaseController
 
 		// if need reload conf
 		$boolIsReloadConf = false;
-		if ( !empty( $countData['last'] ) && time() - $countData['last'] > 1200 && $countData['noar'] >= 20 )
+		if ( !empty( $countData['last'] ) && time() - $countData['last'] > 600 && $countData['noar'] >= 20 )
 		{
 			$boolIsReloadConf = true;
 			$countData['last'] = time();
@@ -84,7 +84,7 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'btc'=>0 , 'ltc'=>0 );
 		$arySyncData['data']['sync']['ar'] = $countData;
 		$arySyncData['data']['sync']['ve'] = CUR_VERSION;
-		$arySyncData['data']['sync']['md'] = $strRunModel;
+		$arySyncData['data']['sync']['md'] = $strRunMode;
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
 		$arySyncData['data']['sync']['info'] = SYS_INFO;
@@ -96,7 +96,7 @@ class SyncController extends BaseController
 
 		// sync data
 		$aryCallBack = UtilApi::callSyncData( $arySyncData );
-		if ( $aryCallBack['ISOK'] === 0 )
+		if ( $aryCallBack['ISOK'] !== 1 )
 		{
 			echo '500';
 			exit();
@@ -117,7 +117,7 @@ class SyncController extends BaseController
 		$syncData = json_decode( base64_decode( urldecode( $syncData ) ) , 1 );
 		if ( !empty( $syncData['runmodel'] ) )
 		{
-			RunModel::model()->storeRunModel( $syncData['runmodel'] );
+			RunModel::model()->storeRunMode( $syncData['runmodel'] );
 			$boolIsRestart = true;
 		}
 
@@ -177,8 +177,12 @@ class SyncController extends BaseController
 				$aryLTCData['speed'] = $aryConfig['speed_ltc'];
 			//$aryLTCData['su'] = isset( $aryConfig['super_ltc'] ) ? $aryConfig['super_ltc'] : 1;
 
-			// is params empty
-			$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
+			// if params empty
+			if ( in_array( $strRunMode , array( 'L' ) ) ) 
+				$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
+			else if ( in_array( $strRunMode , array( 'B' ) ) ) 
+				$boolCheck = CUtil::isParamsEmpty( $aryBTCData );
+
 			if ( $boolCheck === true )
 			{
 				// store data

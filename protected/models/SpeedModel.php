@@ -39,8 +39,14 @@ class SpeedModel extends CModel
 										'R'=>$data['Rejected'] , 
 										'S'=>$data['MHS av'] , 
 										'RUN'=>$data['Device Elapsed'],
-										'LAST'=>$data['Last Share Time']
+										//'LAST'=>$data['Last Share Time']
+										'LAST'=>$data['Last Valid Work']
 									);
+
+			/*
+			if ( empty( $aryUsbData[$aryUsb]['LAST'] ) )
+				$aryUsbData[$aryUsb]['LAST'] = $data['Last Valid Work'];
+			*/
 		}
 
 		return $aryUsbData;

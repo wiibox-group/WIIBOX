@@ -9,6 +9,7 @@
  */
 return array(
 			'scrypt_setting_haveNullData' => 'SCRYPT配置不能有空数据！',
+			'sha_setting_haveNullData' => 'SHA配置不能有空数据！',
 			'miningMachine_found_faild'=> '我不是你要找的矿机！',
 			'sys_error' => '系统错误',
 			'bound_cancel_faild' => '取消绑定失败,请重试',

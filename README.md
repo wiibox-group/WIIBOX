@@ -13,7 +13,7 @@ http://pan.baidu.com/s/1sjPieM5
 ```
 ###WIIBOX已完成对A2的官方支持，镜像地址为（帐号密码均为树莓默认）：<br/>
 ```ObjectiveC
-http://pan.baidu.com/s/1qWJfA9I
+http://pan.baidu.com/s/1eQw0KFK
 ```
 （ 新版v2.1.3，此版本已重新编译浮点运算处理，增强了稳定性，目前已通过稳定性测试200小时以上，需要8G以上SD卡 ）<br/>
 <br/>
