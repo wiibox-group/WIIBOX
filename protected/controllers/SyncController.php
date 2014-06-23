@@ -259,7 +259,7 @@ class SyncController extends BaseController
 		//获取当前算力速度以及运行模式数据
 		$objSpeedModel = SpeedModel::model();
 		$intSpeedSum = $objSpeedModel -> getSpeedSum();
-		$strRunModel = RunModel::model() -> getRunModel();
+		$strRunModel = RunModel::model() -> getRunMode();
 		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
 		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
 

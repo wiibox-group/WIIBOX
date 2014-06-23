@@ -1,14 +1,10 @@
 #!/bin/bash
-
-rm -rf /www/cache/www.upgrade.run.status.d /www/cache/www.restart.status.d /tmp/ltc /tmp/btc
 mkdir /tmp/ltc/
 chmod 777 /tmp/ltc
 mkdir /tmp/btc/
 chmod 777 /tmp/btc
 chmod 777 /www/ -R
 chown www-data:www-data /www/ -R
-
-echo 'nihao'
 
 count=0
 while true ; do
