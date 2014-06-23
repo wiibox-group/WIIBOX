@@ -17,7 +17,7 @@
     		'scrypt_workerPwd' => 'SCRYPT Unify the Worker Password',
     		
     		'runFrequency' => 'Running Frequency:',
-    		'frequencyTip' => 'Be Careful',
+    		'frequencyTip' => 'BE CAREFUL',
     		'setting_save' => 'Setting Saving',
     		'importantOption' => 'Important Option!',
     		'setting_save_tip' => 'Please Restart After Saving!',

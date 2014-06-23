@@ -247,6 +247,8 @@ class SyncController extends BaseController
 
 		$arySyncData = array();
 		$strRKEY = RunModel::model() -> getKeys();
+		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
+		$mac_addr = new CMac( $os );
 		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
 		$arySyncData['time'] = time();
 		$arySyncData['data']['sync']['maxPoint'] = $maxPoint;
@@ -276,9 +278,9 @@ class SyncController extends BaseController
 			if( $nowTime == $pointTime && ($nowTime - $lastSyncTime) >= $waitTime )
 			{
 				$aryData = array(
-							'L' => array( ''.$pointTime => array( $pointTime , $intSpeedL , date('Y-m-d H:i:s' , time())) ),
+							'L' => array( ''.$pointTime => array( $pointTime , $intSpeedL ) ),
 							'B' => array( ''.$pointTime => array( $pointTime , $intSpeedB ) )
-							);
+						);
 				$arySyncData['data']['sync']['data'] = $aryData;
 			}else
 			{

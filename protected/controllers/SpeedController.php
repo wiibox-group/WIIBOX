@@ -11,10 +11,10 @@ class SpeedController extends BaseController
 	public $_redis;
 	
 	/** 图表最多显示多少个点 **/
-	public $_maxPoint = 100;
+	public $_maxPoint = 145;
 	
 	/** 间隔时间 ( 按 分钟 计算  ) **/
-	public $_waitTime = 4;
+	public $_waitTime = 10;
 	
 	/** 点时间 */
 	public $_pointTime = 0;
@@ -100,7 +100,7 @@ class SpeedController extends BaseController
 					if( $this -> _nowTime == $pointTime )
 					{
 						$intSpeedSum = $objSpeedModel -> getSpeedSum();	
-						$strRunModel = RunModel::model() -> getRunModel();
+						$strRunModel = RunModel::model() -> getRunMode();
 						
 						//填充当前时间段数据
 						$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
