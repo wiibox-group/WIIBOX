@@ -1,6 +1,6 @@
 {
     "title": "Please sign in",
-    "input1": "Email",
+    "input1": "Username",
     "input2": "Password",
     "remember": "Please sign in",
     "btn": "Sign in"

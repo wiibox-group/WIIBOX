@@ -178,6 +178,33 @@ class RunModel extends CModel
 
 		return $this->_redis;
 	}
+	
+	/**
+	* 获取控制器Key
+	*
+	* @author zhangyi
+	* @date 2014-06-13
+	*
+	*/
+	public function getKeys()
+	{
+		
+		// generate key
+		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
+		$mac_addr = new CMac( $os );
+		$ip_addr = new CIp( $os );
+		
+		// get system
+		$sys = new CSys();
+
+		$strRKEY = '';
+		if ( file_exists( WEB_ROOT.'/js/RKEY.TXT' ) )
+		{
+			$strRKEY = file_get_contents( WEB_ROOT.'/js/RKEY.TXT' );
+		}
+		return $strRKEY;
+
+	}
 
 // end class
 }

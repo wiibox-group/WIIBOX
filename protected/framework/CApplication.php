@@ -278,5 +278,18 @@ abstract class CApplication extends CComponents
 		return $this -> components['language'];
 	}
 	
+	/**
+	 *
+	 * @return CLanguage object
+	 */
+	public function getLogin()
+	{
+		if( !isset( $this -> components['login'] ))
+		{
+			$this -> components['login'] = new LoginController();
+		}
+		return $this -> components['login'];
+	}
+	
 //end class
 }

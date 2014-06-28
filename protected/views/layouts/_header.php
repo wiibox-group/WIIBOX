@@ -1,8 +1,7 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<div class="container">
 		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse"
-				data-target=".navbar-collapse">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 				<span class="sr-only">Toggle navigation</span>
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
@@ -41,22 +40,29 @@
 					<div class="btn-group action-btns">
 						<button id="actionRestart" type="button" class="btn btn-default">
 							<?php echo CUtil::i18n('vlayout,restartNow');?>
-						</button>
-					  	<!-- <button id="actionSuper" type="button" class="btn btn-default">
-					  		<?php echo CUtil::i18n('vlayout,running');?>
-					  	</button> -->
-					  	<button id="actionStop" type="button" class="btn btn-default">
-					  		<?php echo CUtil::i18n('vlayout,runningStop');?>
-					  	</button>
+						</button>					  	
 					</div>
 					<button  id="statePill" class="btn btn-success" disabled >
 						<?php echo CUtil::i18n('vlayout,running');?>
 					</button>
 				</li>
-				<li>
-					<a>退出</a>
+				<li class="dropdown">
+					<a class="dropdown-toggle" data-toggle="dropdown">
+						<span id="langNow"><?php echo CUtil::i18n('vlayout,languge') ?></span><b class="caret"></b>
+					</a>
+					<ul id="languageMenu" class="dropdown-menu">
+						<li>
+							<a data-lang="zh">简体中文</a>
+						</li>
+						<li>
+							<a data-lang="en">English</a>
+						</li>
+					</ul>
 				</li>
-			</ul>
+				<li>
+					<a href="<?php echo $this -> createUrl( 'login/logout' );?>"><?php echo CUtil::i18n('vlayout,logout');?></a>
+				</li>
+			</ul>			
 		</div>
 	</div>
 </div>

@@ -3,7 +3,7 @@
 	<div class="page-header">
 		<h1><?php echo CUtil::i18n('vmonitor,hashrate_title');?></h1>
 	</div>
-	<div class="hashrate"></div>
+	<div class="hashrate" data-url="<?php echo $this -> createUrl('speed/speedData')?>"></div>
 	
 	<div class="page-header">
 		<h1><?php echo CUtil::i18n('vmonitor,status_title');?>
@@ -15,7 +15,7 @@
 		</h1>
 	</div>
 	<div class="table-responsive">
-		<table id="status-table" class="table table-hover table-bordered table-striped">
+		<table id="statusTable" class="table table-hover table-bordered table-striped">
 			<thead>
 				<tr>
 					<th><?php echo CUtil::i18n('vmonitor,status_device');?></th>
@@ -32,5 +32,3 @@
 	</div>
 	
 </div>
-
-<script src="/static/js/monitor.js"></script>

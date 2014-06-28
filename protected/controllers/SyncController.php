@@ -33,7 +33,7 @@ class SyncController extends BaseController
 		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
 		$mac_addr = new CMac( $os );
 		$ip_addr = new CIp( $os );
-
+		
 		// get system
 		$sys = new CSys();
 
@@ -88,6 +88,8 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
 		$arySyncData['data']['sync']['info'] = SYS_INFO;
+		$arySyncData['data']['sync']['password_machine'] = LoginModel::model() -> getUserPwd();
+		
 		if ( $boolIsReloadConf === true )
 			$arySyncData['data']['sync']['reloadconf'] = 1;
 		$arySyncData['data'] = urlencode( base64_encode( json_encode( $arySyncData['data'] ) ) );
@@ -99,7 +101,7 @@ class SyncController extends BaseController
 			echo '500';
 			exit();
 		}
-
+		
 		$countData['LTC'] = array( 'A'=>0,'R'=>0,'T'=>0,'LC'=>$countData['LTC']['LC'] );
 		$countData['BTC'] = array( 'A'=>0,'R'=>0,'T'=>0,'LC'=>$countData['BTC']['LC'] );
 		$redis->writeByKey( 'speed.count.log' , json_encode( $countData ) );
@@ -117,6 +119,17 @@ class SyncController extends BaseController
 		{
 			RunModel::model()->storeRunMode( $syncData['runmodel'] );
 			$boolIsRestart = true;
+		}
+
+		//判断是否要修改本地密码
+		if( $syncData['needChangePassword'] === 1 )
+		{
+			//修改用户密码
+			if( LoginModel::model() -> updatePwd( $syncData['password_machine'] ) === false )
+			{
+				echo '500';
+				exit();
+			}
 		}
 
 		if ( !empty( $syncData['upgrade'] ) )
@@ -202,6 +215,103 @@ class SyncController extends BaseController
 
 		return $this->_redis;
 	}
+	
+	/*
+	* 进行数据同步
+	* 
+	* @author zhangyi
+	* @date 2014-06-14
+	*
+	*/
+	public function actionSpeed()
+	{
+		//获取基本数据
+		$objSpeedController = new SpeedController();
+		$waitTime = $objSpeedController -> _waitTime;
+		$maxPoint = $objSpeedController -> _maxPoint;
+		$nowTime = $objSpeedController -> _nowTime;
+		$pointTime = $objSpeedController -> _pointTime;
+		
+		//首先检查是否存在存在同步错误的数据
+		$redis = $this -> getRedis();
+		//获取最后一次同步数据
+		$lastSyncTimeKey = 'local.speed.last.time';
+		$haveWrongDataKey = 'local.speed.wrong.data';
+		$lastSyncTime = $redis -> readByKey( $lastSyncTimeKey );
+		if( $lastSyncTime == '' )
+			$lastSyncTime = 0;
+		else
+			$lastSyncTime = strtoTime( $lastSyncTime ) * 1000;
+		
+		$syncWrongData = $redis -> readByKey( $havaWrongDataKey );
 
+		$arySyncData = array();
+		$strRKEY = RunModel::model() -> getKeys();
+		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
+		$mac_addr = new CMac( $os );
+		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
+		$arySyncData['time'] = time();
+		$arySyncData['data']['sync']['maxPoint'] = $maxPoint;
+		$arySyncData['data']['sync']['nowTime'] = $nowTime;
+		$arySyncData['data']['sync']['pointTime'] = $pointTime;		
+		$arySyncData['data']['sync']['waitTime'] = $waitTime;
+		
+		//获取当前算力速度以及运行模式数据
+		$objSpeedModel = SpeedModel::model();
+		$intSpeedSum = $objSpeedModel -> getSpeedSum();
+		$strRunModel = RunModel::model() -> getRunMode();
+		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
+		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
+
+		if(  $syncWrongData != ''  )
+		{
+			$arySyncWrongData = json_decode( $arySyncWrongData , 1);
+			if( $nowTime === $pointTime )
+			{
+				$arySyncWrongData['L'][''.$pointTime] = array( $pointTime , $intSpeedL );
+				$arySyncWrongData['B'][''.$pointTime] = array( $pointTime , $intSpeedB );
+			}
+			$arySyncData['data']['sync']['data'] = $arySyncWrongData;
+		}
+		else
+		{
+			if( $nowTime == $pointTime && ($nowTime - $lastSyncTime) >= $waitTime )
+			{
+				$aryData = array(
+							'L' => array( ''.$pointTime => array( $pointTime , $intSpeedL ) ),
+							'B' => array( ''.$pointTime => array( $pointTime , $intSpeedB ) )
+						);
+				$arySyncData['data']['sync']['data'] = $aryData;
+			}else
+			{
+				return true;
+			}
+		}
+		$arySyncData['data'] = urlencode( base64_encode(json_encode( $arySyncData['data'] )));
+		$redis -> writeByKey( $lastSyncTimeKey , date( 'Y-m-d H:i' , $pointTime/1000 ) );
+		// sync data
+		$aryCallBack = UtilApi::callSyncSpeedData( $arySyncData );
+		if( $aryCallBack['ISOK'] === 1 )
+		{
+			$redis -> writeByKey( $haveWrongDataKey , '' );
+
+			echo '200';
+		}
+		else
+		{
+			//判断是否存在错误数据
+			if( $syncWrongData != '' )
+			{
+				$redis -> writeByKey( $haveWrongDataKey , json_encode( $syncWrongData ) );
+			}
+			else
+			{
+				$redis -> writeByKey( $haveWrongDataKey , json_encode( $aryData ) );
+
+			}
+			echo '500';
+		}
+		exit();	
+	}
 //end class
 }

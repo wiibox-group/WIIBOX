@@ -1,6 +1,6 @@
 <?php
     return array(
-    	'hashrate_title' => 'Hashrate',
+    	'hashrate_title' => '速度曲线',
     	'status_title' => '运行状态',
     	'status_device' => '设备',
     	'status_state' => '状态',

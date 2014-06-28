@@ -26,8 +26,13 @@ class UtilUrl
 						'printsome'=>'port/print',
 						'generatekey'=>'port/generatekey',
 						'cancelbind'=>'port/cancelbind',
+			
+						//speed data
+						'speed' => 'speed/speedData',
+						
 						//login
-						'login'=>'login/login'
+						'login'=>'login/login',
+						'logout' => 'login/logout',
 					);
 
 	/**

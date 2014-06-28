@@ -84,73 +84,68 @@ body {
 .footer p {
   margin-bottom: 0;
 }
+.body-login {
+  background: #eee;
+}
+.body-login .tip-msg {
+  max-width: 330px;
+}
 .page-login {
   display: none;
 }
-.form-signin {
+.page-login .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
 }
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
+.page-login .form-signin .form-signin-heading,
+.page-login .form-signin .checkbox {
   margin-bottom: 10px;
 }
-.form-signin .checkbox {
+.page-login .form-signin .checkbox {
   font-weight: normal;
 }
-.form-signin .form-control {
+.page-login .form-signin .form-control {
   position: relative;
   height: auto;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 10px;
   font-size: 16px;
 }
-.form-signin .form-control:focus {
+.page-login .form-signin .form-control:focus {
   z-index: 2;
 }
-.form-signin input[type="email"] {
+.page-login .form-signin input[type="text"] {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
-.form-signin input[type="password"] {
+.page-login .form-signin input[type="password"] {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
-.page-index .dropdown-menu li a {
-  cursor: pointer;
-}
-.input-area {
-  padding: 10px 0;
-}
-.input-area input {
-  line-height: 2;
-  height: auto;
-  font-size: 14px;
-  margin: 10px 0;
-}
-.form-signin {
-  max-width: 400px;
+.page-index .form-setting {
+  max-width: 620px;
   margin: 0 auto;
 }
-.important-tip {
-  font-size: 16px;
-  padding: 10px 0;
-  text-align: center;
+.page-index .form-setting .form-title {
+  margin-bottom: 10px;
 }
-.input-area input {
-  height: 42px;
-  font-size: 14px;
-  margin: 10px 0;
+.page-index .form-setting .form-control {
+  font-size: 12px;
+  padding: 20px 12px;
 }
-.page-monitor #status-table thead th,
-.page-monitor #status-table tbody th,
-.page-monitor #status-table thead td,
-.page-monitor #status-table tbody td {
+.page-index .form-setting .dropdown-menu li a {
+  cursor: pointer;
+}
+.page-index .form-setting .alert {
+  margin-top: 30px;
+}
+.page-monitor #statusTable thead th,
+.page-monitor #statusTable tbody th,
+.page-monitor #statusTable thead td,
+.page-monitor #statusTable tbody td {
   text-align: center;
 }
 .page-check {
@@ -160,7 +155,7 @@ body {
   cursor: pointer;
 }
 .page-check .form-selftest {
-  width: 600px;
+  max-width: 600px;
   margin: 0 auto;
 }
 .page-check .form-selftest .page-header {
@@ -174,16 +169,10 @@ body {
 .page-check .check-item {
   font-size: 14px;
   line-height: 18px;
+  background: #666 !important;
 }
-.page-check .nav-pills > li.active > a.waiting-check,
-.page-check .nav-pills > li.active > a.waiting-check:hover,
-.page-check .nav-pills > li.active > a.waiting-check:focus {
-  background-color: #666;
-}
-.page-check .nav-pills > li.active > a.check-error,
-.page-check .nav-pills > li.active > a.check-error:hover,
-.page-check .nav-pills > li.active > a.check-error:focus {
-  background-color: #d2322d;
+.page-check .check-error {
+  background: #d2322d !important;
 }
 .page-check ul.nav-pills li {
   padding: 2px 0;

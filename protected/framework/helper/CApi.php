@@ -33,7 +33,6 @@ class CApi
 
 		$aryParams[] = "&sign={$sign}";
 		$url = $url.( $_boolIsStaticUrl === true ? '?' : '&' ).implode( "&" , $aryParams );
-
 		// 初始化一个 cURL 对象
 		$curl = curl_init();
 		// 设置你需要抓取的URL
@@ -58,7 +57,7 @@ class CApi
 		else
 		{
 			$aryReturn = $resJson;
-		}
+}
 		return $aryReturn;
 	}
 	

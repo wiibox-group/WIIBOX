@@ -21,6 +21,10 @@ define( 'NBT_BEGIN_MICROTIME' , microtime(true) );
 //邮件地址
 define('MAIL_TO_WGB','wengebin@hotmail.com');
 
+define('UUSERNAME' , 'wiibox');
+define('UPASSWORD' , 'wiibox');
+define('UKEY', 'wiibox');
+
 //Redis连接
 define( 'REDIS_CONNECT_ADD' , '127.0.0.1' );
 define( 'REDIS_CONNECT_PORT' , '6379' );

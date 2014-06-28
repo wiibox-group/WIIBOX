@@ -85,6 +85,8 @@ class IndexController extends BaseController
 	 */
 	public function actionIndex()
 	{
+		//检查是否登入
+		Nbt::app() -> login -> checkIsLogin();
 		try
 		{
 			$this->replaceSeoTitle( CUtil::i18n( 'controllers,index_index_seoTitle' ) );
@@ -573,6 +575,12 @@ class IndexController extends BaseController
 	 */
 	public function actionCheck( $_boolIsNoExist = false )
 	{
+		//以下代码仅供测试使用
+		$aryData = SpeedModel::model() -> getCheckDataCurl();
+		echo json_encode( $aryData );exit;
+		
+		
+		//正式代码
 		// get run model
 		$strRunMode = $this->getRunMode();
 
