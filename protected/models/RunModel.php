@@ -14,6 +14,7 @@ class RunModel extends CModel
 	private $_defaultMode = array(
 				'GS_A1_S_V1' => 'B',
 				'FC_S_V1' => 'B',
+				'AV_S_V1' => 'B',
 			);
 
 	/**
