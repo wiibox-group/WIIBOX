@@ -9,8 +9,36 @@ class SpeedModel extends CModel
 {
 	
 	public $_fileName = 'list.speed.log';
-	private $_redis;
+
+	public $_NoSyncDataFileName = 'list.no.sync.data';
 	
+	private $_redis;
+	/** 图表最多显示多少个点 **/
+	public $_maxPoint = 145;
+	
+	/** 间隔时间 ( 按 分钟 计算  ) **/
+	public $_waitTime = 10;
+	
+	/** 点时间 */
+	public $_pointTime = 0;
+	
+	/** 当前时间 */
+	public $_nowTime = 0;
+	
+	/** 运行模式 */
+	public $_runModel = array(
+				'L' => 'L',
+				'B' => 'B'
+	);
+	
+	public function init()
+	{
+		parent::init();
+		$this -> _waitTime = $this -> _waitTime * 60 * 1000;
+		$this -> _nowTime = strtotime(date( 'Y-m-d H:i' )) * 1000;
+		$this -> _pointTime = $this -> _waitTime * intval( $this -> _nowTime / $this -> _waitTime );
+	}
+
 	/**
 	 * 返回惟一实例
 	 *
@@ -19,6 +47,11 @@ class SpeedModel extends CModel
 	public static function model( $className = __CLASS__ )
 	{
 		return parent::model( __CLASS__ );
+	}
+
+	public function getNoSyncFilePath()
+	{
+		return $this -> _NoSyncDataFileName ;
 	}
 
 	/**
@@ -43,10 +76,6 @@ class SpeedModel extends CModel
 										'LAST'=>$data['Last Valid Work']
 									);
 
-			/*
-			if ( empty( $aryUsbData[$aryUsb]['LAST'] ) )
-				$aryUsbData[$aryUsb]['LAST'] = $data['Last Valid Work'];
-			*/
 		}
 
 		return $aryUsbData;
@@ -108,6 +137,7 @@ class SpeedModel extends CModel
 	{
 		if( empty( $this -> _redis ) )
 			$this -> _redis = new CRedisFile();
+				
 		return $this -> _redis;
 	}
 	
@@ -134,6 +164,147 @@ class SpeedModel extends CModel
 		
 		return $intSpeedSum * 1024;
 	}
+
+	/**
+	 * 创建供同步的数据
+	 *
+	 * @author zhangyi
+	 * @date 2014-06-30
+	 */
+	public function createSyncSpeedData()
+	{
+		//准备基础数据
+		$redis = $this -> getRedis();
+		$aryData = array(
+					'maxPoint' => $this -> _maxPoint,
+					'nowTime' => $this -> _nowTime,
+					'pointTime' => $this -> _pointTime,
+					'waitTime' => $this -> _waitTime
+				);
+
+		$arySpeedData = array();
+		//判断是否存在同步错误数据
+		if( file_exists( $redis -> getFilePath( $this -> _NoSyncDataFileName ) ) === true )
+		{
+			//将未同步数据进行取出
+			$strSpeedData = $redis -> readByKey( $this -> _NoSyncDataFileName);
+			if( empty( $strSpeedData ) )
+				return false;
+			$arySpeedData = json_decode( $strSpeedData , 1 );
+		}
+		
+		//获取当前算力速度以及运行模式数据
+		$intSpeedSum = $this -> getSpeedSum();
+		$strRunModel = RunModel::model() -> getRunMode();
+		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
+		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
+
+		$arySpeedData['L'][''.$this -> _pointTime] = $intSpeedL;
+		$arySpeedData['B'][''.$this -> _pointTime] = $intSpeedB;
+		$aryData['localSpeed'] = $arySpeedData;
+
+		return $aryData;
+	}
+
+
+	/**
+	 * 创建数据并存储数据
+	 * @throws CException
+	 * @return boolean
+	 * 
+	 * @author zhangyi
+	 * @date 2014-6-11
+	 */
+	public function refreshSpeedData( )
+	{
+		$boolFlag = false;
+		try
+		{
+			//创建数据
+			$intSpeedSum = $this -> getSpeedSum();	
+			$strRunModel = RunModel::model() -> getRunMode();
+			$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
+			$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
+			
+			//如果文件不存在,则写入默认数据
+			if( file_exists( $this -> getFilePath()) === false )
+			{
+				$aryData = array(
+							'L' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedL )),
+							'B' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedB ))
+						);
+				$aryData = $this -> changeNullData( $aryData ); }
+			//如果文件存在,则判断最后一次同步时间和当前所允许同步时间差距 
+			else
+			{
+				//如果当前时间减去最后一次时间大于 点与点之间时间差距 则执行插入数据功能,否则替换最后一次数据
+				$aryData = $this -> getSpeedDataByFile();	
+				if( empty( $aryData ) )
+					return false;
+				$pointTime = $this -> _pointTime;
+				$aryPointsDataL = $aryData['L'];
+				$aryPointsDataB = $aryData['B'];
+				$aryPointsDataB[''.$pointTime] = array( $pointTime , $intSpeedB );
+				$aryPointsDataL[''.$pointTime] = array( $pointTime , $intSpeedL );
+						
+				//对空白数据进行补充
+				unset( $aryData );
+				$aryData = array(
+							'L' => $aryPointsDataL,
+							'B' => $aryPointsDataB
+						);
+				$aryData = $this -> changeNullData( $aryData );
+			}
+			
+			//进行数据写入
+			$boolFlag = $this -> storeSpeedData( $aryData );
+		}
+		catch (CException $e)
+		{
+			$boolFlag = false;
+		}
+		return $boolFlag;
+	}
+	
+	/**
+	 * 补充空白数据
+	 * @param array $_aryData
+	 * 
+	 * @author zhangyi
+	 * @date 2014-6-11
+	 */
+	public function changeNullData( $_aryData = array() )
+	{
+		
+		$aryPointsDataL = empty( $_aryData ) ? array() : $_aryData['L'];
+		$aryPointsDataB = empty( $_aryData ) ? array() : $_aryData['B'];
+		$aryTempB = array();
+		$aryTempL = array();
+		
+		//假如时间存在,则赋予原值
+		for( $i = $this -> _maxPoint -1 ; $i >= 0 ; $i-- )
+		{
+			$point = $this -> _pointTime - $this -> _waitTime * $i ;
+			if( array_key_exists( ''.$point , $aryPointsDataL ) )
+			{
+				$aryTempL[''.$point] = $aryPointsDataL[''.$point];
+				$aryTempB[''.$point] = $aryPointsDataB[''.$point];
+			}
+			else
+			{
+				$aryTempL[''.$point] = array( $point , 0 );
+				$aryTempB[''.$point] = array( $point , 0 );
+			}
+		}
+		$aryData = array(
+				'L' => $aryTempL,
+				'B' => $aryTempB
+				);
+		
+		unset( $_aryData , $aryPointsDataB , $aryPointsDataL , $aryTempB , $aryTempL);
+		return $aryData;
+	}
+
 	
 //end class
 }

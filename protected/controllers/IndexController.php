@@ -20,14 +20,27 @@ class IndexController extends BaseController
 	private $_runMode = '';
 
 	// default speed
-	private $_defaultSpeed = array(
-				'GS_D_V2'		=> '850',
-				'GS_S_V2'		=> '825',
-				'GS_S_V3'		=> '850',
-				'A2_S_V1'		=> '1280',
-				'GS_A1_S_V1'	=> '850',
-				'FC_S_V1'		=> '300',
-				'DIF_S_V1'		=> '850',
+	private $_defaultspeed = array(
+				//双挖菊花
+				'gs_d_v2'		=> '850',
+				
+				//4u
+				'gs_s_v2'		=> '825',
+				
+				//4u 9331
+				'gs_s_v3'		=> '850',
+
+				//a2
+				'a2_s_v1'		=> '1280',
+				
+				// a1
+				'gs_a1_s_v1'	=> '850',
+
+				//烤猫
+				'fc_s_v1'		=> '300',
+
+				//大红龙
+				'dif_s_v1'		=> '850',
 			);
 
 	// default check mode for single mode
@@ -482,11 +495,6 @@ class IndexController extends BaseController
 	 */
 	public function actionCheck( $_boolIsNoExist = false )
 	{
-		//以下代码仅供测试使用
-		$aryData = SpeedModel::model() -> getCheckDataCurl();
-		echo json_encode( $aryData );exit;
-		
-		
 		//正式代码
 		// get run model
 		$strRunMode = $this->getRunMode();
