@@ -19,30 +19,6 @@ class IndexController extends BaseController
 	// run mode
 	private $_runMode = '';
 
-	// default speed
-<<<<<<< HEAD
-	private $_defaultspeed = array(
-				//双挖菊花
-				'gs_d_v2'		=> '850',
-				
-				//4u
-				'gs_s_v2'		=> '825',
-				
-				//4u 9331
-				'gs_s_v3'		=> '850',
-
-				//a2
-				'a2_s_v1'		=> '1280',
-				
-				// a1
-				'gs_a1_s_v1'	=> '850',
-
-				//烤猫
-				'fc_s_v1'		=> '300',
-
-				//大红龙
-				'dif_s_v1'		=> '850',
-=======
 	private $_defaultSpeed = array(
 				// GS 5chips
 				'GS_D_V2'		=> '850',
@@ -62,7 +38,6 @@ class IndexController extends BaseController
 				'DIF_S_V1'		=> '850',
 				// Avalon 3
 				'AV_S_V1'		=> '500',
->>>>>>> 2ee473a844b5d28529453a39682306eeb36ed0ae
 			);
 
 	// default check mode for single mode
