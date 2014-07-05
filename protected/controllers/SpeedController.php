@@ -18,6 +18,7 @@ class SpeedController extends BaseController
 		
 		if( SpeedModel::model() -> refreshSpeedData() === false )
 			echo '500';
+
 		echo '200';
 		exit();
 	}
@@ -30,20 +31,15 @@ class SpeedController extends BaseController
 	 */
 	public function actionSpeedData()
 	{
-		$isOk = 0;
-		$msg = '获取数据失败';
-		$aryData = array();
-		$objSpeedModel = SpeedModel::model();
-		if( Nbt::app() -> request -> isAjaxRequest )
-		{
-			$aryData = $objSpeedModel -> getSpeedDataByFile();
-			$temp['L'] = array_values($aryData['L']);
-			$temp['B'] = array_values($aryData['B']);
-			$aryData = $temp;
-			unset( $temp );
-			$isOk = 1;
-			$msg = '获取数据成功';
-		}
+		$aryData = SpeedModel::model() -> getSpeedDataByFile();
+		$temp['L'] = array_values($aryData['L']);
+		$temp['B'] = array_values($aryData['B']);
+		$aryData = $temp;
+		unset( $temp );
+
+		$isOk = 1;
+		$msg = '获取数据成功';
+
 		echo $this -> encodeAjaxData( $isOk , $aryData , $msg );
 		exit();
 	}

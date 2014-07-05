@@ -385,14 +385,17 @@ class IndexController extends BaseController
 
 		foreach ( $output as $r )
 		{
-			preg_match( '/.*(cgminer|cgminer_fc).*/' , $r , $match_btc );
-			preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
+			preg_match( '/.*(miner).*/' , $r , $match_miner );
 
 			// if LTC model
-			if ( !empty( $match_ltc[1] ) && $alivedLTC === false )
+			if ( !empty( $match_miner[1] ) 
+					&& in_array( $strRunMode , array( 'L','LB' ) ) 
+					&& $alivedLTC === false )
 				$alivedLTC = true;
 			// if BTC model
-			else if ( !empty( $match_btc[1] ) && $alivedBTC === false )
+			else if ( !empty( $match_miner[1] ) 
+					&& in_array( $strRunMode , array( 'B','LB' ) ) 
+					&& $alivedBTC === false )
 				$alivedBTC = true;
 		}
 
@@ -516,55 +519,23 @@ class IndexController extends BaseController
 		$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep miner';
 		exec( $command , $grepout );
 
-		switch ( $strRunMode )
+		$boolIsAlived = false;
+		foreach ( $grepout as $r )
 		{
-			case 'L':
-				$boolIsLTCAlived = false;
-				foreach ( $grepout as $r )
-				{
-					preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
-					if ( !empty( $match_ltc[1] ) )
-					{
-						$boolIsLTCAlived = true;
-						break;
-					}
-				}
-
-				if ( count( $aryUsb ) === 0 )
-					$this->actionShutdown( true );
-
-				if ( $boolIsLTCAlived === false && count( $aryUsb ) > 0 )
-					$this->actionRestart( true );
-
+			preg_match( '/.*(miner).*/' , $r , $match_miner );
+			if ( !empty( $match_miner[1] ) )
+			{
+				$boolIsAlived = true;
 				$usbData['OK'] = 1;
-				
 				break;
-
-			case 'B':
-				$boolIsBTCAlived = false;
-				foreach ( $grepout as $r )
-				{
-					preg_match( '/.*(cgminer|cgminer_fc).*/' , $r , $match_btc );
-					if ( !empty( $match_btc[1] ) )
-					{
-						$boolIsBTCAlived = true;
-						break;
-					}
-				}
-
-				if ( count( $aryUsb ) === 0 )
-					$this->actionShutdown( true );
-
-				if ( $boolIsBTCAlived === false && count( $aryUsb ) > 0 )
-					$this->actionRestart( true );
-
-				$usbData['OK'] = 1;
-
-				break;
-
-			default:
-				break;
+			}
 		}
+
+		if ( count( $aryUsb ) === 0 )
+			$this->actionShutdown( true );
+
+		if ( $boolIsAlived === false && count( $aryUsb ) > 0 )
+			$this->actionRestart( true );
 
 		if ( $_boolIsReturn === false )
 		{

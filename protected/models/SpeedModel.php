@@ -76,13 +76,16 @@ class SpeedModel extends CModel
 		foreach ( $aryApiData as $key=>$data ) 
 		{
 			// 获得通讯协议名称
-			if ( $key == 'STATUS' )
+			if ( $key === 'STATUS' )
 			{
 				preg_match( '/.*\s(\w*)\(s\).*/' , $data['Msg'] , $matchs );
 				$strMinerName = $matchs[1];
 
 				continue;
 			}
+
+			if ( empty($strMinerName) )
+				break; 
 
 			$aryUsb = $strMinerName.$data[$strMinerName];
 			$aryUsbData[$aryUsb] = array( 'A'=>$data['Accepted'] , 
