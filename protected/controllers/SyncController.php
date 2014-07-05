@@ -64,7 +64,7 @@ class SyncController extends BaseController
 			$countData['last'] = time();
 			$countData['noar'] = 0;
 		}
-		else
+		else if ( $intMaxNum > 0 )
 			$countData['noar'] += 1;
 
 		// if need reload conf

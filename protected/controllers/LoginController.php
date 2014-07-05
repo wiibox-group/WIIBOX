@@ -37,9 +37,9 @@ class LoginController extends BaseController
 				$aryUserInfo['pwd'] = isset( $_POST['pwd'] ) ? CString::encodeMachinePassword( trim( $_POST['pwd'] ) ) : '';
 				$strIsRemember = isset( $_POST['remember'] ) ? htmlspecialchars( trim( $_POST['remember'] ) ) : 'no';
 				
+				// 检查登录
 				$boolCheckLogin = LoginModel::model() -> checkLogin( $aryUserInfo );
-				
-				if(($boolCheckLogin = LoginModel::model() -> checkLogin( $aryUserInfo )) === false)
+				if( $boolCheckLogin === false)
 					throw new CModelException( CUtil::i18n( 'controllers,login_index_pwdWrong' ) );
 					
 				//根据是否登入成功,再判断是否将用户名和密码写入cookie
