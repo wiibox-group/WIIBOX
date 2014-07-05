@@ -81,7 +81,7 @@ class CUtilMachine
 	 * @param string $_strType 设备类型
 	 * @return int
 	 */
-	public function getDefaultInterval( $_strType = '' )
+	public static function getDefaultInterval( $_strType = '' )
 	{
 		if ( empty( $_strType ) )
 			return 120;
@@ -95,7 +95,7 @@ class CUtilMachine
 	 * @param string $_strType 设备类型
 	 * @return int
 	 */
-	public function getSpeedList( $_strType = '' )
+	public static function getSpeedList( $_strType = '' )
 	{
 		if ( empty( $_strType ) )
 			return array();

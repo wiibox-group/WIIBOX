@@ -7,7 +7,7 @@ class CUtilRestart
 	/**
 	 * 重启A2
 	 */
-	public function restartByA2( $_aryConfig = array() )
+	public static function restartByA2( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -22,7 +22,7 @@ class CUtilRestart
 	/**
 	 * 重启A1
 	 */
-	public function restartByA1( $_aryConfig = array() )
+	public static function restartByA1( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -37,7 +37,7 @@ class CUtilRestart
 	/**
 	 * 重启烤猫
 	 */
-	public function restartByFc( $_aryConfig = array() )
+	public static function restartByFc( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -59,7 +59,7 @@ class CUtilRestart
 	/**
 	 * 重启小强矿机
 	 */
-	public function restartByXq( $_aryConfig = array() )
+	public static function restartByXq( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -73,7 +73,7 @@ class CUtilRestart
 	/**
 	 * 重启Avalon 3
 	 */
-	public function restartByAvalon( $_aryConfig = array() )
+	public static function restartByAvalon( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -95,7 +95,7 @@ class CUtilRestart
 	/**
 	 * 重启小二黑
 	 */
-	public function restartByGS40Chips( $_aryConfig = array() )
+	public static function restartByGS40Chips( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -110,7 +110,7 @@ class CUtilRestart
 	/**
 	 * 重启大红袍
 	 */
-	public function restartByDIF128Chips( $_aryConfig = array() )
+	public static function restartByDIF128Chips( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -125,7 +125,7 @@ class CUtilRestart
 	/**
 	 * 重启宙斯
 	 */
-	public function restartByZs( $_aryConfig = array() )
+	public static function restartByZs( $_aryConfig = array() )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
