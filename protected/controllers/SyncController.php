@@ -64,7 +64,7 @@ class SyncController extends BaseController
 			$countData['last'] = time();
 			$countData['noar'] = 0;
 		}
-		else
+		else if ( $intMaxNum > 0 )
 			$countData['noar'] += 1;
 
 		// if need reload conf
@@ -76,6 +76,7 @@ class SyncController extends BaseController
 			$countData['noar'] = 0;
 		}
 
+		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
 		$arySyncData = array();
 		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
 		$arySyncData['time'] = time();
@@ -89,17 +90,45 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
 		$arySyncData['data']['sync']['info'] = SYS_INFO;
 		$arySyncData['data']['sync']['password_machine'] = LoginModel::model() -> getUserPwd();
+		$arySyncData['data']['sync']['localSpeed'] = $aryLocalSpeedData;
 		
+		//将本地配置传送到服务端
+		$aryRunMode = str_split( $strRunMode );
+		$aryConfSettingTemp = array();
+		foreach( $aryRunMode as $strMode )
+		{
+			$strMode = strtolower( $strMode );
+			$aryConfSetting = json_decode( $redis -> readByKey( "{$strMode}tc.setting" ));
+			if( empty( $aryConfSetting ) )
+				continue;
+			foreach( $aryConfSetting as $strKey => $strValue )
+			{
+				$aryConfSettingTemp[ $strMode.$strKey ] = $strValue;
+			}
+			unset( $aryConfSetting );
+		}
+		$arySyncData['data']['sync']['conf'] = json_encode($aryConfSettingTemp);
+		unset( $aryConfSettingTemp );
+
+		//将本地配置传到服务端
 		if ( $boolIsReloadConf === true )
 			$arySyncData['data']['sync']['reloadconf'] = 1;
+
 		$arySyncData['data'] = urlencode( base64_encode( json_encode( $arySyncData['data'] ) ) );
 
 		// sync data
 		$aryCallBack = UtilApi::callSyncData( $arySyncData );
 		if ( $aryCallBack['ISOK'] !== 1 )
 		{
+			//同步出现错误,则将 本地速度写到文件中
+			$redis -> writeByKey( SpeedModel::model() -> getNoSyncFilePath() , json_encode( $aryLocalSpeedData['localSpeed'] ) );
+			
 			echo '500';
 			exit();
+		}
+		else
+		{
+			$redis -> deleteByKey( SpeedModel::model() -> getNoSyncFilePath() );
 		}
 		
 		$countData['LTC'] = array( 'A'=>0,'R'=>0,'T'=>0,'LC'=>$countData['LTC']['LC'] );
@@ -214,104 +243,6 @@ class SyncController extends BaseController
 			$this->_redis = new CRedisFile();
 
 		return $this->_redis;
-	}
-	
-	/*
-	* 进行数据同步
-	* 
-	* @author zhangyi
-	* @date 2014-06-14
-	*
-	*/
-	public function actionSpeed()
-	{
-		//获取基本数据
-		$objSpeedController = new SpeedController();
-		$waitTime = $objSpeedController -> _waitTime;
-		$maxPoint = $objSpeedController -> _maxPoint;
-		$nowTime = $objSpeedController -> _nowTime;
-		$pointTime = $objSpeedController -> _pointTime;
-		
-		//首先检查是否存在存在同步错误的数据
-		$redis = $this -> getRedis();
-		//获取最后一次同步数据
-		$lastSyncTimeKey = 'local.speed.last.time';
-		$haveWrongDataKey = 'local.speed.wrong.data';
-		$lastSyncTime = $redis -> readByKey( $lastSyncTimeKey );
-		if( $lastSyncTime == '' )
-			$lastSyncTime = 0;
-		else
-			$lastSyncTime = strtoTime( $lastSyncTime ) * 1000;
-		
-		$syncWrongData = $redis -> readByKey( $havaWrongDataKey );
-
-		$arySyncData = array();
-		$strRKEY = RunModel::model() -> getKeys();
-		$os = DIRECTORY_SEPARATOR=='\\' ? "windows" : "linux";
-		$mac_addr = new CMac( $os );
-		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
-		$arySyncData['time'] = time();
-		$arySyncData['data']['sync']['maxPoint'] = $maxPoint;
-		$arySyncData['data']['sync']['nowTime'] = $nowTime;
-		$arySyncData['data']['sync']['pointTime'] = $pointTime;		
-		$arySyncData['data']['sync']['waitTime'] = $waitTime;
-		
-		//获取当前算力速度以及运行模式数据
-		$objSpeedModel = SpeedModel::model();
-		$intSpeedSum = $objSpeedModel -> getSpeedSum();
-		$strRunModel = RunModel::model() -> getRunMode();
-		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
-		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
-
-		if(  $syncWrongData != ''  )
-		{
-			$arySyncWrongData = json_decode( $arySyncWrongData , 1);
-			if( $nowTime === $pointTime )
-			{
-				$arySyncWrongData['L'][''.$pointTime] = array( $pointTime , $intSpeedL );
-				$arySyncWrongData['B'][''.$pointTime] = array( $pointTime , $intSpeedB );
-			}
-			$arySyncData['data']['sync']['data'] = $arySyncWrongData;
-		}
-		else
-		{
-			if( $nowTime == $pointTime && ($nowTime - $lastSyncTime) >= $waitTime )
-			{
-				$aryData = array(
-							'L' => array( ''.$pointTime => array( $pointTime , $intSpeedL ) ),
-							'B' => array( ''.$pointTime => array( $pointTime , $intSpeedB ) )
-						);
-				$arySyncData['data']['sync']['data'] = $aryData;
-			}else
-			{
-				return true;
-			}
-		}
-		$arySyncData['data'] = urlencode( base64_encode(json_encode( $arySyncData['data'] )));
-		$redis -> writeByKey( $lastSyncTimeKey , date( 'Y-m-d H:i' , $pointTime/1000 ) );
-		// sync data
-		$aryCallBack = UtilApi::callSyncSpeedData( $arySyncData );
-		if( $aryCallBack['ISOK'] === 1 )
-		{
-			$redis -> writeByKey( $haveWrongDataKey , '' );
-
-			echo '200';
-		}
-		else
-		{
-			//判断是否存在错误数据
-			if( $syncWrongData != '' )
-			{
-				$redis -> writeByKey( $haveWrongDataKey , json_encode( $syncWrongData ) );
-			}
-			else
-			{
-				$redis -> writeByKey( $haveWrongDataKey , json_encode( $aryData ) );
-
-			}
-			echo '500';
-		}
-		exit();	
 	}
 //end class
 }
