@@ -21,8 +21,8 @@
 	</div>
 	<?php echo $content;?>
 
+	<script src="<?php echo $this->baseUrl;?>/static/js/libs.min.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/js/login.min.js"></script>
-
 </body>
 
 </html>
