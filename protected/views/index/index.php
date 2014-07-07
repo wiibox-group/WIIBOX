@@ -9,7 +9,7 @@
 <div class="container page-index">
 	<div class="page-header">
 		<h1><?php echo CUtil::i18n('vindex,setting_center');?><div class="pull-right">
-		<h4><?php echo CUtil::i18n( 'vindex,this_version' ).CUR_VERSION; ?></h4></div></h1>
+		<h4><?php echo CUtil::i18n( 'vindex,this_version' ).CUR_VERSION_NUM; ?></h4></div></h1>
 	</div>
 	<div class="jumbotron">
 		<form class="form-setting" role="form" method="post" action="<?php echo $this->createUrl( 'index/index' ); ?>">

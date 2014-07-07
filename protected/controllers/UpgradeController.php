@@ -32,7 +32,7 @@ class UpgradeController extends BaseController
 	public function actionHasnew( $_boolIsExit = false )
 	{
 		// check version
-		$aryVersionData = UtilApi::callCheckNewVersion( CUR_VERSION );
+		$aryVersionData = UtilApi::callCheckNewVersion( CUR_VERSION_NUM );
 		
 		if ( $_boolIsExit === false )
 		{
@@ -69,7 +69,7 @@ class UpgradeController extends BaseController
 			if ( empty( $strVersion ) )
 				throw new CModelException( CUtil::i18n( 'exception,version_upgrad_upgradFaild' ) );
 
-			if ( $strVersion <= CUR_VERSION )
+			if ( $strVersion <= CUR_VERSION_NUM )
 				throw new CModelException( CUtil::i18n( 'exception,version_upgrad_withoutUpgrad' ) );
 
 			// execute upgrade
