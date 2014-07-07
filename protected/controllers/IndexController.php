@@ -659,7 +659,7 @@ class IndexController extends BaseController
 		$countData = json_decode( $countLog , 1 );
 
 		$now = time();
-		// array( 'BTC'=>array('A'=>100,'R'=>2,'T'=>123456),'LTC'=>array('/dev/ttyUSB0'=>array('A'=>100,'R'=>2,'T'=>123456)) )
+
 		if ( empty( $speedLog ) || empty( $speedData ) )
 			$speedData = array('BTC'=>array(),'LTC'=>array());
 		if ( empty( $countLog ) || empty( $countData ) )
