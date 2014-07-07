@@ -84,19 +84,65 @@ body {
 .footer p {
   margin-bottom: 0;
 }
+html,
+body {
+  height: 100%;
+}
 .body-login {
   background: #eee;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  -ms-user-select: none;
 }
 .body-login .tip-msg {
   max-width: 330px;
+  position: relative;
+  z-index: 10;
 }
-.page-login {
+.body-login .doge-tip {
+  position: absolute;
+  bottom: 100px;
+  right: 25px;
+  z-index: 11;
+  display: block;
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: -3px;
+  padding: 5px 0;
+}
+.body-login .doge-tip .doge-tip-arrow {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  margin-left: -5px;
+  border-width: 5px 5px 0;
+  border-top-color: #000;
+}
+.body-login .doge-tip .doge-tip-inner {
+  max-width: 200px;
+  padding: 3px 8px;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  background-color: #000;
+  border-radius: 4px;
+}
+.page-login .form-holder {
   display: none;
 }
 .page-login .form-signin {
   max-width: 330px;
   padding: 15px;
   margin: 0 auto;
+  position: relative;
+  z-index: 10;
 }
 .page-login .form-signin .form-signin-heading,
 .page-login .form-signin .checkbox {
@@ -124,6 +170,20 @@ body {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+.page-login .doge {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  cursor: pointer;
+}
+.page-login #canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9;
+  cursor: default;
 }
 .page-index .form-setting {
   max-width: 620px;

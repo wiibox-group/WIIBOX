@@ -29,6 +29,34 @@
         });
 
         /*
+         单位换算
+         opt: {max, num, point}
+        */
+
+        function unitConversion(opt) {
+            var pb = 1024 * 1024 * 1024 * 1024,
+                tb = 1024 * 1024 * 1024,
+                gb = 1024 * 1024,
+                mb = 1024,
+                value = '';
+
+            if (opt.max > pb) {
+                value = (opt.num / pb).toFixed(opt.point) + " PB";
+            } else if (opt.max > tb) {
+                value = (opt.num / tb).toFixed(opt.point) + " TB";
+            } else if (opt.max > gb) {
+                value = (opt.num / gb).toFixed(opt.point) + " GB";
+            } else if (opt.max > mb) {
+                value = (opt.num / mb).toFixed(opt.point) + " MB";
+            } else {
+                value = opt.num + " KB";
+            }
+
+            return value;
+        }
+
+
+        /*
          * Hashrate统计图
          */
 
@@ -53,13 +81,22 @@
                     min: 0,
                     labels: {
                         formatter: function() {
-                            return this.value;
+                            return unitConversion({
+                                max: this.axis.max,
+                                num: this.value,
+                                point: 1
+                            });
                         }
                     }
                 },
                 tooltip: {
                     formatter: function() {
-                        return Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/><b>' + this.series.name + '</b><br><b>' + this.y + '</b>';
+                        var value = unitConversion({
+                            max: this.y,
+                            num: this.y,
+                            point: 2
+                        });
+                        return Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) + '<br/><b>' + this.series.name + '</b><br><b>' + value + '</b>';
                     }
                 },
                 plotOptions: {
@@ -76,11 +113,11 @@
                     }
                 },
                 series: [{
-                    name: 'SHA (khash/s)',
+                    name: 'SHA (hash/s)',
                     color: '#FF7F0E',
                     data: data.DATA.B
                 }, {
-                    name: 'SCRYPT (khash/s)',
+                    name: 'SCRYPT (hash/s)',
                     data: data.DATA.L
                 }],
                 navigation: {

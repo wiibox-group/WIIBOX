@@ -7,12 +7,15 @@
  */
 class SpeedModel extends CModel
 {
-	
-	public $_fileName = 'list.speed.log';
-
-	public $_NoSyncDataFileName = 'list.no.sync.data';
-	
+	/** Redis store hander **/
 	private $_redis;
+	
+	/** 速度集合KEY **/
+	private $_fileName = 'list.speed.log';
+
+	/** 未同步数据KEY **/
+	private $_noSyncDataFileName = 'list.no.sync.data';
+
 	/** 图表最多显示多少个点 **/
 	public $_maxPoint = 145;
 	
@@ -49,25 +52,42 @@ class SpeedModel extends CModel
 		return parent::model( __CLASS__ );
 	}
 
+	/**
+	 * 获得未同步数据缓存名
+	 *
+	 * @return string
+	 */
 	public function getNoSyncFilePath()
 	{
-		return $this -> _NoSyncDataFileName ;
+		return $this -> _noSyncDataFileName ;
 	}
 
 	/**
 	 * 获得速度数据
+	 *
+	 * @return array
 	 */
 	public static function getSpeedDataByApi()
 	{
 		$aryApiData = SocketModel::request( 'devs' );
 
 		$aryUsbData = array();
-		foreach ( $aryApiData as $data ) 
+		$strMinerName = '';
+		foreach ( $aryApiData as $key=>$data ) 
 		{
-			if ( !isset( $data['ASC'] ) )
-				continue;
+			// 获得通讯协议名称
+			if ( $key === 'STATUS' )
+			{
+				preg_match( '/.*\s(\w*)\(s\).*/' , $data['Msg'] , $matchs );
+				$strMinerName = $matchs[1];
 
-			$aryUsb = 'ASC'.$data['ASC'];
+				continue;
+			}
+
+			if ( empty($strMinerName) )
+				break; 
+
+			$aryUsb = $strMinerName.$data[$strMinerName];
 			$aryUsbData[$aryUsb] = array( 'A'=>$data['Accepted'] , 
 										'R'=>$data['Rejected'] , 
 										'S'=>$data['MHS av'] , 
@@ -82,7 +102,6 @@ class SpeedModel extends CModel
 	}
 	
 	/**
-	 * 
 	 * 根据文件获取数据
 	 * 
 	 * @author zhangyi
@@ -184,10 +203,10 @@ class SpeedModel extends CModel
 
 		$arySpeedData = array();
 		//判断是否存在同步错误数据
-		if( file_exists( $redis -> getFilePath( $this -> _NoSyncDataFileName ) ) === true )
+		if( file_exists( $redis -> getFilePath( $this -> _noSyncDataFileName ) ) === true )
 		{
 			//将未同步数据进行取出
-			$strSpeedData = $redis -> readByKey( $this -> _NoSyncDataFileName);
+			$strSpeedData = $redis -> readByKey( $this -> _noSyncDataFileName);
 			if( empty( $strSpeedData ) )
 				return false;
 			$arySpeedData = json_decode( $strSpeedData , 1 );

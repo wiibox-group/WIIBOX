@@ -29,6 +29,7 @@
 	<input type="hidden" id="urlConfig" data-restart="<?php echo $this->createUrl( 'index/restart' ); ?>" data-check="<?php echo $this->createUrl( 'index/check' ); ?>" >
 
 	<script src="<?php echo $this->baseUrl;?>/static/js/language/<?php echo CUtil::getLanguage();?>/base.config.js"></script>
+	<script src="<?php echo $this->baseUrl;?>/static/js/libs.min.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/js/script.min.js"></script>
 
 </body>

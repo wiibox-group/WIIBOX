@@ -64,7 +64,7 @@ class SyncController extends BaseController
 			$countData['last'] = time();
 			$countData['noar'] = 0;
 		}
-		else
+		else if ( $intMaxNum > 0 )
 			$countData['noar'] += 1;
 
 		// if need reload conf
@@ -76,7 +76,6 @@ class SyncController extends BaseController
 			$countData['noar'] = 0;
 		}
 
-
 		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
 		$arySyncData = array();
 		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
@@ -85,7 +84,7 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['st'] = count( $checkState['alived']['BTC'] ) > 0 || count( $checkState['alived']['LTC'] ) > 0 ? ( $checkState['super'] === true ? 2 : 1 ) : -1;
 		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'btc'=>0 , 'ltc'=>0 );
 		$arySyncData['data']['sync']['ar'] = $countData;
-		$arySyncData['data']['sync']['ve'] = CUR_VERSION;
+		$arySyncData['data']['sync']['ve'] = CUR_VERSION_NUM;
 		$arySyncData['data']['sync']['md'] = $strRunMode;
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
@@ -114,6 +113,7 @@ class SyncController extends BaseController
 		//将本地配置传到服务端
 		if ( $boolIsReloadConf === true )
 			$arySyncData['data']['sync']['reloadconf'] = 1;
+
 		$arySyncData['data'] = urlencode( base64_encode( json_encode( $arySyncData['data'] ) ) );
 
 		// sync data

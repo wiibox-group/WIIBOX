@@ -7,69 +7,17 @@
  */
 class IndexController extends BaseController
 {
-	// redis object
+	/** redis object **/
 	private $_redis;
 
-	// curent every usb setting
+	/** curent every usb setting **/
 	private $_usbSet = array();
 
-	// system message
+	/** system message **/
 	private $_sys = '';
 
-	// run mode
+	/** run mode **/
 	private $_runMode = '';
-
-	private $_defaultSpeed = array(
-				// GS 5chips
-				'GS_D_V2'		=> '850',
-				// GS 40chips
-				'GS_S_V2'		=> '825',
-				// GS 40chips for 9331
-				'GS_S_V3'		=> '850',
-				// A2
-				'A2_S_V1'		=> '1280',
-				// GS A1
-				'GS_A1_S_V1'	=> '850',
-				// Fried Cat
-				'FC_S_V1'		=> '300',
-				// Rock Box for xiaoqiang
-				'XQ_S_V1'		=> '300',
-				// Diginforce
-				'DIF_S_V1'		=> '850',
-				// Avalon 3
-				'AV_S_V1'		=> '500',
-			);
-
-	// default check mode for single mode
-	private $_checkMode_S = array(
-				'OPENWRT_GS_D_V2'		=> 'tty',
-				'RASPBERRY_GS_S_V2'		=> 'lsusb-api',
-				'OPENWRT_GS_S_V3'		=> 'tty',
-				'RASPBERRY_A2_S_V1'		=> 'spi-ltc',
-				'RASPBERRY_GS_A1_S_V1'	=> 'spi-btc',
-				'RASPBERRY_FC_S_V1'		=> 'tty-btc',
-				'RASPBERRY_XQ_S_V1'		=> 'tty-btc',
-				'OPENWRT_DIF_S_V1'		=> 'lsusb-api',
-				'RASPBERRY_DIF_S_V1'	=> 'lsusb-api',
-				'OPENWRT_AV_S_V1'		=> 'tty-btc',
-			);
-
-	// default check mode for dule mode
-	private $_checkMode_D = array(
-				'OPENWRT_GS_D_V2'		=> 'lsusb',
-			);
-
-	// default work time interval
-	private $_defaultInterval = array(
-				'GS_D_V2'		=> 120,
-				'GS_S_V2'		=> 120,
-				'GS_S_V3'		=> 120,
-				'A2_S_V1'		=> 300,
-				'GS_A1_S_V1'	=> 300,
-				'FC_S_V1'		=> 300,
-				'XQ_S_V1'		=> 300,
-				'DIF_S_V1'		=> 300,
-			);
 
 	/**
 	 * init
@@ -244,53 +192,41 @@ class IndexController extends BaseController
 			switch ( SYS_INFO )
 			{
 				case 'GS_A1_S_V1':
-					// get btc config
-					$aryLTCData = $this->getTarConfig( 'btc' );
-
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
 					$aryConfig['speed'] = $aryBTCData['speed'];
 
-					$this->restartByA1( $aryConfig );
+					CUtilRestart::restartByA1( $aryConfig );
 
 					break;
 
 				case 'FC_S_V1':
-					// get btc config
-					$aryLTCData = $this->getTarConfig( 'btc' );
-
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
 					$aryConfig['speed'] = $aryBTCData['speed'];
 					$aryConfig['usb'] = $aryUsb;
 
-					$this->restartByFc( $aryConfig );
+					CUtilRestart::restartByFc( $aryConfig );
 
 					break;
 
 				case 'XQ_S_V1':
-					// get btc config
-					$aryLTCData = $this->getTarConfig( 'btc' );
-
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
 					$aryConfig['speed'] = $aryBTCData['speed'];
 					$aryConfig['usb'] = $aryUsb;
 
-					$this->restartByXq( $aryConfig );
+					CUtilRestart::restartByXq( $aryConfig );
 
 					break;
 
 				case 'AV_S_V1':
-					// get btc config
-					$aryLTCData = $this->getTarConfig( 'btc' );
-
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
 					$aryConfig['speed'] = $aryBTCData['speed'];
 					$aryConfig['usb'] = $aryUsb;
 
-					$this->restartByAvalon( $aryConfig );
+					CUtilRestart::restartByAvalon( $aryConfig );
 
 					break;
 
@@ -321,7 +257,7 @@ class IndexController extends BaseController
 						$aryConfig['mode'] = $strRunMode;
 						$aryConfig['su'] = $aryLTCData['su'];
 
-						$this->restartByGS40Chips( $aryConfig , $usb , $strRunMode );
+						CUtilRestart::restartByGS40Chips( $aryConfig );
 						$intUids --;
 					}
 
@@ -332,7 +268,7 @@ class IndexController extends BaseController
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
-					$this->restartByA2( $aryConfig );
+					CUtilRestart::restartByA2( $aryConfig );
 
 					break;
 
@@ -342,7 +278,7 @@ class IndexController extends BaseController
 					$aryConfig['mode'] = $strRunMode;
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
-					$this->restartByGS40Chips( $aryConfig , 'all' , $strRunMode );
+					CUtilRestart::restartByGS40Chips( $aryConfig );
 
 					break;
 
@@ -352,7 +288,17 @@ class IndexController extends BaseController
 					$aryConfig['mode'] = $strRunMode;
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
-					$this->restartByDIF128Chips( $aryConfig , 'all' , $strRunMode );
+					CUtilRestart::restartByDIF128Chips( $aryConfig );
+
+					break;
+
+				case 'ZS_S_V1':
+					$aryConfig = $aryLTCData;
+					$aryConfig['ac'] = $aryLTCData['ac'][0];
+					$aryConfig['speed'] = $aryLTCData['speed'];
+					$aryConfig['usb'] = $aryUsb;
+
+					CUtilRestart::restartByZs( $aryConfig );
 
 					break;
 
@@ -366,172 +312,13 @@ class IndexController extends BaseController
 		$redis->writeByKey( 'restart.status' , json_encode( $restartData ) );
 
 		// clear count data
-		$countData = array(
-				'BTC'=>array('A'=>0,'R'=>0,'T'=>$now,'LC'=>$now),
-				'LTC'=>array('A'=>0,'R'=>0,'T'=>$now,'LC'=>$now)
-			);
-		$redis->writeByKey( 'speed.count.log' , json_encode( $countData ) );
+		$redis->writeByKey( 'speed.history.log' , '{}' );
 
 		if ( $_boolIsNoExist === false )
 		{
 			echo '200';exit;
 		}
 		else return true;
-	}
-
-	/**
-	 * restart program by spi
-	 */
-	public function restartByA2( $_aryConfig = array() , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) )
-			return false;
-
-		$intRunSpeed = $_aryConfig['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_a2 -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --A1Pll1 {$intRunSpeed} --A1Pll2 {$intRunSpeed} --A1Pll3 {$intRunSpeed} --A1Pll4 {$intRunSpeed} --A1Pll5 {$intRunSpeed} --A1Pll6 {$intRunSpeed} --diff 16 --api-listen --api-network --cs 8 --stmcu 0 --hwreset --no-submit-stale --lowmem --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
-
-		exec( $command );
-
-		// clear history log
-		$redis = $this->getRedis();
-		$redis->writeByKey( 'speed.history.log' , '{}' );
-
-		return true;
-	}
-
-	/**
-	 * restart program by spi-btc
-	 */
-	public function restartByA1( $_aryConfig = array() , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) )
-			return false;
-
-		$intRunSpeed = $_aryConfig['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_a1 --no-submit-stale --hotplug=0 --cs=8 --hwreset --stmcu=1 --diff=8 --A1Pll={$intRunSpeed} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 --real-quiet >/dev/null 2>&1 &";
-
-		exec( $command );
-
-		// clear history log
-		$redis = $this->getRedis();
-		$redis->writeByKey( 'speed.history.log' , '{}' );
-
-		return true;
-	}
-
-	/**
-	 * restart program by tty-btc
-	 */
-	public function restartByFc( $_aryConfig = array() , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) )
-			return false;
-
-		if ( !empty( $_aryConfig['usb'] ) )
-		{
-			$strUsbParam = '';
-			foreach ( $_aryConfig['usb'] as $usb )
-				$strUsbParam .= ' -S'.$usb;
-		}
-
-		$intRunSpeed = $_aryConfig['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_fc {$strUsbParam} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --hashratio-freq={$intRunSpeed} --api-listen --api-allow W:127.0.0.1 --real-quiet >/dev/null 2>&1 &";
-
-		exec( $command );
-
-		// clear history log
-		$redis = $this->getRedis();
-		$redis->writeByKey( 'speed.history.log' , '{}' );
-
-		return true;
-	}
-
-	/**
-	 * restart program by tty-btc
-	 */
-	public function restartByXq( $_aryConfig = array() , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) )
-			return false;
-
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_xq -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
-
-		exec( $command );
-
-		// clear history log
-		$redis = $this->getRedis();
-		$redis->writeByKey( 'speed.history.log' , '{}' );
-
-		return true;
-	}
-
-	/**
-	 * restart program by avalon
-	 */
-	public function restartByAvalon( $_aryConfig = array() , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) )
-			return false;
-
-		if ( !empty( $_aryConfig['usb'] ) )
-		{
-			$strUsbParam = '';
-			foreach ( $_aryConfig['usb'] as $usb )
-				$strUsbParam .= ' -S '.$usb;
-		}
-
-		$intRunSpeed = $_aryConfig['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_av {$strUsbParam} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --avalon2-freq={$intRunSpeed} --avalon2-fan=40 --avalon2-voltage=7000 --api-listen --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
-
-		exec( $command );
-
-		// clear history log
-		$redis = $this->getRedis();
-		$redis->writeByKey( 'speed.history.log' , '{}' );
-
-		return true;
-	}
-
-	/**
-	 * restart program by GS 40 chips
-	 */
-	public function restartByGS40Chips( $_aryConfig = array() , $_strUsb = '' , $_strUsbModel = '' , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) || empty( $_strUsb ) || empty( $_strUsbModel ) )
-			return false;
-
-		$aryData = $_aryConfig;
-		$startModel = $_strUsbModel;
-
-		if ( empty( $aryData ) )
-			return false;
-
-		$intRunSpeed = $aryData['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
-
-		exec( $command );
-		return true;
-	}
-
-	/**
-	 * restart program by DIF 128 chips
-	 */
-	public function restartByDIF128Chips( $_aryConfig = array() , $_strUsb = '' , $_strUsbModel = '' , $_strSingleShutDown = '' )
-	{
-		if ( empty( $_aryConfig ) || empty( $_strUsb ) || empty( $_strUsbModel ) )
-			return false;
-
-		$aryData = $_aryConfig;
-		$startModel = $_strUsbModel;
-
-		if ( empty( $aryData ) )
-			return false;
-
-		$intRunSpeed = $aryData['speed'];
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_dif --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=128,usefifo=0 --hotplug=0 -o {$aryData['ad']} -u {$aryData['ac']} -p {$aryData['pw']} --api-listen >/dev/null 2>&1 &";
-
-		exec( $command );
-		return true;
 	}
 
 	/**
@@ -598,14 +385,17 @@ class IndexController extends BaseController
 
 		foreach ( $output as $r )
 		{
-			preg_match( '/.*(cgminer|cgminer_fc).*/' , $r , $match_btc );
-			preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
+			preg_match( '/.*(cgminer|minerd).*/' , $r , $match_miner );
 
 			// if LTC model
-			if ( !empty( $match_ltc[1] ) && $alivedLTC === false )
+			if ( !empty( $match_miner[1] ) 
+					&& in_array( $strRunMode , array( 'L','LB' ) ) 
+					&& $alivedLTC === false )
 				$alivedLTC = true;
 			// if BTC model
-			else if ( !empty( $match_btc[1] ) && $alivedBTC === false )
+			else if ( !empty( $match_miner[1] ) 
+					&& in_array( $strRunMode , array( 'B','LB' ) ) 
+					&& $alivedBTC === false )
 				$alivedBTC = true;
 		}
 
@@ -729,55 +519,23 @@ class IndexController extends BaseController
 		$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep miner';
 		exec( $command , $grepout );
 
-		switch ( $strRunMode )
+		$boolIsAlived = false;
+		foreach ( $grepout as $r )
 		{
-			case 'L':
-				$boolIsLTCAlived = false;
-				foreach ( $grepout as $r )
-				{
-					preg_match( '/.*(minerd|cgminer_ltc|cgminer_a2).*/' , $r , $match_ltc );
-					if ( !empty( $match_ltc[1] ) )
-					{
-						$boolIsLTCAlived = true;
-						break;
-					}
-				}
-
-				if ( count( $aryUsb ) === 0 )
-					$this->actionShutdown( true );
-
-				if ( $boolIsLTCAlived === false && count( $aryUsb ) > 0 )
-					$this->actionRestart( true );
-
+			preg_match( '/.*(cgminer|minerd).*/' , $r , $match_miner );
+			if ( !empty( $match_miner[1] ) )
+			{
+				$boolIsAlived = true;
 				$usbData['OK'] = 1;
-				
 				break;
-
-			case 'B':
-				$boolIsBTCAlived = false;
-				foreach ( $grepout as $r )
-				{
-					preg_match( '/.*(cgminer|cgminer_fc).*/' , $r , $match_btc );
-					if ( !empty( $match_btc[1] ) )
-					{
-						$boolIsBTCAlived = true;
-						break;
-					}
-				}
-
-				if ( count( $aryUsb ) === 0 )
-					$this->actionShutdown( true );
-
-				if ( $boolIsBTCAlived === false && count( $aryUsb ) > 0 )
-					$this->actionRestart( true );
-
-				$usbData['OK'] = 1;
-
-				break;
-
-			default:
-				break;
+			}
 		}
+
+		if ( count( $aryUsb ) === 0 )
+			$this->actionShutdown( true );
+
+		if ( $boolIsAlived === false && count( $aryUsb ) > 0 )
+			$this->actionRestart( true );
 
 		if ( $_boolIsReturn === false )
 		{
@@ -901,7 +659,7 @@ class IndexController extends BaseController
 		$countData = json_decode( $countLog , 1 );
 
 		$now = time();
-		// array( 'BTC'=>array('A'=>100,'R'=>2,'T'=>123456),'LTC'=>array('/dev/ttyUSB0'=>array('A'=>100,'R'=>2,'T'=>123456)) )
+
 		if ( empty( $speedLog ) || empty( $speedData ) )
 			$speedData = array('BTC'=>array(),'LTC'=>array());
 		if ( empty( $countLog ) || empty( $countData ) )
@@ -969,6 +727,8 @@ class IndexController extends BaseController
 				// end btc mode
 				break;
 
+			// ltc mode use tty agreement
+			case 'tty-ltc':
 			// ltc mode use usb but data from api
 			case 'lsusb-api':
 			// ltc mode use spi agreement
@@ -1223,7 +983,7 @@ class IndexController extends BaseController
 	 */
 	public function getDefaultSpeed()
 	{
-		return empty( $this->_defaultSpeed[SYS_INFO] ) ? 850 : $this->_defaultSpeed[SYS_INFO];
+		return CUtilMachine::getDefaultSpeed(SYS_INFO);
 	}
 
 	/**
@@ -1231,7 +991,7 @@ class IndexController extends BaseController
 	 */
 	public function getDefaultInterval()
 	{
-		return empty( $this->_defaultInterval[SYS_INFO] ) ? 300 : $this->_defaultInterval[SYS_INFO];
+		return CUtilMachine::getDefaultInterval(SYS_INFO);
 	}
 
 	/**
@@ -1241,15 +1001,7 @@ class IndexController extends BaseController
 	{
 		// get current system
 		$strSys = $this->getSystem();
-
-		// system info head
-		$strSysInfo = $strSys.'_'.SYS_INFO;
-
-		$strRunMode = $this->getRunMode();
-		if ( $strRunMode == 'L' || $strRunMode == 'B' )
-			return empty( $this->_checkMode_S[$strSysInfo] ) ? 'lsusb' : $this->_checkMode_S[$strSysInfo];
-		else
-			return empty( $this->_checkMode_D[$strSysInfo] ) ? 'lsusb' : $this->_checkMode_D[$strSysInfo];
+		return CUtilMachine::getCheckMode( $strSys );
 	}
 
 	/**
@@ -1268,15 +1020,14 @@ class IndexController extends BaseController
 	}
 
 	public function actionGetSpeed()
-     {
-         $isOk = 0;
-         $msg = '';
-         $aryData = array('run' => '' , 'value' => array() );
-         $aryData['value'] = SpeedModel::model() -> getSpeedDataByApi();
-         $aryData['run'] =  RunModel::model() -> getRunMode();
-         echo $this -> encodeAjaxData($isOk , $aryData , $msg , -1);
- 
-     }
+	{
+		$isOk = 0;
+		$msg = '';
+		$aryData = array('run' => '' , 'value' => array() );
+		$aryData['value'] = SpeedModel::model() -> getSpeedDataByApi();
+		$aryData['run'] =  RunModel::model() -> getRunMode();
+		echo $this -> encodeAjaxData($isOk , $aryData , $msg , -1);
+	}
 
 //end class
 }

@@ -157,8 +157,6 @@
                     url: item.url,
                     dataType: 'json',
                     success: function(data) {
-                        console.log(item.key);
-                        console.log(data);
                         result(item.key, data);
                     },
                     error: function() {
@@ -246,7 +244,7 @@
                             }
 
                             if (data.WIIBOX === 1) {
-                                $('#resultNetwork>span').text(langData.normal);
+                                $('#resultNetwork2>span').text(langData.normal);
                             } else {
                                 abnormal('resultNetwork2');
                             }

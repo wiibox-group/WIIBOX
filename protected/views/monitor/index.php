@@ -9,7 +9,7 @@
 		<h1><?php echo CUtil::i18n('vmonitor,status_title');?>
 			<div class="pull-right">
 				<h4>
-					<?php echo CUtil::i18n('vmonitor,this_version').CUR_VERSION; ?>
+					<?php echo CUtil::i18n('vmonitor,this_version').CUR_VERSION_NUM; ?>
 				</h4>
 			</div>
 		</h1>
