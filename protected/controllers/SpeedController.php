@@ -31,18 +31,43 @@ class SpeedController extends BaseController
 	public function actionSpeedData()
 	{
 		$isOk = 0;
-		$msg = '获取数据失败';
+		$msg = '';
 		$aryData = array();
-		$objSpeedModel = SpeedModel::model();
-		if( Nbt::app() -> request -> isAjaxRequest )
+		try
 		{
-			$aryData = $objSpeedModel -> getSpeedDataByFile();
-			$temp['L'] = array_values($aryData['L']);
-			$temp['B'] = array_values($aryData['B']);
-			$aryData = $temp;
-			unset( $temp );
-			$isOk = 1;
-			$msg = '获取数据成功';
+			$objSpeedModel = SpeedModel::model();
+			if( Nbt::app() -> request -> isAjaxRequest )
+			{
+				$aryData = $objSpeedModel -> getSpeedDataByFile();
+				//如果数据不存在，则刷新一次数据
+				if(empty( $aryData ) && $objSpeedModel -> refreshSpeedData() === true)
+				{
+					$aryData = $objSpeedModel -> getSpeedDataByFile();
+					
+				}
+				
+				//如果数据依然不存在，则抛出系统异常错误
+				if( !empty ( $aryData ) )
+				{	
+					$aryTemp['L'] = array_values($aryData['L']);
+					$aryTemp['B'] = array_values($aryData['B']);
+					$aryData = $aryTemp;
+					unset( $aryTemp );
+					$isOk = 1;
+				}
+				else
+				{
+					throw new CModelException( CUtil::i18n('exception,sys_error') );
+				}
+			}
+			else
+			{
+				throw new CModelException( CUtil::i18n('exception,sys_error') );
+			}
+		}
+		catch( CModelException $e )
+		{
+			$msg = $e -> getMessage();
 		}
 		echo $this -> encodeAjaxData( $isOk , $aryData , $msg );
 		exit();

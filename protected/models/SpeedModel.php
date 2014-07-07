@@ -192,17 +192,24 @@ class SpeedModel extends CModel
 				return false;
 			$arySpeedData = json_decode( $strSpeedData , 1 );
 		}
-		
+
 		//获取当前算力速度以及运行模式数据
 		$intSpeedSum = $this -> getSpeedSum();
 		$strRunModel = RunModel::model() -> getRunMode();
 		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
 		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
-
+		
+		//将数据写入
 		$arySpeedData['L'][''.$this -> _pointTime] = $intSpeedL;
 		$arySpeedData['B'][''.$this -> _pointTime] = $intSpeedB;
-		$aryData['localSpeed'] = $arySpeedData;
 
+		//判断当前总数已经超过了最大点数
+		if( count( $arySpeedData['L'] ) > $this -> _maxPoint )
+		{
+			array_shift( $arySpeedData['L'] );
+			array_shift( $arySpeedData['B'] );
+		}
+		$aryData['localSpeed'] = $arySpeedData;
 		return $aryData;
 	}
 
@@ -221,7 +228,7 @@ class SpeedModel extends CModel
 		try
 		{
 			//创建数据
-			$intSpeedSum = $this -> getSpeedSum();	
+			$intSpeedSum = $this -> getSpeedSum();
 			$strRunModel = RunModel::model() -> getRunMode();
 			$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
 			$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
