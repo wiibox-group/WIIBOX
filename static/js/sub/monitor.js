@@ -113,11 +113,11 @@
                     }
                 },
                 series: [{
-                    name: 'SHA (khash/s)',
+                    name: 'SHA (hash/s)',
                     color: '#FF7F0E',
                     data: data.DATA.B
                 }, {
-                    name: 'SCRYPT (khash/s)',
+                    name: 'SCRYPT (hash/s)',
                     data: data.DATA.L
                 }],
                 navigation: {
