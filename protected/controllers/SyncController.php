@@ -76,7 +76,6 @@ class SyncController extends BaseController
 			$countData['noar'] = 0;
 		}
 
-
 		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
 		$arySyncData = array();
 		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
@@ -114,6 +113,7 @@ class SyncController extends BaseController
 		//将本地配置传到服务端
 		if ( $boolIsReloadConf === true )
 			$arySyncData['data']['sync']['reloadconf'] = 1;
+
 		$arySyncData['data'] = urlencode( base64_encode( json_encode( $arySyncData['data'] ) ) );
 
 		// sync data

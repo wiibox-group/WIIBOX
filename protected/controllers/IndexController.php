@@ -385,7 +385,7 @@ class IndexController extends BaseController
 
 		foreach ( $output as $r )
 		{
-			preg_match( '/.*(miner).*/' , $r , $match_miner );
+			preg_match( '/.*(cgminer|minerd).*/' , $r , $match_miner );
 
 			// if LTC model
 			if ( !empty( $match_miner[1] ) 
@@ -522,7 +522,7 @@ class IndexController extends BaseController
 		$boolIsAlived = false;
 		foreach ( $grepout as $r )
 		{
-			preg_match( '/.*(miner).*/' , $r , $match_miner );
+			preg_match( '/.*(cgminer|minerd).*/' , $r , $match_miner );
 			if ( !empty( $match_miner[1] ) )
 			{
 				$boolIsAlived = true;
