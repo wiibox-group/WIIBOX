@@ -74,14 +74,11 @@ class CheckController extends BaseController
 			// run command success
 			$aryReturn['COMMAND'] = 1;
 			// find mill
-			foreach ( $output as $usb )
-			{
-				preg_match( '/.*Bus\s(\d+)\sDevice\s(\d+).*SGS\sThomson\sMicroelectronics.*/' , $usb , $match_usb );
-				if ( !empty( $match_usb[1] ) && !empty( $match_usb[2] ) )
-				{
-					$aryReturn['MILL'] ++;
-				}
-			}
+			$sys = new CSys();
+			$strCheckTar = CUtilMachine::getCheckMode( $sys->cursys );
+			$strRunMode = RunModel::model()->getRunMode();
+			$aryUsb = UsbModel::model()->getUsbCheckResult( $strRunMode , $strCheckTar );
+			$aryReturn['MILL'] = count( $aryUsb['usb'] );
 		}
 
 		echo json_encode( $aryReturn );
@@ -173,7 +170,7 @@ class CheckController extends BaseController
 	 */
 	public function actionVersion()
 	{
-		$aryReturn = array( 'VERSION'=>CUR_VERSION );
+		$aryReturn = array( 'VERSION'=>CUR_VERSION_NUM );
 		echo json_encode( $aryReturn );
 		exit;
 	}

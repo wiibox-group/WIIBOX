@@ -63,7 +63,7 @@ class LoginController extends BaseController
 			if( $boolCheckLogin === true )
 			{
 				Nbt::app()->session->set( 'userInfo' , $aryUserInfo );
-				UtilMsg::saveTipToSession( '登入成功' );
+				UtilMsg::saveTipToSession( CUtil::i18n('controllers,login_index_success') );
 				$this -> redirect( array( 'index/index' ) );
 			}
 		} catch (CModelException$e) {

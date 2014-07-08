@@ -14,5 +14,5 @@ return array(
 		'upgrade_index_seoTitle' => 'BTC & LTC Upgrade Center',
 		'login_index_seoTitle' => 'User Login',
 		'login_index_loginFaild' => 'Login failed',
-		'login_index_pwdWrong' => 'Password Error',		
+		'login_index_pwdWrong' => 'Password Error',			'login_index_success' => 'Login success',
 );

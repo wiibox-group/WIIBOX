@@ -14,5 +14,6 @@ return array(
 		'upgrade_index_seoTitle' => 'BTC & LTC 升级中心',
 		'login_index_seoTitle' => '用户登入',
 		'login_index_loginFaild' => '登入失败',
-		'login_index_pwdWrong' => '密码错误',		
+		'login_index_pwdWrong' => '密码错误',
+		'login_index_success' => '登入成功',
 );

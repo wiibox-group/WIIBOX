@@ -84,7 +84,7 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['st'] = count( $checkState['alived']['BTC'] ) > 0 || count( $checkState['alived']['LTC'] ) > 0 ? ( $checkState['super'] === true ? 2 : 1 ) : -1;
 		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'btc'=>0 , 'ltc'=>0 );
 		$arySyncData['data']['sync']['ar'] = $countData;
-		$arySyncData['data']['sync']['ve'] = CUR_VERSION;
+		$arySyncData['data']['sync']['ve'] = CUR_VERSION_NUM;
 		$arySyncData['data']['sync']['md'] = $strRunMode;
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
