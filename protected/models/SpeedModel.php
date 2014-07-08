@@ -15,6 +15,9 @@ class SpeedModel extends CModel
 
 	/** 未同步数据KEY **/
 	private $_noSyncDataFileName = 'list.no.sync.data';
+	
+	/** 本地数据存储 记录忽略次数的 key **/
+	private $_ignoreKey= 'string.ignore.num';
 
 	/** 图表最多显示多少个点 **/
 	public $_maxPoint = 145;
@@ -259,17 +262,43 @@ class SpeedModel extends CModel
 							'L' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedL )),
 							'B' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedB ))
 						);
-				$aryData = $this -> changeNullData( $aryData ); }
+				$aryData = $this -> changeNullData( $aryData ); 
+			}
 			//如果文件存在,则判断最后一次同步时间和当前所允许同步时间差距 
 			else
 			{
 				//如果当前时间减去最后一次时间大于 点与点之间时间差距 则执行插入数据功能,否则替换最后一次数据
-				$aryData = $this -> getSpeedDataByFile();	
-				if( empty( $aryData ) )
-					return false;
-				$pointTime = $this -> _pointTime;
+				$aryData = $this -> getSpeedDataByFile();
 				$aryPointsDataL = $aryData['L'];
 				$aryPointsDataB = $aryData['B'];
+				$aryLastDataL = end($aryData['L']);
+				$intLastTime = array_shift( $aryLastDataL );
+				$pointTime = $this -> _pointTime;
+				
+				//如果当前可同步时间 与 最后一次同步时间中间相差两个点，则跳过三次
+				if( $pointTime < $intLastTime || $pointTime - $intLastTime >= 2 * $this -> _waitTime )
+				{
+					//获取忽略的次数
+					$intIgnoreNum = $this -> getIgnoreNum();
+					
+					//当且仅当等于 3 时程序才能执行
+					if( $intIgnoreNum != 3 )
+					{
+						$intIgnoreNum = ( $intIgnoreNum > 3 || $intIgnoreNum < 0 ) ? 0 : ++$intIgnoreNum;
+						
+						//将数据进行存储
+						if( $this -> storeIgnoreNum( $intIgnoreNum ) === false )
+							return false;
+						return false;
+					}
+					//如果等于3,则让程序正常执行
+					else
+					{
+						if( $this -> delIgnoreNumFile() === false )
+							return false;
+					}
+				}
+				
 				$aryPointsDataB[''.$pointTime] = array( $pointTime , $intSpeedB );
 				$aryPointsDataL[''.$pointTime] = array( $pointTime , $intSpeedL );
 						
@@ -329,6 +358,55 @@ class SpeedModel extends CModel
 		
 		unset( $_aryData , $aryPointsDataB , $aryPointsDataL , $aryTempB , $aryTempL);
 		return $aryData;
+	}
+	
+	/**
+	 * 获取 忽略 的次数
+	 *
+	 * @author zhangyi
+	 * @date 2014-07-08
+	 */
+	public function getIgnoreNum()
+	{	
+		$redis = $this -> getRedis();
+		if( file_exists( $redis -> getFilePath( $this -> _ignoreKey ) ) === true )
+		{
+			$strNum = $redis -> readByKey( $this -> _ignoreKey );
+			if( empty( $strNum ) )
+				return 0;
+			else
+				return intval( $strNum );
+		}
+		else
+			return 0;
+	}
+	
+	/**
+	 * 存储 忽略 的次数
+	 *
+	 * @param int $_intNum 数值
+	 *
+	 * @author zhangyi 
+	 * @date 2014-07-08
+	 */
+	public function storeIgnoreNum( $_intNum = 0 )
+	{
+		if( !is_int( $_intNum ) )
+			return false;
+		return $this -> getRedis() -> writeByKey( $this -> _ignoreKey , ''.$_intNum );
+	}
+	
+	/**
+	 *
+	 * 删除 记录忽略次数  的文件
+	 *
+	 * @author zhangyi 
+	 * @date 2014-07-08
+	 */
+	public function delIgnoreNumFile()
+	{
+		$redis = $this -> getRedis();
+		return $redis -> deleteByKey( $this -> _ignoreKey );
 	}
 
 	
