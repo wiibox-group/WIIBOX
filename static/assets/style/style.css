@@ -190,11 +190,12 @@ body {
   margin: 0 auto;
 }
 .page-index .form-setting .form-title {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
 }
-.page-index .form-setting .form-control {
-  font-size: 12px;
-  padding: 20px 12px;
+.page-index .form-setting .form-group .input-lg,
+.page-index .form-setting .form-group .btn-lg {
+  font-size: 16px;
 }
 .page-index .form-setting .dropdown-menu li a {
   cursor: pointer;
