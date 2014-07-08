@@ -70,15 +70,6 @@ class SpeedController extends BaseController
 		{
 			$msg = $e -> getMessage();
 		}
-		$aryData = SpeedModel::model() -> getSpeedDataByFile();
-		$temp['L'] = array_values($aryData['L']);
-		$temp['B'] = array_values($aryData['B']);
-		$aryData = $temp;
-		unset( $temp );
-
-		$isOk = 1;
-		$msg = '获取数据成功';
-
 		echo $this -> encodeAjaxData( $isOk , $aryData , $msg );
 		exit();
 	}
