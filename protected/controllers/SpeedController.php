@@ -31,7 +31,6 @@ class SpeedController extends BaseController
 	 */
 	public function actionSpeedData()
 	{
-<<<<<<< HEAD
 		$isOk = 0;
 		$msg = '';
 		$aryData = array();
@@ -71,7 +70,6 @@ class SpeedController extends BaseController
 		{
 			$msg = $e -> getMessage();
 		}
-=======
 		$aryData = SpeedModel::model() -> getSpeedDataByFile();
 		$temp['L'] = array_values($aryData['L']);
 		$temp['B'] = array_values($aryData['B']);
@@ -81,7 +79,6 @@ class SpeedController extends BaseController
 		$isOk = 1;
 		$msg = '获取数据成功';
 
->>>>>>> 9db8737130220034c8654413e23659a7b3ccbff5
 		echo $this -> encodeAjaxData( $isOk , $aryData , $msg );
 		exit();
 	}

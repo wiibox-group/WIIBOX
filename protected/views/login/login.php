@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <div class="container page-login">
 	<form id="signinForm" class="form-signin" role="form" method="post" action="<?php echo $this -> createUrl('login/login')?>">
         <h2 class="form-signin-heading">{{title}}</h2>
@@ -9,7 +8,6 @@
         </label>
         <button class="btn btn-lg btn-primary btn-block" type="submit">{{btn}}</button>
     </form>
-=======
 <div class="page-login">
 	<div class="form-holder">
 		<form id="signinForm" class="form-signin" role="form" method="post" action="<?php echo $this -> createUrl('login/login')?>">
@@ -31,5 +29,4 @@
 	</div>
 
 	<div id="canvas-container"></div>
->>>>>>> 9db8737130220034c8654413e23659a7b3ccbff5
 </div>
