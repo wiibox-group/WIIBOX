@@ -245,7 +245,6 @@ class IndexController extends BaseController
 			switch ( SYS_INFO )
 			{
 				case 'GS_D_V2':
-				case 'GS_S_V3':
 					$intUids = $aryLTCData['acc'];
 					foreach ( $aryUsb as $usb )
 					{
@@ -272,6 +271,7 @@ class IndexController extends BaseController
 
 					break;
 
+				case 'GS_S_V3':
 				case 'GS_S_V2':
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
