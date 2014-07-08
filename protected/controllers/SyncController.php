@@ -89,7 +89,7 @@ class SyncController extends BaseController
 		$arySyncData['data']['sync']['ip'] = $ip_addr->ip_addr;
 		$arySyncData['data']['sync']['sys'] = $sys->cursys;
 		$arySyncData['data']['sync']['info'] = SYS_INFO;
-		$arySyncData['data']['sync']['password_machine'] = LoginModel::model() -> getUserPwd();
+		$arySyncData['data']['sync']['pw'] = LoginModel::model() -> getUserPwd();
 		$arySyncData['data']['sync']['localSpeed'] = $aryLocalSpeedData;
 		
 		//将本地配置传送到服务端
@@ -151,7 +151,7 @@ class SyncController extends BaseController
 		}
 
 		//判断是否要修改本地密码
-		if( $syncData['needChangePassword'] === 1 )
+		if( !empty( $syncData['password_machine'] ) )
 		{
 			//修改用户密码
 			if( LoginModel::model() -> updatePwd( $syncData['password_machine'] ) === false )

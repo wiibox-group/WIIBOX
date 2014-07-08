@@ -98,8 +98,11 @@ class LoginModel extends CModel
 		$redis = $this -> getRedis();
 		$filePath = $redis -> getFilePath( $this -> _fileName );
 		if( file_exists( $filePath ) === false )
-			return $redis -> writeByKey( $this -> _fileName , json_encode( array('uname' => UUSERNAME ,
-							'pwd' => CString::encodeMachinePassword( UPASSWORD )) ) );
+			return $redis -> writeByKey( $this -> _fileName , json_encode(
+						array(
+							'uname' => UUSERNAME ,
+							'pwd' => CString::encodeMachinePassword( UPASSWORD ) 
+						) ) );
 	}
 	
 	/**
