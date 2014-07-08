@@ -101,7 +101,7 @@ class CUtilRestart
 			return false;
 
 		$intRunSpeed = intval( $_aryConfig['speed'] );
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=128,usefifo=0 --hotplug=0 -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen >/dev/null 2>&1 &";
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen >/dev/null 2>&1 &";
 
 		@exec( $command );
 		return true;
