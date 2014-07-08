@@ -33,20 +33,20 @@
 				<div><?php echo CUtil::i18n('vindex,scrypt_setting'); ?></div>
 			</div>
 			<div class="form-group">
-				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,scrypt_MinePoolAddress'); ?>" name="address_ltc" value="<?php echo $ltc['ad']; ?>" type="text" />
+				<input class="form-control input-lg" placeholder="<?php echo CUtil::i18n('vindex,scrypt_MinePoolAddress'); ?>" name="address_ltc" value="<?php echo $ltc['ad']; ?>" type="text" />
 			</div>
 			<div class="form-group">
-				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerNum'); ?>" name="account_ltc" value="<?php echo $ltc['ac']; ?>" type="text" />
+				<input class="form-control input-lg" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerNum'); ?>" name="account_ltc" value="<?php echo $ltc['ac']; ?>" type="text" />
 			</div>
 			<div class="form-group">
-				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerPwd'); ?>" name="password_ltc" value="<?php echo $ltc['pw']; ?>" type="text" />
+				<input class="form-control input-lg" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerPwd'); ?>" name="password_ltc" value="<?php echo $ltc['pw']; ?>" type="text" />
 			</div>
 			<?php endif; ?>
 			<?php if ( count( $arySpeed ) ) : ?>
 			<div class="form-group">
 				<input type="hidden" id="run_speed" name="run_speed" value="<?php echo $speed; ?>" />
 				<div class="btn-group">
-					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					<button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown">
 					    <?php echo CUtil::i18n('vindex,runFrequency')?><span id="speed-cur"><?php echo $speed; ?></span>M
 					    &nbsp;<span class="caret"></span>
 					</button>
