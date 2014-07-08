@@ -7,6 +7,7 @@ if( !file_exists( dirname(__FILE__).'/protected/config/define.php' ) )
 }
 
 require_once( dirname(__FILE__).'/protected/config/define.php' );
+require_once( dirname(__FILE__).'/protected/config/define_add.php' );
 require_once( dirname(__FILE__).'/protected/config/version.php' );
 require_once( dirname(__FILE__).'/protected/config/version_num.php' );
 

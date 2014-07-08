@@ -37,8 +37,10 @@ class SpeedController extends BaseController
 		try
 		{
 			$objSpeedModel = SpeedModel::model();
+			/*
 			if( Nbt::app() -> request -> isAjaxRequest )
 			{
+			*/
 				$aryData = $objSpeedModel -> getSpeedDataByFile();
 				//如果数据不存在，则刷新一次数据
 				if(empty( $aryData ) && $objSpeedModel -> refreshSpeedData() === true)
@@ -60,11 +62,13 @@ class SpeedController extends BaseController
 				{
 					throw new CModelException( CUtil::i18n('exception,sys_error') );
 				}
+			/*
 			}
 			else
 			{
 				throw new CModelException( CUtil::i18n('exception,sys_error') );
 			}
+			*/
 		}
 		catch( CModelException $e )
 		{
