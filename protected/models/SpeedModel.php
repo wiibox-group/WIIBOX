@@ -37,8 +37,8 @@ class SpeedModel extends CModel
 	public function init()
 	{
 		parent::init();
-		$this -> _waitTime = $this -> _waitTime * 60 * 1000;
-		$this -> _nowTime = strtotime(date( 'Y-m-d H:i' )) * 1000;
+		$this -> _waitTime = $this -> _waitTime * 60;
+		$this -> _nowTime = strtotime(date( 'Y-m-d H:i' ));
 		$this -> _pointTime = $this -> _waitTime * intval( $this -> _nowTime / $this -> _waitTime );
 	}
 
