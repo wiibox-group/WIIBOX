@@ -9,6 +9,9 @@ class SpeedModel extends CModel
 {
 	/** Redis store hander **/
 	private $_redis;
+
+	/** 系统名 */
+	public $_sys = '';
 	
 	/** 速度集合KEY **/
 	private $_fileName = 'list.speed.log';
@@ -86,6 +89,15 @@ class SpeedModel extends CModel
 
 			if ( empty($strMinerName) )
 				break; 
+
+			// 获得系统名
+			$sys = new CSys();
+			// 系统全称
+			$strSysInfo = $sys->cursys.'_'.SYS_INFO;
+
+			// 如果属于没有统计Accept的系统，则将share作为Accept
+			if ( $strSysInfo === 'OPENWRT_GS_S_V3' )
+				$data['Accepted'] = intval( $data['Total MH'] );
 
 			$aryUsb = $strMinerName.$data[$strMinerName];
 			$aryUsbData[$aryUsb] = array( 'A'=>$data['Accepted'] , 
