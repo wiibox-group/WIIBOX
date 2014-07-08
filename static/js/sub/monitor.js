@@ -2,7 +2,7 @@
     if ($('.page-monitor').length) {
 
         /*
-         * 获取Hashrate的数据
+         获取Hashrate的数据
          */
         $.ajax({
             type: "get",
@@ -20,7 +20,7 @@
 
 
         /*
-         * 关闭UTC
+         关闭UTC
          */
         Highcharts.setOptions({
             global: {
@@ -28,10 +28,11 @@
             }
         });
 
+
         /*
          单位换算
          opt: {max, num, point}
-        */
+         */
 
         function unitConversion(opt) {
             var pb = 1024 * 1024 * 1024 * 1024,
@@ -57,7 +58,22 @@
 
 
         /*
-         * Hashrate统计图
+         遍历数组，将时间戳乘以1000
+         */
+
+        function covertDate(arr) {
+            var result = [];
+            if (arr.length) {
+                $.each(arr, function(index, item) {
+                    result.push([(item[0] * 1000), item[1]]);
+                });
+            }
+            return result;
+        }
+
+
+        /*
+         Hashrate统计图
          */
 
         function hashrate(data) {
@@ -115,10 +131,10 @@
                 series: [{
                     name: 'SHA (hash/s)',
                     color: '#FF7F0E',
-                    data: data.DATA.B
+                    data: covertDate(data.DATA.B)
                 }, {
                     name: 'SCRYPT (hash/s)',
-                    data: data.DATA.L
+                    data: covertDate(data.DATA.L)
                 }],
                 navigation: {
                     menuItemStyle: {
@@ -131,8 +147,7 @@
 
 
         /*
-         * 查询设备运行状态
-         *
+         查询设备运行状态
          */
 
         function deviceInfo() {
@@ -162,8 +177,8 @@
             });
 
             /*
-             * 定时执行查询
-             * 10s
+             定时执行查询
+             10s
              */
 
             function doAgain() {
