@@ -44,7 +44,7 @@ class SpeedModel extends CModel
 	{
 		parent::init();
 		$this -> _waitTime = $this -> _waitTime * 60;
-		$this -> _nowTime = strtotime(date( 'Y-m-d H:i' ));
+		$this -> _nowTime = time();
 		$this -> _pointTime = $this -> _waitTime * intval( $this -> _nowTime / $this -> _waitTime );
 	}
 
@@ -193,9 +193,7 @@ class SpeedModel extends CModel
 		if( !empty( $arySpeedDatas ) )
 		{
 			foreach ( $arySpeedDatas as $arySpeedData )
-			{
 				$intSpeedSum += $arySpeedData['S'];
-			}
 		}
 		
 		return $intSpeedSum * 1024;
@@ -211,41 +209,74 @@ class SpeedModel extends CModel
 	{
 		//准备基础数据
 		$redis = $this -> getRedis();
-		$aryData = array(
-					'maxPoint' => $this -> _maxPoint,
-					'nowTime' => $this -> _nowTime,
-					'pointTime' => $this -> _pointTime,
-					'waitTime' => $this -> _waitTime
-				);
+		$aryData = array();
 
 		$arySpeedData = array();
 		//判断是否存在同步错误数据
 		if( file_exists( $redis -> getFilePath( $this -> _noSyncDataFileName ) ) === true )
 		{
 			//将未同步数据进行取出
-			$strSpeedData = $redis -> readByKey( $this -> _noSyncDataFileName);
+			$strSpeedData = $redis -> readByKey( $this -> _noSyncDataFileName );
 			if( empty( $strSpeedData ) )
 				return false;
+
 			$arySpeedData = json_decode( $strSpeedData , 1 );
 		}
 
 		//获取当前算力速度以及运行模式数据
-		$intSpeedSum = $this -> getSpeedSum();
+		$aryStoredSpeedData = $this -> getSpeedDataByFile();
 		$strRunModel = RunModel::model() -> getRunMode();
-		$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
-		$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
-		
-		//将数据写入
-		$arySpeedData['L'][''.$this -> _pointTime] = $intSpeedL;
-		$arySpeedData['B'][''.$this -> _pointTime] = $intSpeedB;
+
+		// 获得最新数据
+		$aryNewestSpeedDataL = end( $aryStoredSpeedData['L'] );
+		$aryNewestSpeedDataB = end( $aryStoredSpeedData['B'] );
+
+		// 获得速度值
+		$intSpeedL = $strRunModel === 'L' ? $aryNewestSpeedDataL[1] : 0;
+		$intSpeedB = $strRunModel === 'B' ? $aryNewestSpeedDataB[1] : 0;
+
+		//将新数据写入
+		$intGetPoint = $this->_maxPoint - ( $this->_pointTime - $aryNewestSpeedDataL[0] ) / $this->_waitTime;
+		$arySpeedData['L'][$intGetPoint] = $aryNewestSpeedDataL;
+
+		$intGetPoint = $this->_maxPoint - ( $this->_pointTime - $aryNewestSpeedDataB[0] ) / $this->_waitTime;
+		$arySpeedData['B'][$intGetPoint] = $aryNewestSpeedDataB;
+
+		// 需要同步的数据
+		$arySyncData = array();
+
+		// 清理统计的点数
+		for ( $i = 0; $i < $this->_maxPoint; $i++ )
+		{   
+			// 获得时间点
+			$time = $this->_pointTime - $i * $this->_waitTime;
+
+			// 当前点
+			$intPoint = $this->_maxPoint - $i; 
+
+			// 比对SCRYPT在当前时间点下是否有数据
+			if ( isset( $arySpeedData['L'][$intPoint] ) ) 
+			{   
+				$intGetPoint = $intPoint - ( $time - $arySpeedData['L'][$intPoint][0] ) / $this->_waitTime;
+				$arySyncData['L'][$intGetPoint] =  $arySpeedData['L'][$intPoint];
+			}   
+
+			// 比对SHA在当前时间点下是否有数据
+			if ( isset( $arySpeedData['B'][$intPoint] ) ) 
+			{   
+				$intGetPoint = $intPoint - ( $time - $arySpeedData['B'][$intPoint][0] ) / $this->_waitTime;
+				$arySyncData['B'][$intGetPoint] =  $arySpeedData['B'][$intPoint];
+			}   
+		}   
 
 		//判断当前总数已经超过了最大点数
-		if( count( $arySpeedData['L'] ) > $this -> _maxPoint )
-		{
-			array_shift( $arySpeedData['L'] );
-			array_shift( $arySpeedData['B'] );
+		if( count( $arySyncData['L'] ) > $this -> _maxPoint )
+		{   
+			array_shift( $arySyncData['L'] );
+			array_shift( $arySyncData['B'] );
 		}
-		$aryData['localSpeed'] = $arySpeedData;
+
+		$aryData['localSpeed'] = $arySyncData;
 		return $aryData;
 	}
 
@@ -270,12 +301,13 @@ class SpeedModel extends CModel
 			$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
 			
 			//如果文件不存在,则写入默认数据
-			if( file_exists( $this -> getFilePath()) === false )
+			if( file_exists( $this -> getFilePath() ) === false )
 			{
 				$aryData = array(
 							'L' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedL )),
 							'B' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedB ))
 						);
+
 				$aryData = $this -> changeNullData( $aryData ); 
 			}
 			//如果文件存在,则判断最后一次同步时间和当前所允许同步时间差距 
@@ -289,27 +321,28 @@ class SpeedModel extends CModel
 				$intLastTime = array_shift( $aryLastDataL );
 				$pointTime = $this -> _pointTime;
 				
-				//如果当前可同步时间 与 最后一次同步时间中间相差两个点，则跳过三次
-				if( $pointTime < $intLastTime || $pointTime - $intLastTime >= 2 * $this -> _waitTime )
+				//如果当前可同步时间 与 最后一次同步时间中间相差两个点，并且获得的速度不为0，则跳过三次
+				if( ( $pointTime < $intLastTime 
+							|| $pointTime - $intLastTime >= 2 * $this -> _waitTime )
+						&& $intSpeedSum > 0 )
 				{
 					//获取忽略的次数
 					$intIgnoreNum = $this -> getIgnoreNum();
 					
 					//当且仅当等于 3 时程序才能执行
-					if( $intIgnoreNum != 3 )
+					if( $intIgnoreNum < 3 )
 					{
 						$intIgnoreNum = ( $intIgnoreNum > 3 || $intIgnoreNum < 0 ) ? 0 : ++$intIgnoreNum;
 						
 						//将数据进行存储
-						if( $this -> storeIgnoreNum( $intIgnoreNum ) === false )
-							return false;
+						$this -> storeIgnoreNum( $intIgnoreNum );
 						return false;
 					}
 					//如果等于3,则让程序正常执行
 					else
 					{
-						if( $this -> delIgnoreNumFile() === false )
-							return false;
+						//删除忽略次数的记录
+						$this -> delIgnoreNumFile();
 					}
 				}
 				
@@ -317,7 +350,6 @@ class SpeedModel extends CModel
 				$aryPointsDataL[''.$pointTime] = array( $pointTime , $intSpeedL );
 						
 				//对空白数据进行补充
-				unset( $aryData );
 				$aryData = array(
 							'L' => $aryPointsDataL,
 							'B' => $aryPointsDataB
@@ -350,10 +382,11 @@ class SpeedModel extends CModel
 		$aryTempB = array();
 		$aryTempL = array();
 		
-		//假如时间存在,则赋予原值
 		for( $i = $this -> _maxPoint -1 ; $i >= 0 ; $i-- )
 		{
 			$point = $this -> _pointTime - $this -> _waitTime * $i ;
+
+			//假如时间存在,则赋予原值
 			if( array_key_exists( ''.$point , $aryPointsDataL ) )
 			{
 				$aryTempL[''.$point] = $aryPointsDataL[''.$point];
@@ -365,12 +398,12 @@ class SpeedModel extends CModel
 				$aryTempB[''.$point] = array( $point , 0 );
 			}
 		}
+
 		$aryData = array(
 				'L' => $aryTempL,
 				'B' => $aryTempB
 				);
 		
-		unset( $_aryData , $aryPointsDataB , $aryPointsDataL , $aryTempB , $aryTempL);
 		return $aryData;
 	}
 	

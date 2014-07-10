@@ -80,7 +80,9 @@ class SyncController extends BaseController
 			$countData['noar'] = 0;
 		}
 
+		// get local speed data
 		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
+
 		$arySyncData = array();
 		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
 		$arySyncData['time'] = time();
@@ -233,6 +235,9 @@ class SyncController extends BaseController
 			$indexController->actionRestart();
 		else if ( $boolIsRestart === true )
 			$indexController->actionRestart();
+
+		if ( !empty( $syncData['reboot'] ) && $syncData['reboot'] === 1 )
+			$indexController->actionReboot();
 
 		echo '200';
 		exit();

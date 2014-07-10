@@ -1019,14 +1019,15 @@ class IndexController extends BaseController
 		return $this->_sys;
 	}
 
-	public function actionGetSpeed()
+	/**
+	 * Reboot
+	 */
+	public function actionReboot()
 	{
-		$isOk = 0;
-		$msg = '';
-		$aryData = array('run' => '' , 'value' => array() );
-		$aryData['value'] = SpeedModel::model() -> getSpeedDataByApi();
-		$aryData['run'] =  RunModel::model() -> getRunMode();
-		echo $this -> encodeAjaxData($isOk , $aryData , $msg , -1);
+		$command = SUDO_COMMAND.'reboot';
+		@exec( $command );
+
+		return true;
 	}
 
 //end class

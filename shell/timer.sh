@@ -20,13 +20,9 @@ while true ; do
 		wget http://127.0.0.1/index.php?r=sync/start -O /dev/null >/dev/null 2>&1
     	fi
 
-	to_speed=$((count%15))
+	to_speed=$((count%30))
 	if [ $to_speed -eq 0 ] ; then
 		wget http://127.0.0.1/index.php?r=speed/index -O /dev/null >/dev/null 2>&1
-	fi
-	
-	if [ $to_speed -eq 0 ] ; then
-		wget http://127.0.0.1/index.php?r=sync/speed -O /dev/null >/dev/null 2>&1
 	fi
 
 	count=$((count+5))
