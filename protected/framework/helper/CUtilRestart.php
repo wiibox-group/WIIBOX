@@ -144,5 +144,20 @@ class CUtilRestart
 		return true;
 	}
 
+	/**
+	 * 重启菊花单挖
+	 */
+	public static function restartByGS5Chips( $_aryConfig = array() , $_strUsb )
+	{
+		if ( empty( $_aryConfig ) )
+			return false;
+
+		$intRunSpeed = intval( $_aryConfig['speed'] );
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd --dif={$_strUsb} -G {$_strUsb} --freq={$intRunSpeed} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} >/dev/null 2>&1 &";
+
+		@exec( $command );
+		return true;
+	}
+
 // end class
 }

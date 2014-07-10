@@ -244,6 +244,7 @@ class IndexController extends BaseController
 
 			switch ( SYS_INFO )
 			{
+				case 'GS_S_V3':
 				case 'GS_D_V2':
 					$intUids = $aryLTCData['acc'];
 					foreach ( $aryUsb as $usb )
@@ -256,7 +257,7 @@ class IndexController extends BaseController
 						$aryConfig['mode'] = $strRunMode;
 						$aryConfig['su'] = $aryLTCData['su'];
 
-						CUtilRestart::restartByGS40Chips( $aryConfig );
+						CUtilRestart::restartByGS5Chips( $aryConfig , $usb );
 						$intUids --;
 					}
 
@@ -271,7 +272,6 @@ class IndexController extends BaseController
 
 					break;
 
-				case 'GS_S_V3':
 				case 'GS_S_V2':
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];

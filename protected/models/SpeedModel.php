@@ -93,6 +93,7 @@ class SpeedModel extends CModel
 			if ( empty($strMinerName) )
 				break; 
 
+			/*
 			// 获得系统名
 			$sys = new CSys();
 			// 系统全称
@@ -101,6 +102,7 @@ class SpeedModel extends CModel
 			// 如果属于没有统计Accept的系统，则将share作为Accept
 			if ( $strSysInfo === 'OPENWRT_GS_S_V3' )
 				$data['Accepted'] = intval( $data['Total MH'] );
+			*/
 
 			$aryUsb = $strMinerName.$data[$strMinerName];
 			$aryUsbData[$aryUsb] = array( 'A'=>$data['Accepted'] , 

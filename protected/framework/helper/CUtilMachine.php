@@ -32,7 +32,7 @@ class CUtilMachine
 	private static $_checkMode_S = array(
 				'OPENWRT_GS_D_V2'		=> 'tty',
 				'RASPBERRY_GS_S_V2'		=> 'lsusb-api',
-				'OPENWRT_GS_S_V3'		=> 'lsusb-api',
+				'OPENWRT_GS_S_V3'		=> 'tty',
 				'RASPBERRY_A2_S_V1'		=> 'spi-ltc',
 				'RASPBERRY_GS_A1_S_V1'	=> 'spi-btc',
 				'RASPBERRY_FC_S_V1'		=> 'tty-btc',
