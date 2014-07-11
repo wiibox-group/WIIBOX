@@ -244,25 +244,6 @@ class IndexController extends BaseController
 
 			switch ( SYS_INFO )
 			{
-				case 'GS_S_V3':
-				case 'GS_D_V2':
-					$intUids = $aryLTCData['acc'];
-					foreach ( $aryUsb as $usb )
-					{
-						$aryConfig = $aryLTCData;
-						if ( $intUids < 1 )
-							$intUids = $aryLTCData['acc'];
-
-						$aryConfig['ac'] = $aryLTCData['ac'][$aryLTCData['acc']-$intUids];
-						$aryConfig['mode'] = $strRunMode;
-						$aryConfig['su'] = $aryLTCData['su'];
-
-						CUtilRestart::restartByGS5Chips( $aryConfig , $usb );
-						$intUids --;
-					}
-
-					break;
-
 				case 'A2_S_V1':
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
@@ -302,8 +283,25 @@ class IndexController extends BaseController
 
 					break;
 
+				case 'GS_S_V3':
+				case 'GS_D_V2':
 				// other mode
 				default:
+					$intUids = $aryLTCData['acc'];
+					foreach ( $aryUsb as $usb )
+					{
+						$aryConfig = $aryLTCData;
+						if ( $intUids < 1 )
+							$intUids = $aryLTCData['acc'];
+
+						$aryConfig['ac'] = $aryLTCData['ac'][$aryLTCData['acc']-$intUids];
+						$aryConfig['mode'] = $strRunMode;
+						$aryConfig['su'] = $aryLTCData['su'];
+
+						CUtilRestart::restartByGS5Chips( $aryConfig , $usb );
+						$intUids --;
+					}
+
 					break;
 			}
 		}
