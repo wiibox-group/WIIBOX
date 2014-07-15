@@ -223,11 +223,15 @@ class SpeedModel extends CModel
 			$arySpeedData = json_decode( $strSpeedData , 1 );
 		}
 
-		//获取当前算力速度以及运行模式数据
+		//获取当前算力速度
 		$aryStoredSpeedData = $this -> getSpeedDataByFile();
+		// 获得最新数据
+		if ( empty( $aryStoredSpeedData ) )
+			return array();
+
+		// 运行模式
 		$strRunModel = RunModel::model() -> getRunMode();
 
-		// 获得最新数据
 		$aryNewestSpeedDataL = end( $aryStoredSpeedData['L'] );
 		$aryNewestSpeedDataB = end( $aryStoredSpeedData['B'] );
 

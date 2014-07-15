@@ -264,12 +264,20 @@ class IndexController extends BaseController
 					break;
 
 				case 'DIF_S_V1':
-					$aryConfig = $aryLTCData;
-					$aryConfig['ac'] = $aryLTCData['ac'][0];
-					$aryConfig['mode'] = $strRunMode;
-					$aryConfig['speed'] = $aryLTCData['speed'];
+					$intUids = $aryLTCData['acc'];
+					foreach ( $aryUsb as $usb )
+					{
+						$aryConfig = $aryLTCData;
+						if ( $intUids < 1 )
+							$intUids = $aryLTCData['acc'];
 
-					CUtilRestart::restartByDIF128Chips( $aryConfig );
+						$aryConfig['ac'] = $aryLTCData['ac'][$aryLTCData['acc']-$intUids];
+						$aryConfig['mode'] = $strRunMode;
+						$aryConfig['su'] = $aryLTCData['su'];
+
+						CUtilRestart::restartByDIF128Chips( $aryConfig , $usb );
+						$intUids --;
+					}
 
 					break;
 

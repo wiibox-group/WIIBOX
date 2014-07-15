@@ -130,9 +130,9 @@ class CUtilMachine
 
 		$strRunMode = RunModel::model()->getRunMode();
 		if ( $strRunMode == 'L' || $strRunMode == 'B' )
-			return empty( self::$_checkMode_S[$strSysInfo] ) ? 'lsusb' : self::$_checkMode_S[$strSysInfo];
+			return empty( self::$_checkMode_S[$strSysInfo] ) ? 'tty' : self::$_checkMode_S[$strSysInfo];
 		else
-			return empty( self::$_checkMode_D[$strSysInfo] ) ? 'lsusb' : self::$_checkMode_D[$strSysInfo];
+			return empty( self::$_checkMode_D[$strSysInfo] ) ? 'tty' : self::$_checkMode_D[$strSysInfo];
 	}
 	
 //end class
