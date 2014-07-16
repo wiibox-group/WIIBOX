@@ -287,6 +287,10 @@ class IndexController extends BaseController
 					$aryConfig['speed'] = $aryLTCData['speed'];
 					$aryConfig['usb'] = $aryUsb;
 
+					// Restart by relay
+					$strRelayPort = CUtilRelay::getRelayPort();
+					CUtilRelay::restartPower( $strRelayPort );
+
 					CUtilRestart::restartByZs( $aryConfig );
 
 					break;

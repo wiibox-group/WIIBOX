@@ -17,7 +17,7 @@ class CPowerSystem extends CApplicationComponents
 	}
 
 	/**
-	 *a重新开关电源
+	 * 重新开关电源
 	 */
 	public static function restartPower( $_intTime = 1000000 )
 	{
