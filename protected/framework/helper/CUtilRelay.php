@@ -34,6 +34,7 @@ class CUtilRelay
 	 */
 	public static function restartPower( $_strPort = 'ttyATH0' , $_intTime = 1000000 )
 	{
+		@exec( SUDO_COMMAND."chmod 777 /dev/{$_strPort}" );
 		@exec( SUDO_COMMAND."stty -F /dev/{$_strPort} raw speed 9600;".SUDO_COMMAND."echo \"O(00,05,0)E\" > /dev/{$_strPort} &" );
 		usleep( $_intTime * 2 );
 		@exec( SUDO_COMMAND."stty -F /dev/{$_strPort} raw speed 9600;".SUDO_COMMAND."echo \"O(00,05,1)E\" > /dev/{$_strPort} &" );
