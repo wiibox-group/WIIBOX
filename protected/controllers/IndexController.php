@@ -289,7 +289,8 @@ class IndexController extends BaseController
 
 					// Restart by relay
 					$strRelayPort = CUtilRelay::getRelayPort();
-					CUtilRelay::restartPower( $strRelayPort );
+					if ( !empty( $strRelayPort ) )
+						CUtilRelay::restartPower( $strRelayPort );
 
 					CUtilRestart::restartByZs( $aryConfig );
 
