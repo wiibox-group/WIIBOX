@@ -1,7 +1,7 @@
 <?php
     return array(
     	'hashrate_title' => 'Hashrate',
-    	'status_title' => 'SHA Running Status',
+    	'status_title' => 'Running Status',
     	'status_device' => 'Equipment',
     	'status_state' => 'Status',
     	'status_algorithm' => 'Algorithm',
