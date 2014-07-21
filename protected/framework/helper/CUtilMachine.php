@@ -16,6 +16,8 @@ class CUtilMachine
 				'A2_S_V1'		=> 1280,
 				// GS A1
 				'GS_A1_S_V1'	=> 850,
+				// JIE A1
+				'JIE_A1_S_V1'	=> 1000,
 				// Fried Cat
 				'FC_S_V1'		=> 300,
 				// Rock Box for xiaoqiang
@@ -35,6 +37,7 @@ class CUtilMachine
 				'OPENWRT_GS_S_V3'		=> 'tty',
 				'RASPBERRY_A2_S_V1'		=> 'spi-ltc',
 				'RASPBERRY_GS_A1_S_V1'	=> 'spi-btc',
+				'RASPBERRY_JIE_A1_S_V1'	=> 'spi-btc',
 				'RASPBERRY_FC_S_V1'		=> 'tty-btc',
 				'RASPBERRY_XQ_S_V1'		=> 'tty-btc',
 				'OPENWRT_DIF_S_V1'		=> 'lsusb-api',
@@ -55,6 +58,7 @@ class CUtilMachine
 				'GS_S_V3'		=> 120,
 				'A2_S_V1'		=> 300,
 				'GS_A1_S_V1'	=> 300,
+				'JIE_A1_S_V1'	=> 300,
 				'FC_S_V1'		=> 300,
 				'XQ_S_V1'		=> 300,
 				'DIF_S_V1'		=> 300,

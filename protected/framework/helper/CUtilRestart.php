@@ -33,6 +33,21 @@ class CUtilRestart
 		@exec( $command );
 		return true;
 	}
+	
+	/**
+	 * 重启JIE A1
+	 */
+	public static function restartByJieA1( $_aryConfig = array() )
+	{
+		if ( empty( $_aryConfig ) )
+			return false;
+	
+		$intRunSpeed = intval( $_aryConfig['speed'] );
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_jie --no-submit-stale --hotplug=0 --cs=8 --hwreset --stmcu=1 --diff=8 --A1Pll1 {$intRunSpeed} --A1Pll2 {$intRunSpeed} --A1Pll3 {$intRunSpeed} --A1Pll4 {$intRunSpeed} --A1Pll5 {$intRunSpeed} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 --real-quiet >/dev/null 2>&1 &";
+	
+		@exec( $command );
+		return true;
+	}
 
 	/**
 	 * 重启烤猫

@@ -190,7 +190,16 @@ class IndexController extends BaseController
 			$aryBTCData = $this->getTarConfig( 'btc' );
 
 			switch ( SYS_INFO )
-			{
+			{	
+				case 'JIE_A1_S_V1':
+					$aryConfig = $aryBTCData;
+					$aryConfig['ac'] = $aryBTCData['ac'][0];
+					$aryConfig['speed'] = $aryBTCData['speed'];
+				
+					CUtilRestart::restartByJieA1( $aryConfig );
+				
+					break;
+
 				case 'GS_A1_S_V1':
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
