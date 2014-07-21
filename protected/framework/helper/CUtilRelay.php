@@ -15,7 +15,7 @@ class CUtilRelay
 	public static function getRelayPort()
 	{
 		// 寻找继电器端口
-		$command = "dmesg|awk -F ' ' '/pl2303.*(ttyUSB[0-9]+)/{split(\$NF,a,\"/\");print a[1]}'";
+		$command = "dmesg|awk -F ' ' '/pl2302.*(ttyUSB[0-9]+)/{split(\$NF,a,\"/\");print a[1]}'";
 		@exec( $command , $output );
 
 		// 返回找到的端口
@@ -36,7 +36,7 @@ class CUtilRelay
 	{
 		@exec( SUDO_COMMAND."chmod 777 /dev/{$_strPort}" );
 		@exec( SUDO_COMMAND."stty -F /dev/{$_strPort} raw speed 9600;".SUDO_COMMAND."echo \"O(00,05,0)E\" > /dev/{$_strPort} &" );
-		usleep( $_intTime * 2 );
+		usleep( $_intTime );
 		@exec( SUDO_COMMAND."stty -F /dev/{$_strPort} raw speed 9600;".SUDO_COMMAND."echo \"O(00,05,1)E\" > /dev/{$_strPort} &" );
 		usleep( $_intTime );
 	}
