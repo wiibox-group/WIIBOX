@@ -9,7 +9,7 @@ WIIBOX open source
 
 ###目前已经开放 703N 与 raspberry 方案，官方 img 可在此处下载（帐号密码均为树莓默认）：<br/>
 ```ObjectiveC
-http://www.wiibox.net/#download
+http://www.wiibox.net/#software
 ```
 ###WIIBOX 所使用的帐号/密码列表如下：<br/>
 ```ObjectiveC
