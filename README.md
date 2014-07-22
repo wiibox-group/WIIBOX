@@ -7,13 +7,18 @@ WIIBOX open source
 3. WIIBOX之前没有开源有诸多原因，简单说来包括：系统不稳定、支持菊花矿机时间紧迫、升级频率过高、官方要求严格。<br/><br/>
 4. 我们不只是做控制器，之后还有更强大的生态链，希望强大的你与我们一起完善控制器程序！<br/><br/>
 
-###目前已经开放 raspberry 方案，官方 img 可在此处下载（帐号密码均为树莓默认）：<br/>
+###目前已经开放 703N 与 raspberry 方案，官方 img 可在此处下载（帐号密码均为树莓默认）：<br/>
 ```ObjectiveC
-http://pan.baidu.com/s/1sjPieM5
+http://www.wiibox.net/#download
 ```
-###WIIBOX已完成对A2的官方支持，镜像地址为（帐号密码均为树莓默认）：<br/>
+###WIIBOX 所使用的帐号/密码列表如下：<br/>
 ```ObjectiveC
-http://pan.baidu.com/s/1eQw0KFK
+703N:
+root@+xTjPR4L%V?=s4-!Ahz3~FXZM^sW:gA_
+
+Raspberry Pi:
+pi@raspberry
+root@123qwe!@#
 ```
 （ 新版v2.1.3，此版本已重新编译浮点运算处理，增强了稳定性，目前已通过稳定性测试200小时以上，需要8G以上SD卡 ）<br/>
 <br/>
