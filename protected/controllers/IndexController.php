@@ -296,12 +296,14 @@ class IndexController extends BaseController
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
 					// Restart by relay
+					/*
 					$strRelayPort = CUtilRelay::getRelayPort();
 					if ( !empty( $strRelayPort ) )
 						CUtilRelay::restartPower( $strRelayPort , 2000000 );
 
 					$aryUsbCache = UsbModel::model()->getUsbChanging( $strRunMode , 0.1, $strCheckTar );
 					$aryUsb = $aryUsbCache['usb'];
+					*/
 					$aryConfig['usb'] = $aryUsb;
 
 					CUtilRestart::restartByZs( $aryConfig );
@@ -976,7 +978,7 @@ class IndexController extends BaseController
 		$redis->writeByKey( 'speed.count.log' , json_encode( $countData , 1 ) );
 
 		// if need restart
-		if ( $boolIsNeedRestart === true )
+		if ( $boolIsNeedRestart === true && SYS_INFO !== 'ZS_S_V1' )
 		{
 			$this->actionRestart( true );
 			
