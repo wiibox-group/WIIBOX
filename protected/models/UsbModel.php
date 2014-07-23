@@ -108,8 +108,6 @@ class UsbModel extends CModel
 			$aryUsbCache['usb'] = $output;
 			$aryUsbCache['time'] = time();
 			$aryUsbCache['hasgd'] = 0;
-
-			return $aryUsbCache;
 		}
 		else if ( $_strCheckTar === 'spi' )
 		{
@@ -132,9 +130,23 @@ class UsbModel extends CModel
 			$aryUsbCache = array();
 			$aryUsbCache['usb'] = $aryUsb;
 			$aryUsbCache['time'] = time();
-
-			return $aryUsbCache;
 		}
+
+		// ZS need without relay port
+		/*
+		if ( SYS_INFO === 'ZS_S_V1' )
+		{
+			$strRelayPort = CUtilRelay::getRelayPort();
+			if ( !empty( $strRelayPort ) )
+			{
+				foreach ( $aryUsbCache['usb'] as $k=>$v )
+				{
+					if ( strpos( $v , $strRelayPort ) )
+						unset( $aryUsbCache['usb'][$k] );
+				}
+			}
+		}
+		*/
 
 		return $aryUsbCache;
 	}
