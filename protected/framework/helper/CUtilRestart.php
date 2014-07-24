@@ -125,7 +125,7 @@ class CUtilRestart
 	/**
 	 * 重启大红袍
 	 */
-	public static function restartByDIF128Chips( $_aryConfig = array() )
+	public static function restartByDIF128Chips( $_aryConfig = array() , $_strUsb = '' )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -162,7 +162,7 @@ class CUtilRestart
 	/**
 	 * 重启菊花单挖
 	 */
-	public static function restartByGS5Chips( $_aryConfig = array() , $_strUsb )
+	public static function restartByGS5Chips( $_aryConfig = array() , $_strUsb = '' )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
