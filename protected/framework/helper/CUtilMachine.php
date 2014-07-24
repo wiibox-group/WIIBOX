@@ -39,7 +39,7 @@ class CUtilMachine
 				'RASPBERRY_GS_A1_S_V1'	=> 'spi-btc',
 				'RASPBERRY_JIE_A1_S_V1'	=> 'spi-btc',
 				'RASPBERRY_FC_S_V1'		=> 'tty-btc',
-				'RASPBERRY_XQ_S_V1'		=> 'lsusb-api',
+				'RASPBERRY_XQ_S_V1'		=> 'lsusb-btc',
 				'OPENWRT_DIF_S_V1'		=> 'lsusb-api',
 				'RASPBERRY_DIF_S_V1'	=> 'lsusb-api',
 				'OPENWRT_AV_S_V1'		=> 'tty-btc',

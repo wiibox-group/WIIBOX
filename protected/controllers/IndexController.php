@@ -706,6 +706,8 @@ class IndexController extends BaseController
 		{
 			// btc mode use spi agreement
 			case 'spi-btc':
+			// btc mode use lsusb agreement
+			case 'lsusb-btc':
 			// btc mode use tty agreement
 			case 'tty-btc':
 
