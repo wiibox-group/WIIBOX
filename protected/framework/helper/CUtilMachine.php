@@ -4,6 +4,9 @@
  */
 class CUtilMachine
 {
+	/** Speed list step */
+	const SPEED_STEP = 25;
+
 	/** Machine default run speed **/
 	private static $_defaultSpeed = array(
 				// GS 5chips
@@ -21,7 +24,7 @@ class CUtilMachine
 				// Fried Cat
 				'FC_S_V1'		=> 300,
 				// Rock Box for xiaoqiang
-				'XQ_S_V1'		=> 300,
+				'XQ_S_V1'		=> 320,
 				// Diginforce
 				'DIF_S_V1'		=> 850,
 				// Avalon 3
@@ -110,15 +113,21 @@ class CUtilMachine
 			return array();
 
 		// 最小速度，前后延伸4个速度梯度
-		$intMin = $intSpeed - 4 * 25;
+		$intMin = floor( $intSpeed / self::SPEED_STEP ) * self::SPEED_STEP - 4 * self::SPEED_STEP;
 		$intMin = $intMin > 0 ? $intMin : 0;
 
 		// 可用速度集合
 		$arySpeed = array();
 		for ( $i = 0; $i < 10; $i++ )
-			$arySpeed[] = $intMin + $i * 25;
+		{
+			$intGetSpeed = $intMin + $i * self::SPEED_STEP;
+			$arySpeed[$intGetSpeed] = $intGetSpeed;
+		}
 
-		return $arySpeed;
+		$arySpeed[$intSpeed] = $intSpeed;
+		ksort( $arySpeed );
+
+		return array_values( $arySpeed );
 	}
 
 	/**
