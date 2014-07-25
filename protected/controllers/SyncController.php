@@ -57,6 +57,10 @@ class SyncController extends BaseController
 		// get alived machine count
 		$intCountMachine = max( count( $checkState['alived']['BTC'] )+count( $checkState['died']['BTC'] ) , count( $checkState['alived']['LTC'] )+count( $checkState['died']['LTC'] ) );
 
+		// get machine number
+		$strCheckTar = CUtilMachine::getCheckMode( $sys->cursys );
+		$aryUsb = UsbModel::model()->getUsbCheckResult( $strRunMode , $strCheckTar );
+
 		// get max accept number
 		$intMaxNum = max( $countData['BTC']['A'] , $countData['BTC']['R'] , $countData['LTC']['A'] , $countData['LTC']['R'] );
 		if ( $intMaxNum > 0 )
@@ -64,7 +68,7 @@ class SyncController extends BaseController
 			$countData['last'] = time();
 			$countData['noar'] = 0;
 		}
-		else if ( $intMaxNum > 0 )
+		else if ( count( $aryUsb['usb'] ) > 0 )
 			$countData['noar'] += 1;
 
 		// if need reload conf
@@ -76,7 +80,9 @@ class SyncController extends BaseController
 			$countData['noar'] = 0;
 		}
 
+		// get local speed data
 		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
+
 		$arySyncData = array();
 		$arySyncData['key'] = md5($mac_addr->mac_addr.'-'.$strRKEY);
 		$arySyncData['time'] = time();
@@ -229,6 +235,9 @@ class SyncController extends BaseController
 			$indexController->actionRestart();
 		else if ( $boolIsRestart === true )
 			$indexController->actionRestart();
+
+		if ( !empty( $syncData['reboot'] ) && $syncData['reboot'] === 1 )
+			$indexController->actionReboot();
 
 		echo '200';
 		exit();

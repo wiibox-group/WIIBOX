@@ -24,10 +24,6 @@ while true ; do
 	if [ $to_speed -eq 0 ] ; then
 		wget http://127.0.0.1/index.php?r=speed/index -O /dev/null >/dev/null 2>&1
 	fi
-	
-	if [ $to_speed -eq 0 ] ; then
-		wget http://127.0.0.1/index.php?r=sync/speed -O /dev/null >/dev/null 2>&1
-	fi
 
 	count=$((count+5))
 	if [ $count -ge 600 ] ; then

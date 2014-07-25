@@ -16,7 +16,7 @@ class SpeedController extends BaseController
 	public function actionIndex()
 	{
 		
-		if( SpeedModel::model() -> refreshSpeedData() === false )
+		if ( SpeedModel::model() -> refreshSpeedData() === false )
 			echo '500';
 
 		echo '200';
@@ -37,15 +37,15 @@ class SpeedController extends BaseController
 		try
 		{
 			$objSpeedModel = SpeedModel::model();
+			/*
 			if( Nbt::app() -> request -> isAjaxRequest )
 			{
+			*/
 				$aryData = $objSpeedModel -> getSpeedDataByFile();
+
 				//如果数据不存在，则刷新一次数据
-				if(empty( $aryData ) && $objSpeedModel -> refreshSpeedData() === true)
-				{
+				if ( empty( $aryData ) && $objSpeedModel -> refreshSpeedData() === true )
 					$aryData = $objSpeedModel -> getSpeedDataByFile();
-					
-				}
 				
 				//如果数据依然不存在，则抛出系统异常错误
 				if( !empty ( $aryData ) )
@@ -60,11 +60,13 @@ class SpeedController extends BaseController
 				{
 					throw new CModelException( CUtil::i18n('exception,sys_error') );
 				}
+			/*
 			}
 			else
 			{
 				throw new CModelException( CUtil::i18n('exception,sys_error') );
 			}
+			*/
 		}
 		catch( CModelException $e )
 		{

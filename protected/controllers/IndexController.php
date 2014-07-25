@@ -190,7 +190,16 @@ class IndexController extends BaseController
 			$aryBTCData = $this->getTarConfig( 'btc' );
 
 			switch ( SYS_INFO )
-			{
+			{	
+				case 'JIE_A1_S_V1':
+					$aryConfig = $aryBTCData;
+					$aryConfig['ac'] = $aryBTCData['ac'][0];
+					$aryConfig['speed'] = $aryBTCData['speed'];
+				
+					CUtilRestart::restartByJieA1( $aryConfig );
+				
+					break;
+
 				case 'GS_A1_S_V1':
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
@@ -244,25 +253,6 @@ class IndexController extends BaseController
 
 			switch ( SYS_INFO )
 			{
-				case 'GS_D_V2':
-				case 'GS_S_V3':
-					$intUids = $aryLTCData['acc'];
-					foreach ( $aryUsb as $usb )
-					{
-						$aryConfig = $aryLTCData;
-						if ( $intUids < 1 )
-							$intUids = $aryLTCData['acc'];
-
-						$aryConfig['ac'] = $aryLTCData['ac'][$aryLTCData['acc']-$intUids];
-						$aryConfig['mode'] = $strRunMode;
-						$aryConfig['su'] = $aryLTCData['su'];
-
-						CUtilRestart::restartByGS40Chips( $aryConfig );
-						$intUids --;
-					}
-
-					break;
-
 				case 'A2_S_V1':
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
@@ -283,12 +273,20 @@ class IndexController extends BaseController
 					break;
 
 				case 'DIF_S_V1':
-					$aryConfig = $aryLTCData;
-					$aryConfig['ac'] = $aryLTCData['ac'][0];
-					$aryConfig['mode'] = $strRunMode;
-					$aryConfig['speed'] = $aryLTCData['speed'];
+					$intUids = $aryLTCData['acc'];
+					foreach ( $aryUsb as $usb )
+					{
+						$aryConfig = $aryLTCData;
+						if ( $intUids < 1 )
+							$intUids = $aryLTCData['acc'];
 
-					CUtilRestart::restartByDIF128Chips( $aryConfig );
+						$aryConfig['ac'] = $aryLTCData['ac'][$aryLTCData['acc']-$intUids];
+						$aryConfig['mode'] = $strRunMode;
+						$aryConfig['su'] = $aryLTCData['su'];
+
+						CUtilRestart::restartByDIF128Chips( $aryConfig , $usb );
+						$intUids --;
+					}
 
 					break;
 
@@ -296,14 +294,41 @@ class IndexController extends BaseController
 					$aryConfig = $aryLTCData;
 					$aryConfig['ac'] = $aryLTCData['ac'][0];
 					$aryConfig['speed'] = $aryLTCData['speed'];
+
+					// Restart by relay
+					/*
+					$strRelayPort = CUtilRelay::getRelayPort();
+					if ( !empty( $strRelayPort ) )
+						CUtilRelay::restartPower( $strRelayPort , 2000000 );
+
+					$aryUsbCache = UsbModel::model()->getUsbChanging( $strRunMode , 0.1, $strCheckTar );
+					$aryUsb = $aryUsbCache['usb'];
+					*/
 					$aryConfig['usb'] = $aryUsb;
 
 					CUtilRestart::restartByZs( $aryConfig );
 
 					break;
 
+				case 'GS_S_V3':
+				case 'GS_D_V2':
 				// other mode
 				default:
+					$intUids = $aryLTCData['acc'];
+					foreach ( $aryUsb as $usb )
+					{
+						$aryConfig = $aryLTCData;
+						if ( $intUids < 1 )
+							$intUids = $aryLTCData['acc'];
+
+						$aryConfig['ac'] = $aryLTCData['ac'][$aryLTCData['acc']-$intUids];
+						$aryConfig['mode'] = $strRunMode;
+						$aryConfig['su'] = $aryLTCData['su'];
+
+						CUtilRestart::restartByGS5Chips( $aryConfig , $usb );
+						$intUids --;
+					}
+
 					break;
 			}
 		}
@@ -681,6 +706,8 @@ class IndexController extends BaseController
 		{
 			// btc mode use spi agreement
 			case 'spi-btc':
+			// btc mode use lsusb agreement
+			case 'lsusb-btc':
 			// btc mode use tty agreement
 			case 'tty-btc':
 
@@ -953,7 +980,7 @@ class IndexController extends BaseController
 		$redis->writeByKey( 'speed.count.log' , json_encode( $countData , 1 ) );
 
 		// if need restart
-		if ( $boolIsNeedRestart === true )
+		if ( $boolIsNeedRestart === true && SYS_INFO !== 'ZS_S_V1' )
 		{
 			$this->actionRestart( true );
 			
@@ -1019,14 +1046,15 @@ class IndexController extends BaseController
 		return $this->_sys;
 	}
 
-	public function actionGetSpeed()
+	/**
+	 * Reboot
+	 */
+	public function actionReboot()
 	{
-		$isOk = 0;
-		$msg = '';
-		$aryData = array('run' => '' , 'value' => array() );
-		$aryData['value'] = SpeedModel::model() -> getSpeedDataByApi();
-		$aryData['run'] =  RunModel::model() -> getRunMode();
-		echo $this -> encodeAjaxData($isOk , $aryData , $msg , -1);
+		$command = SUDO_COMMAND.'reboot';
+		@exec( $command );
+
+		return true;
 	}
 
 //end class
