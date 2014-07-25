@@ -9,9 +9,6 @@
 	<meta name="Description" content="<?php echo $this->getSeoDesc();?>" />
 	<title><?php echo $this->getSeoTitle();?></title>
 	<link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl;?>/static/assets/style/style.min.css"/>
-	<?php if( NBT_DEBUG ):?>
-	<script src="<?php echo $this->baseUrl;?>/static/libs/dump/dump.js"></script>
-	<?php endif;?>
 	<!--[if lt IE 9]>
 	<script src="<?php echo $this->baseUrl;?>/staic/libs/html5shiv/html5shiv.min.js"></script>
 	<script src="<?php echo $this->baseUrl;?>/static/libs/respond/respond.min.js"></script>
