@@ -21,6 +21,37 @@
         }
     });
 
+    // Set name of hidden property and visibility change event
+    // since some browsers only offer vendor-prefixed support
+    var hidden, state, visibilityChange;
+    if (typeof document.hidden !== "undefined") {
+        hidden = "hidden";
+        visibilityChange = "visibilitychange";
+        state = "visibilityState";
+    } else if (typeof document.mozHidden !== "undefined") {
+        hidden = "mozHidden";
+        visibilityChange = "mozvisibilitychange";
+        state = "mozVisibilityState";
+    } else if (typeof document.msHidden !== "undefined") {
+        hidden = "msHidden";
+        visibilityChange = "msvisibilitychange";
+        state = "msVisibilityState";
+    } else if (typeof document.webkitHidden !== "undefined") {
+        hidden = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
+        state = "webkitVisibilityState";
+    }
+
+    var pageState = true;
+    document.addEventListener(visibilityChange, function() {
+        if(document[state] === 'visible'){ //可见
+            pageState = true;
+        }else{ //不可见
+            pageState = false;
+        }
+    }, false);
+
+
     function init(langData) {
         //form的验证事件
         $('#signinForm').html5Validate(function() {
@@ -110,7 +141,6 @@
             var sum = 0;
 
             //出币
-
             function addCoins(count) {
                 // 自动出币最多50次
                 if (sum == 50) {
@@ -141,8 +171,10 @@
 
             //定时出币
             var loop = setInterval(function() {
-                addCoins();
-                sum++;
+                if(pageState){ //如果页面在可见状态下
+                    addCoins();
+                    sum++;
+                }
             }, 5000);
 
             //点击doge，大量出币
@@ -150,7 +182,6 @@
                 //随机3～6颗
                 addCoins(parseInt(Math.random() * 3 + 3));
             });
-
         }
 
         //doge-tip
