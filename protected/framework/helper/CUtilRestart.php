@@ -79,7 +79,8 @@ class CUtilRestart
 		if ( empty( $_aryConfig ) )
 			return false;
 
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_xq -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
+		$intRunSpeed = intval( $_aryConfig['speed'] );
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_xq -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 --icarus-options=115200:1:1 --rmu-auto {$intRunSpeed} --rmu-fan 0 >/dev/null 2>&1 &";
 
 		@exec( $command );
 		return true;
@@ -125,7 +126,7 @@ class CUtilRestart
 	/**
 	 * 重启大红袍
 	 */
-	public static function restartByDIF128Chips( $_aryConfig = array() )
+	public static function restartByDIF128Chips( $_aryConfig = array() , $_strUsb = '' )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;
@@ -162,7 +163,7 @@ class CUtilRestart
 	/**
 	 * 重启菊花单挖
 	 */
-	public static function restartByGS5Chips( $_aryConfig = array() , $_strUsb )
+	public static function restartByGS5Chips( $_aryConfig = array() , $_strUsb = '' )
 	{
 		if ( empty( $_aryConfig ) )
 			return false;

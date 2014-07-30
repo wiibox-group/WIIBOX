@@ -16,6 +16,7 @@ class RunModel extends CModel
 				'GS_A1_S_V1' => 'B',
 				'FC_S_V1' => 'B',
 				'AV_S_V1' => 'B',
+				'XQ_S_V1' =>'B',
 			);
 
 	/**
