@@ -412,6 +412,9 @@ class IndexController extends BaseController
 					&& in_array( $strRunMode , array( 'B','LB' ) ) 
 					&& $alivedBTC === false )
 				$alivedBTC = true;
+
+			if ( $strRunMode === 'LB' && $alivedLTC === true && $alivedBTC === false )
+				$alivedBTC = true;
 		}
 
 		// Alived machine
