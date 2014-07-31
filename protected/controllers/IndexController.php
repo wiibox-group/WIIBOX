@@ -246,7 +246,7 @@ class IndexController extends BaseController
 		}
 
 		// if ltc machine has restart
-		if ( count( $aryUsb ) > 0 && in_array( $strRunMode , array( 'L' ) ) ) 
+		if ( count( $aryUsb ) > 0 && in_array( $strRunMode , array( 'L','LB' ) ) ) 
 		{
 			// get ltc config
 			$aryLTCData = $this->getTarConfig( 'ltc' );
@@ -296,14 +296,12 @@ class IndexController extends BaseController
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
 					// Restart by relay
-					/*
 					$strRelayPort = CUtilRelay::getRelayPort();
 					if ( !empty( $strRelayPort ) )
 						CUtilRelay::restartPower( $strRelayPort , 2000000 );
 
 					$aryUsbCache = UsbModel::model()->getUsbChanging( $strRunMode , 0.1, $strCheckTar );
 					$aryUsb = $aryUsbCache['usb'];
-					*/
 					$aryConfig['usb'] = $aryUsb;
 
 					CUtilRestart::restartByZs( $aryConfig );

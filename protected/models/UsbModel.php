@@ -133,7 +133,6 @@ class UsbModel extends CModel
 		}
 
 		// ZS need without relay port
-		/*
 		if ( SYS_INFO === 'ZS_S_V1' )
 		{
 			$strRelayPort = CUtilRelay::getRelayPort();
@@ -146,7 +145,6 @@ class UsbModel extends CModel
 				}
 			}
 		}
-		*/
 
 		return $aryUsbCache;
 	}
