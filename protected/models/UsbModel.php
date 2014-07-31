@@ -132,20 +132,6 @@ class UsbModel extends CModel
 			$aryUsbCache['time'] = time();
 		}
 
-		// ZS need without relay port
-		if ( SYS_INFO === 'ZS_S_V1' )
-		{
-			$strRelayPort = CUtilRelay::getRelayPort();
-			if ( !empty( $strRelayPort ) )
-			{
-				foreach ( $aryUsbCache['usb'] as $k=>$v )
-				{
-					if ( strpos( $v , $strRelayPort ) )
-						unset( $aryUsbCache['usb'][$k] );
-				}
-			}
-		}
-
 		return $aryUsbCache;
 	}
 
