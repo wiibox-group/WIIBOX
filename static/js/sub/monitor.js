@@ -169,23 +169,8 @@
                 dataType: 'json',
                 timeout: 10000,
                 success: function(data) {
-
-                    data = {
-                        "alived": {
-                            "BTC": ["1:10", "1:11", "1:12", "1:13"],
-                            "LTC": ["1:15", "1:16", "1:4", "1:5", "1:6", "1:7"]
-                        },
-                        "died": {
-                            "BTC": [ "1:13", "1:14", "1:15", "1:16"],
-                            "LTC": ["1:15", "1:16", "1:4"]
-                        },
-                        "super": true
-                    };
-
-                    data.basei18n = basei18n;
-
-
                     if (data.alived.BTC.length || data.alived.LTC.length || data.died.BTC.length || data.died.LTC.length) {
+                        data.basei18n = basei18n;
                         var temp = Handlebars.compile(tpl);
                         $('#statusTable>tbody').html(temp(data));
                     } else {
