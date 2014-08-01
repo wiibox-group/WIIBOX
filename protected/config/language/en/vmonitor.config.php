@@ -8,4 +8,5 @@
     	'sha_runStatus' => 'SHA Running Status',
     	'this_version' => 'Current Version:',
     	'scrypt_runStatus' => 'SCRYPT Running Status',
+        'number' => 'Number'
     );

@@ -16,13 +16,6 @@
 	</div>
 	<div class="table-responsive">
 		<table id="statusTable" class="table table-hover table-bordered table-striped">
-			<thead>
-				<tr>
-					<th><?php echo CUtil::i18n('vmonitor,status_device');?></th>
-					<th><?php echo CUtil::i18n('vmonitor,status_state');?></th>
-					<th><?php echo CUtil::i18n('vmonitor,status_algorithm');?></th>
-				</tr>
-			</thead>
 			<tbody>
 				<tr>
 					<td colspan="3">loading...</td>
