@@ -56,7 +56,7 @@
         //form的验证事件
         $('#signinForm').html5Validate(function() {
             //通过验证，提交表单
-            $(this).submit();
+            $('#signinForm')[0].submit();
         });
 
         // Matter aliases
