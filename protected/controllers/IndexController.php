@@ -669,10 +669,11 @@ class IndexController extends BaseController
 		$aryUsbCache = UsbModel::model()->getUsbCheckResult( $strRunMode , $strCheckTar );
 		$aryUsb = $aryUsbCache['usb'];
 
+		//get 
 		$redis = $this->getRedis();
 		$speedLog = $redis->readByKey( 'speed.log' );
 		$countLog = $redis->readByKey( 'speed.count.log' );
-
+		
 		$speedData = json_decode( $speedLog , 1 );
 		$countData = json_decode( $countLog , 1 );
 
@@ -694,7 +695,17 @@ class IndexController extends BaseController
 
 		$boolIsNeedRestart = false;
 		$newData = array('BTC'=>array(),'LTC'=>array());
-
+		
+		// get speed data
+		$arySpeedData = SpeedModel::getSpeedDataByApi();
+		
+		// get history accept
+		$historyLog = $redis->readByKey( 'speed.history.log' );
+		$aryHistory = json_decode( $historyLog , 1 );
+		
+		// high speed
+		$doubleHighSpeed = 0;
+		
 		switch ( $strCheckTar )
 		{
 			// btc mode use spi agreement
@@ -703,19 +714,21 @@ class IndexController extends BaseController
 			case 'lsusb-btc':
 			// btc mode use tty agreement
 			case 'tty-btc':
-
-				// get speed data
-				$arySpeedData = SpeedModel::getSpeedDataByApi();
-
-				// get history accept
-				$historyLog = $redis->readByKey( 'speed.history.log' );
-				$aryHistory = json_decode( $historyLog , 1 );
-
-				// high speed
-				$doubleHighSpeed = 0;
+				
+				//统计挂掉的算力版个数
+				$speedCountResult['error'] = 0;
 				foreach ( $arySpeedData as $key=>$data )
+				{
 					$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
-
+					if(isset($aryHistory[$key]['A'])&&$aryHistory[$key]['A']>=$arySpeedData[$key]['A'])
+					{
+						$speedCountResult['error']++;
+					}
+				}
+				
+				$speedCountResult['normal'] = count($aryUsb) - $speedCountResult['error'];
+				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
+				
 				// parse data
 				foreach ( $arySpeedData as $key=>$data )
 				{
@@ -753,18 +766,20 @@ class IndexController extends BaseController
 			case 'lsusb-api':
 			// ltc mode use spi agreement
 			case 'spi-ltc':
-
-				// get speed data
-				$arySpeedData = SpeedModel::getSpeedDataByApi();
-
-				// get history accept
-				$historyLog = $redis->readByKey( 'speed.history.log' );
-				$aryHistory = json_decode( $historyLog , 1 );
-
-				// high speed
-				$doubleHighSpeed = 0;
+				
+				//统计挂掉的算力版个数
+				$speedCountResult['error'] = 0;
 				foreach ( $arySpeedData as $key=>$data )
+				{
 					$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
+					if(isset($aryHistory[$key]['A'])&&$aryHistory[$key]['A']>=$arySpeedData[$key]['A'])
+					{
+						$speedCountResult['error']++;
+					}
+				}
+				
+				$speedCountResult['normal'] = count($aryUsb) - $speedCountResult['error'];
+				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
 
 				// parse data
 				foreach ( $arySpeedData as $key=>$data )
@@ -827,7 +842,10 @@ class IndexController extends BaseController
 
 				if ( file_exists( $btc_log_dir ) )
 					$btc_dir_source = opendir( $btc_log_dir );
-
+				
+				//初始　正常的算力版个数
+				$speedCountResult['normal'] = 0;
+				
 				$btc_need_check_time = false;
 				while ( isset( $btc_dir_source ) && ( $file  = readdir( $btc_dir_source ) ) !== false )
 				{
@@ -857,7 +875,9 @@ class IndexController extends BaseController
 						unlink( $sub_dir );
 						$btc_need_check_time = true;
 					}
+					$speedCountResult['normal']＋＋;
 				}
+				
 				
 				if ( $btc_need_check_time === true || empty( $countData['BTC']['LC'] ) )
 					$countData['BTC']['LC'] = $now;
@@ -915,6 +935,8 @@ class IndexController extends BaseController
 						unlink( $sub_dir );
 						$ltc_need_check_time = true;
 					}
+					
+					$speedCountResult['normal']＋＋;
 				}
 				
 				
@@ -945,7 +967,11 @@ class IndexController extends BaseController
 
 				if ( empty( $speedData['lastlog'] ) )
 					$boolIsNeedRestart = false;
-
+				
+				//保存　算力版统计结果
+				$speedCountResult['error'] = count($aryUsb) - $speedCountResult['normal'];
+				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
+				
 				// end tty/lsusb mode
 				break;
 		}
