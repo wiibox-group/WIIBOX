@@ -145,23 +145,32 @@
         }
 
 
+        function deviceTpl() {
+            $.ajax({
+                url: '/static/js/tpl/monitor.tpl',
+                dataType: 'text',
+                success: function(data) {
+                    deviceInfo(data);
+                },
+                error: function() {
+                    $('#statusTable>tbody').html('<tr><td colspan="4">' + basei18n.loadFaild + '</td></tr>');
+                }
+            });
+        }
+
 
         /*
          查询设备运行状态
          */
 
-        function deviceInfo() {
+        function deviceInfo(tpl) {
             $.ajax({
-                type: 'get',
                 url: $('#urlConfig').data('check'),
                 dataType: 'json',
                 timeout: 10000,
                 success: function(data) {
                     if (data.alived.BTC.length || data.alived.LTC.length || data.died.BTC.length || data.died.LTC.length) {
-                        var tpl = '{{#each alived.BTC}}<tr><td>B:{{this}}</td><td>' + basei18n.running + '</td><td>SHA</td></tr>{{/each}}';
-                        tpl += '{{#each alived.LTC}}<tr><td>L:{{this}}</td><td>' + basei18n.running + '</td><td>SCRYPT</td></tr>{{/each}}';
-                        tpl += '{{#each died.BTC}}<tr><td>B:{{this}}</td><td>' + basei18n.stopped + '</td><td>SHA</td></tr>{{/each}}';
-                        tpl += '{{#each died.LTC}}<tr><td>L:{{this}}</td><td>' + basei18n.stopped + '</td><td>SCRYPT</td></tr>{{/each}}';
+                        data.basei18n = basei18n;
                         var temp = Handlebars.compile(tpl);
                         $('#statusTable>tbody').html(temp(data));
                     } else {
@@ -183,13 +192,13 @@
 
             function doAgain() {
                 setTimeout(function() {
-                    deviceInfo();
+                    deviceTpl();
                 }, 10000);
             }
         }
 
         $(document).ready(function() {
-            deviceInfo();
+            deviceTpl();
         });
 
     }

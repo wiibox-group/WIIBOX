@@ -41,7 +41,7 @@ module.exports = function(grunt) {
                     footer: '\n/*! <%= pkg.name %> 最后修改于： <%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    'static/js/libs.min.js': ['static/libs/jquery/jquery-1.11.1.js', 'static/libs/jquery-migrate/jquery-migrate-1.2.1.js', 'static/libs/bootstrap/js/bootstrap.js', 'static/libs/jquery-cookie/jquery.cookie.js', 'static/libs/handlebars/handlebars-v1.3.0.js', 'static/libs/highcharts/highcharts.js', 'static/libs/nprogress/nprogress.js', 'static/libs/jquery-html5Validate/jquery-html5Validate.js'],
+                    'static/js/libs.min.js': ['static/libs/jquery/jquery-1.11.1.js', 'static/libs/jquery-migrate/jquery-migrate-1.2.1.js', 'static/libs/bootstrap/js/bootstrap.js', 'static/libs/jquery-cookie/jquery.cookie.js', 'static/libs/handlebars/handlebars-v1.3.0.js', 'static/libs/handlebars/handlebars-helper.js', 'static/libs/highcharts/highcharts.js', 'static/libs/nprogress/nprogress.js', 'static/libs/jquery-html5Validate/jquery-html5Validate.js'],
                     'static/js/script.min.js': ['static/js/sub/base.js', 'static/js/sub/index.js', 'static/js/sub/monitor.js'],
                     'static/js/login.min.js': ['static/libs/matter/matter.min.js', 'static/js/sub/login.js'],
                     'static/js/check.min.js': ['static/js/sub/check.js']
