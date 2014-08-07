@@ -696,16 +696,6 @@ class IndexController extends BaseController
 		$boolIsNeedRestart = false;
 		$newData = array('BTC'=>array(),'LTC'=>array());
 		
-		// get speed data
-		$arySpeedData = SpeedModel::getSpeedDataByApi();
-		
-		// get history accept
-		$historyLog = $redis->readByKey( 'speed.history.log' );
-		$aryHistory = json_decode( $historyLog , 1 );
-		
-		// high speed
-		$doubleHighSpeed = 0;
-		
 		switch ( $strCheckTar )
 		{
 			// btc mode use spi agreement
@@ -714,7 +704,16 @@ class IndexController extends BaseController
 			case 'lsusb-btc':
 			// btc mode use tty agreement
 			case 'tty-btc':
+				// get speed data
+				$arySpeedData = SpeedModel::getSpeedDataByApi();
 				
+				// get history accept
+				$historyLog = $redis->readByKey( 'speed.history.log' );
+				$aryHistory = json_decode( $historyLog , 1 );
+				
+				// high speed
+				$doubleHighSpeed = 0;
+
 				//统计挂掉的算力版个数
 				$speedCountResult['error'] = 0;
 				foreach ( $arySpeedData as $key=>$data )
@@ -767,6 +766,16 @@ class IndexController extends BaseController
 			// ltc mode use spi agreement
 			case 'spi-ltc':
 				
+				// get speed data
+				$arySpeedData = SpeedModel::getSpeedDataByApi();
+
+				// get history accept
+				$historyLog = $redis->readByKey( 'speed.history.log' );
+				$aryHistory = json_decode( $historyLog , 1 );
+
+				// high speed
+				$doubleHighSpeed = 0;
+
 				//统计挂掉的算力版个数
 				$speedCountResult['error'] = 0;
 				foreach ( $arySpeedData as $key=>$data )
@@ -875,7 +884,7 @@ class IndexController extends BaseController
 						unlink( $sub_dir );
 						$btc_need_check_time = true;
 					}
-					$speedCountResult['normal']＋＋;
+					$speedCountResult['normal']++;
 				}
 				
 				
@@ -936,7 +945,7 @@ class IndexController extends BaseController
 						$ltc_need_check_time = true;
 					}
 					
-					$speedCountResult['normal']＋＋;
+					$speedCountResult['normal']++;
 				}
 				
 				
