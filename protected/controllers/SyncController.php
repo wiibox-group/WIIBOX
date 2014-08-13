@@ -81,7 +81,7 @@ class SyncController extends BaseController
 		}
 		//get 
 		$strSpeedCountResultRedis = $redis->readByKey('speed.count.result');
-		$speedCountResult = $strSpeedCountResultRedis == '' ? array() : json_decode($strSpeedCountResultRedis);
+		$speedCountResult = $strSpeedCountResultRedis == '' ? array() : json_decode($strSpeedCountResultRedis,1);
 		
 		// get local speed data
 		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
