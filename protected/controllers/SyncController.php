@@ -79,7 +79,10 @@ class SyncController extends BaseController
 			$countData['last'] = time();
 			$countData['noar'] = 0;
 		}
-
+		//get 
+		$strSpeedCountResultRedis = $redis->readByKey('speed.count.result');
+		$speedCountResult = $strSpeedCountResultRedis == '' ? array() : json_decode($strSpeedCountResultRedis,1);
+		
 		// get local speed data
 		$aryLocalSpeedData = SpeedModel::model() -> createSyncSpeedData();
 
@@ -88,7 +91,7 @@ class SyncController extends BaseController
 		$arySyncData['time'] = time();
 		$arySyncData['data'] = array();
 		$arySyncData['data']['sync']['st'] = count( $checkState['alived']['BTC'] ) > 0 || count( $checkState['alived']['LTC'] ) > 0 ? ( $checkState['super'] === true ? 2 : 1 ) : -1;
-		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'btc'=>0 , 'ltc'=>0 );
+		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'error'=>$speedCountResult['error'] , 'normal'=>$speedCountResult['normal'] );
 		$arySyncData['data']['sync']['ar'] = $countData;
 		$arySyncData['data']['sync']['ve'] = CUR_VERSION_NUM;
 		$arySyncData['data']['sync']['md'] = $strRunMode;
