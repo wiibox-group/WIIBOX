@@ -91,7 +91,7 @@ class SyncController extends BaseController
 		$arySyncData['time'] = time();
 		$arySyncData['data'] = array();
 		$arySyncData['data']['sync']['st'] = count( $checkState['alived']['BTC'] ) > 0 || count( $checkState['alived']['LTC'] ) > 0 ? ( $checkState['super'] === true ? 2 : 1 ) : -1;
-		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'error'=>$speedCountResult['error'] , 'normal'=>$speedCountResult['normal'] );
+		$arySyncData['data']['sync']['sp'] = array( 'count'=>$intCountMachine , 'error'=>$speedCountResult['error'] , 'normal'=>$speedCountResult['normal'] , 'lsusb'=>0 );
 		$arySyncData['data']['sync']['ar'] = $countData;
 		$arySyncData['data']['sync']['ve'] = CUR_VERSION_NUM;
 		$arySyncData['data']['sync']['md'] = $strRunMode;

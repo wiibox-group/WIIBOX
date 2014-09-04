@@ -102,7 +102,7 @@ class CUtilRestart
 		}
 
 		$intRunSpeed = intval( $_aryConfig['speed'] );
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_av {$strUsbParam} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --avalon2-freq={$intRunSpeed} --avalon2-fan=40 --avalon2-voltage=7000 --api-listen --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_av {$strUsbParam} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --avalon2-freq={$intRunSpeed} --avalon2-fan=90 --avalon2-voltage=7000 --api-listen --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
 
 		@exec( $command );
 		return true;
@@ -117,7 +117,7 @@ class CUtilRestart
 			return false;
 
 		$intRunSpeed = intval( $_aryConfig['speed'] );
-		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 >/dev/null 2>&1 &";
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_ltc --gridseed-options=baud=115200,freq={$intRunSpeed},modules=1,chips=40,usefifo=0 --hotplug=0 -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --api-listen --api-allow W:127.0.0.1 --text-only >/dev/null 2>&1 &";
 
 		@exec( $command );
 		return true;

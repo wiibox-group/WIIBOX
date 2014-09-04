@@ -57,9 +57,9 @@ class CUtilMachine
 
 	/** default work time interval **/
 	private static $_defaultInterval = array(
-				'GS_D_V2'		=> 120,
-				'GS_S_V2'		=> 120,
-				'GS_S_V3'		=> 120,
+				'GS_D_V2'		=> 300,
+				'GS_S_V2'		=> 300,
+				'GS_S_V3'		=> 300,
 				'A2_S_V1'		=> 300,
 				'GS_A1_S_V1'	=> 300,
 				'JIE_A1_S_V1'	=> 300,

@@ -715,18 +715,9 @@ class IndexController extends BaseController
 				$doubleHighSpeed = 0;
 
 				//统计挂掉的算力版个数
-				$speedCountResult['error'] = 0;
+				$speedCountResult['normal'] = 0;
 				foreach ( $arySpeedData as $key=>$data )
-				{
 					$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
-					if(isset($aryHistory[$key]['A'])&&$aryHistory[$key]['A']>=$arySpeedData[$key]['A'])
-					{
-						$speedCountResult['error']++;
-					}
-				}
-				
-				$speedCountResult['normal'] = count($aryUsb) - $speedCountResult['error'];
-				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
 				
 				// parse data
 				foreach ( $arySpeedData as $key=>$data )
@@ -734,6 +725,8 @@ class IndexController extends BaseController
 					// more than 5 minutes restart
 					if ( $now - $data['LAST'] > $intWorkTimeInterval )
 						$boolIsNeedRestart = true;
+					else
+						$speedCountResult['normal']++;
 
 					// if speed too low
 					if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
@@ -755,6 +748,9 @@ class IndexController extends BaseController
 
 				// write history log
 				$redis->writeByKey( 'speed.history.log' , json_encode( $aryHistory ) );
+				// write machines number log
+				$speedCountResult['error'] = count($aryUsb) - $speedCountResult['normal'];
+				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
 
 				// end btc mode
 				break;
@@ -777,18 +773,9 @@ class IndexController extends BaseController
 				$doubleHighSpeed = 0;
 
 				//统计挂掉的算力版个数
-				$speedCountResult['error'] = 0;
+				$speedCountResult['normal'] = 0;
 				foreach ( $arySpeedData as $key=>$data )
-				{
 					$doubleHighSpeed = max( $doubleHighSpeed , floatval( $data['S'] ) );
-					if(isset($aryHistory[$key]['A'])&&$aryHistory[$key]['A']>=$arySpeedData[$key]['A'])
-					{
-						$speedCountResult['error']++;
-					}
-				}
-				
-				$speedCountResult['normal'] = count($aryUsb) - $speedCountResult['error'];
-				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
 
 				// parse data
 				foreach ( $arySpeedData as $key=>$data )
@@ -796,6 +783,8 @@ class IndexController extends BaseController
 					// more than 5 minutes restart
 					if ( $now - $data['LAST'] > $intWorkTimeInterval )
 						$boolIsNeedRestart = true;
+					else
+						$speedCountResult['normal']++;
 
 					// if speed too low
 					if ( $doubleHighSpeed > 0 && $data['RUN'] > 30 && floatval( $data['S'] ) - $doubleHighSpeed * 0.8 < 0 )
@@ -817,6 +806,9 @@ class IndexController extends BaseController
 
 				// write history log
 				$redis->writeByKey( 'speed.history.log' , json_encode( $aryHistory ) );
+				// write machines number log
+				$speedCountResult['error'] = count($aryUsb) - $speedCountResult['normal'];
+				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
 
 				// end spi mode
 				break;
@@ -849,11 +841,15 @@ class IndexController extends BaseController
 				$btc_log_dir = $log_dir.'/btc';
 				$ltc_log_dir = $log_dir.'/ltc';
 
+				//初始　正常的算力版个数
+				$speedCountResult = array(
+							'BTC'=>array('normal'=>0,'error'=>0),
+							'LTC'=>array('normal'=>0,'error'=>0)
+						);
+
+				// BTC Start...
 				if ( file_exists( $btc_log_dir ) )
 					$btc_dir_source = opendir( $btc_log_dir );
-				
-				//初始　正常的算力版个数
-				$speedCountResult['normal'] = 0;
 				
 				$btc_need_check_time = false;
 				while ( isset( $btc_dir_source ) && ( $file  = readdir( $btc_dir_source ) ) !== false )
@@ -884,7 +880,6 @@ class IndexController extends BaseController
 						unlink( $sub_dir );
 						$btc_need_check_time = true;
 					}
-					$speedCountResult['normal']++;
 				}
 				
 				
@@ -901,8 +896,15 @@ class IndexController extends BaseController
 				{
 					if ( $now - $newData['BTC']['T'] > $intWorkTimeInterval || $now - $newData['BTC']['T'] < 0 )
 						$boolIsNeedRestart = true;
+					else
+						$speedCountResult['BTC']['normal'] = count( $aryUsb );
 				}
 
+				// Get BTC mode normal machine number
+				$speedCountResult['BTC']['error'] = count( $aryUsb ) - $speedCountResult['BTC']['normal'];
+
+
+				// LTC start...
 				if ( file_exists( $ltc_log_dir ) )
 					$ltc_dir_source = opendir( $ltc_log_dir );
 
@@ -944,10 +946,7 @@ class IndexController extends BaseController
 						unlink( $sub_dir );
 						$ltc_need_check_time = true;
 					}
-					
-					$speedCountResult['normal']++;
 				}
-				
 				
 				if ( $ltc_need_check_time === true || empty( $countData['LTC']['LC'] ) )
 					$countData['LTC']['LC'] = $now;
@@ -961,10 +960,9 @@ class IndexController extends BaseController
 					foreach ( $newData['LTC'] as $m )
 					{
 						if ( $now - $m['T'] > $intWorkTimeInterval || $now - $m['T'] < 0 )
-						{
 							$boolIsNeedRestart = true;
-							break;
-						}
+						else
+							$speedCountResult['LTC']['normal']++;
 					}
 					
 					if ( $boolIsNeedRestart === false 
@@ -974,12 +972,21 @@ class IndexController extends BaseController
 						$boolIsNeedRestart = true;
 				}
 
+				// Get LTC mode normal machine number
+				$speedCountResult['LTC']['error'] = count( $aryUsb ) - $speedCountResult['LTC']['normal'];
+
 				if ( empty( $speedData['lastlog'] ) )
 					$boolIsNeedRestart = false;
 				
-				//保存　算力版统计结果
-				$speedCountResult['error'] = count($aryUsb) - $speedCountResult['normal'];
-				$redis->writeByKey('speed.count.result' , json_encode($speedCountResult));
+				// 保存算力版统计结果
+				$storeSpeedCountResult = array();
+				// 分离统计结果
+				if ( in_array( $strRunMode , array( 'B' ) ) )
+					$storeSpeedCountResult = $speedCountResult['BTC'];
+				else
+					$storeSpeedCountResult = $speedCountResult['LTC'];
+				// 存储结果
+				$redis->writeByKey( 'speed.count.result' , json_encode( $storeSpeedCountResult ) );
 				
 				// end tty/lsusb mode
 				break;
