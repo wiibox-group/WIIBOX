@@ -13,6 +13,7 @@ class RunModel extends CModel
 	// default run mode
 	private $_defaultMode = array(
 				'JIE_A1_S_V1' => 'B',
+				'JIE_A1_S_V2' => 'B',
 				'GS_A1_S_V1' => 'B',
 				'FC_S_V1' => 'B',
 				'AV_S_V1' => 'B',

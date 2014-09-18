@@ -192,6 +192,7 @@ class IndexController extends BaseController
 			switch ( SYS_INFO )
 			{	
 				case 'JIE_A1_S_V1':
+				case 'JIE_A1_S_V2':
 					$aryConfig = $aryBTCData;
 					$aryConfig['ac'] = $aryBTCData['ac'][0];
 					$aryConfig['speed'] = $aryBTCData['speed'];
