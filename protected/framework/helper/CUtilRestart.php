@@ -175,5 +175,27 @@ class CUtilRestart
 		return true;
 	}
 
+	/**
+	 * 重启LK 33M
+	 */
+	public static function restartByLK33M( $_aryConfig = array() )
+	{
+		if ( empty( $_aryConfig ) )
+			return false;
+
+		if ( !empty( $_aryConfig['usb'] ) )
+		{
+			$strUsbParam = '';
+			foreach ( $_aryConfig['usb'] as $usb )
+				$strUsbParam .= ' -S '.$usb;
+		}
+
+		$intRunSpeed = intval( $_aryConfig['speed'] );
+		$command = SUDO_COMMAND.WEB_ROOT."/soft/cgminer_lk33 {$strUsbParam} -o {$_aryConfig['ad']} -u {$_aryConfig['ac']} -p {$_aryConfig['pw']} --fixdiff 1024 --chips 36 --clock {$intRunSpeed} --api-listen --api-allow W:127.0.0.1 --quiet >/dev/null 2>&1 &";
+
+		@exec( $command );
+		return true;
+	}
+
 // end class
 }

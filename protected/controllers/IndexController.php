@@ -301,6 +301,16 @@ class IndexController extends BaseController
 
 					break;
 
+				case 'LK_S_V1':
+					$aryConfig = $aryLTCData;
+					$aryConfig['ac'] = $aryLTCData['ac'][0];
+					$aryConfig['speed'] = $aryLTCData['speed'];
+					$aryConfig['usb'] = $aryUsb;
+
+					CUtilRestart::restartByLK33M( $aryConfig );
+
+					break;
+
 				case 'GS_S_V3':
 				case 'GS_D_V2':
 				// other mode

@@ -33,6 +33,8 @@ class CUtilMachine
 				'AV_S_V1'		=> 500,
 				// Zeus 33M Miner, default 950M
 				'ZS_S_V1'		=> 0,
+				// LK 33M
+				'LK_S_V1'		=> 325,
 			);
 
 	/** default check mode for single mode **/
@@ -51,6 +53,7 @@ class CUtilMachine
 				'OPENWRT_DIF_S_V1'		=> 'tty',
 				'OPENWRT_AV_S_V1'		=> 'tty-btc',
 				'RASPBERRY_ZS_S_V1'		=> 'tty-ltc',
+				'RASPBERRY_LK_S_V1'		=> 'tty-ltc',
 			);
 
 	/** default check mode for dule mode **/
@@ -71,6 +74,7 @@ class CUtilMachine
 				'XQ_S_V1'		=> 300,
 				'DIF_S_V1'		=> 300,
 				'ZS_S_V1'		=> 300,
+				'LK_S_V1'		=> 300,
 			);
 	
 	/**
