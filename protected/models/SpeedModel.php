@@ -220,7 +220,18 @@ class SpeedModel extends CModel
 			if( empty( $strSpeedData ) )
 				return false;
 
-			$arySpeedData = json_decode( $strSpeedData , 1 );
+			// 解析没有同步的数据
+			$aryGetSpeedData = json_decode( $strSpeedData , 1 );
+			// 分析两种算法的具体数据
+			foreach ( $aryGetSpeedData as $algorithm=>$ary )
+			{
+				foreach ( $ary as $k=>$v )
+				{
+					// 重新计算数据点位置
+					$intPoint = $this->_maxPoint - ( $this->_pointTime - $v[0] ) / $this->_waitTime;
+					$arySpeedData[$algorithm][$intPoint] = $v;
+				}
+			}
 		}
 
 		//获取当前算力速度
