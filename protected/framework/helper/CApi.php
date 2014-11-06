@@ -43,6 +43,9 @@ class CApi
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		// 设置cURL 最长执行时间
 		curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+		// 设置cURL 是否是否验证 SSL
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
 		// 运行cURL，请求网页
 		$res = curl_exec($curl);
 		// 关闭URL请求
