@@ -197,5 +197,56 @@ class CUtilRestart
 		return true;
 	}
 
+	/**
+	 * 重启SF 3301
+	 */
+	public static function restartBySf3301( $_aryConfig = array() , $_aryUsb = '' , $_strType = '' )
+	{
+		if ( empty( $_aryConfig ) )
+			return false;
+
+		$intRunSpeed = intval( $_aryConfig['speed'] );
+		if ( $_strType == 'LTC' )
+		{
+			foreach ( $_aryUsb as $index=>&$usb )
+				$usb = ($index+1).":".$usb;
+			$strUsb = implode( ',' , $_aryUsb );
+			$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][0]} -p x -f {$intRunSpeed} -B -d {$strUsb} >/dev/null 2>&1 &";
+		}
+		else if ( $_strType == 'BTC' )
+		{
+			foreach ( $_aryUsb as $index=>&$usb )
+				$usb = ($index+1).":".$usb;
+			$strUsb = implode( ',' , $_aryUsb );
+			$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][0]} -p x -a sha256d -f {$intRunSpeed} -B -d {$strUsb} >/dev/null 2>&1 &";
+		}
+
+		if ( !empty( $command ) )
+			@exec( $command );
+
+		/*
+		if ( $_strType == 'LTC' )
+		{
+			foreach ( $_aryUsb as $index=>&$usb )
+			{
+				$usb = ($index+1).":".$usb;
+				$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][$index]} -p x -f {$intRunSpeed} -B -d {$usb} >/dev/null 2>&1 &";
+				@exec( $command );
+			}
+		}
+		else if ( $_strType == 'BTC' )
+		{
+			foreach ( $_aryUsb as $index=>&$usb )
+			{
+				$usb = ($index+1).":".$usb;
+				$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][$index]} -p x -a sha256d -f {$intRunSpeed} -B -d {$usb} >/dev/null 2>&1 &";
+				@exec( $command );
+			}
+		}
+		 */
+
+		return true;
+	}
+
 // end class
 }

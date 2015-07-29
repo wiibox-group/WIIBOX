@@ -41,8 +41,18 @@ class IndexController extends BaseController
 			// open redis
 			$redis = $this->getRedis();
 
+			// 是否获取指定类型运算频率
+			$intFreq = null;
+			if ( SYS_INFO === 'SF3301_D_V1' )
+				$intFreq = array(0,1);
+
+			// 可调速度集合
+			$aryBTCSpeed = CUtilMachine::getSpeedList( SYS_INFO , is_null($intFreq)?null:$intFreq[0] );
+			$aryLTCSpeed = CUtilMachine::getSpeedList( SYS_INFO , is_null($intFreq)?null:$intFreq[1] );
+
 			// get default speed
-			$intDefaultSpeed = self::getDefaultSpeed();
+			$intDefaultBTCSpeed = self::getDefaultSpeed(is_null($intFreq)?null:$intFreq[0]);
+			$intDefaultLTCSpeed = self::getDefaultSpeed(is_null($intFreq)?null:$intFreq[1]);
 
 			// Tip data
 			$aryTipData = array();
@@ -53,11 +63,11 @@ class IndexController extends BaseController
 			$ltcVal = $redis->readByKey( 'ltc.setting' );
 			$aryBTCData = empty( $btcVal ) ? array() : json_decode( $btcVal , true );
 			if ( empty($aryBTCData['speed']) )
-				$aryBTCData['speed'] = $intDefaultSpeed;
+				$aryBTCData['speed'] = $intDefaultBTCSpeed;
 
 			$aryLTCData = empty( $ltcVal ) ? array() : json_decode( $ltcVal , true );
 			if ( empty($aryLTCData['speed']) )
-				$aryLTCData['speed'] = $intDefaultSpeed;
+				$aryLTCData['speed'] = $intDefaultLTCSpeed;
 
 			// get run model
 			$strRunMode = $this->getRunMode();
@@ -68,12 +78,12 @@ class IndexController extends BaseController
 				$strBTCAddress = isset( $_POST['address_btc'] ) ? htmlspecialchars( $_POST['address_btc'] ) : '';
 				$strBTCAccount = isset( $_POST['account_btc'] ) ? htmlspecialchars( $_POST['account_btc'] ) : '';
 				$strBTCPassword = isset( $_POST['password_btc'] ) ? htmlspecialchars( $_POST['password_btc'] ) : '';
+				$intBTCSpeed = isset( $_POST['run_speed_btc'] ) ? intval( $_POST['run_speed_btc'] ) : $intDefaultBTCSpeed;
 
 				$strLTCAddress = isset( $_POST['address_ltc'] ) ? htmlspecialchars( $_POST['address_ltc'] ) : '';
 				$strLTCAccount = isset( $_POST['account_ltc'] ) ? htmlspecialchars( $_POST['account_ltc'] ) : '';
 				$strLTCPassword = isset( $_POST['password_ltc'] ) ? htmlspecialchars( $_POST['password_ltc'] ) : '';
-
-				$intSpeed = isset( $_POST['run_speed'] ) ? intval( $_POST['run_speed'] ) : $intDefaultSpeed;
+				$intLTCSpeed = isset( $_POST['run_speed_ltc'] ) ? intval( $_POST['run_speed_ltc'] ) : $intDefaultLTCSpeed;
 
 				$strGetRunMode = isset( $_POST['runmodel'] ) ? htmlspecialchars( $_POST['runmodel'] ) : '';
 				if ( !empty( $strGetRunMode ) && in_array( $strGetRunMode , array( 'L' , 'LB' ) ) )
@@ -85,13 +95,13 @@ class IndexController extends BaseController
 				$aryBTCData['ad'] = $strBTCAddress;
 				$aryBTCData['ac'] = $strBTCAccount;
 				$aryBTCData['pw'] = $strBTCPassword;
-				$aryBTCData['speed'] = $intSpeed;
+				$aryBTCData['speed'] = $intBTCSpeed;
 				//$aryBTCData['su'] = isset( $aryBTCData['su'] ) ? $aryBTCData['su'] : 1;
 
 				$aryLTCData['ad'] = $strLTCAddress;
 				$aryLTCData['ac'] = $strLTCAccount;
 				$aryLTCData['pw'] = $strLTCPassword;
-				$aryLTCData['speed'] = $intSpeed;
+				$aryLTCData['speed'] = $intLTCSpeed;
 				//$aryLTCData['su'] = isset( $aryLTCData['su'] ) ? $aryLTCData['su'] : 1;
 
 				if ( in_array( $strRunMode , array( 'L' ) ) )
@@ -126,7 +136,12 @@ class IndexController extends BaseController
 		$aryData['btc'] = $aryBTCData;
 		$aryData['ltc'] = $aryLTCData;
 		$aryData['runmodel'] = $strRunMode;
-		$aryData['speed'] = $aryLTCData['speed'];
+		$aryData['speedDefBTC'] = $intDefaultBTCSpeed;
+		$aryData['speedDefLTC'] = $intDefaultLTCSpeed;
+		$aryData['speedBTC'] = $aryBTCData['speed'];
+		$aryData['speedLTC'] = $aryLTCData['speed'];
+		$aryData['aryBTCSpeed'] = $aryBTCSpeed;
+		$aryData['aryLTCSpeed'] = $aryLTCSpeed;
 		$this->render( 'index' , $aryData );
 	}
 
@@ -185,7 +200,7 @@ class IndexController extends BaseController
 		$aryUsb = $aryUsbCache['usb'];
 
 		// if btc machine has restart
-		if ( count( $aryUsb ) > 0 && in_array( $strRunMode , array( 'B' ) ) )
+		if ( count( $aryUsb ) > 0 && in_array( $strRunMode , array( 'B','LB' ) ) )
 		{
 			$aryBTCData = $this->getTarConfig( 'btc' );
 
@@ -237,6 +252,15 @@ class IndexController extends BaseController
 					$aryConfig['usb'] = $aryUsb;
 
 					CUtilRestart::restartByAvalon( $aryConfig );
+
+					break;
+
+				case 'SF3301_D_V1':
+					$aryConfig = $aryBTCData;
+					$aryConfig['ac'] = $aryBTCData['ac'];
+					$aryConfig['speed'] = $aryBTCData['speed'];
+
+					CUtilRestart::restartBySf3301( $aryConfig , array($aryUsb[0],$aryUsb[2],$aryUsb[4]) , 'BTC' );
 
 					break;
 
@@ -308,6 +332,15 @@ class IndexController extends BaseController
 					$aryConfig['usb'] = $aryUsb;
 
 					CUtilRestart::restartByLK33M( $aryConfig );
+
+					break;
+
+				case 'SF3301_D_V1':
+					$aryConfig = $aryLTCData;
+					$aryConfig['ac'] = $aryLTCData['ac'];
+					$aryConfig['speed'] = $aryLTCData['speed'];
+
+					CUtilRestart::restartBySf3301( $aryConfig , array($aryUsb[1],$aryUsb[3],$aryUsb[5]) , 'LTC' );
 
 					break;
 
@@ -516,12 +549,12 @@ class IndexController extends BaseController
 				count( $aryData['alived']['LTC'] )+count( $aryData['died']['LTC'] ) );
 
 		// if need restart
-		if ( ( $strRunMode === 'L' 
-					&& $intCountMachine > 0 
-					&& count( $aryData['alived']['LTC'] ) === 0 ) 
-				|| ( $strRunMode === 'B' 
-					&& $intCountMachine > 0 
-					&& count( $aryData['alived']['BTC'] ) === 0 ) 
+		if ( ( in_array( $strRunMode , array( 'L','LB' ) ) 
+				&& $intCountMachine > 0
+				&& count( $aryData['alived']['LTC'] ) === 0 )
+			|| ( in_array( $strRunMode , array( 'B','LB' ) )
+				&& $intCountMachine > 0
+				&& count( $aryData['alived']['BTC'] ) === 0 )
 		)
 			echo $this->actionRestart( true ) === true ? 1 : -1;
 		else
@@ -713,10 +746,15 @@ class IndexController extends BaseController
 			case 'spi-btc':
 			// btc mode use lsusb agreement
 			case 'lsusb-btc':
+			// btc mode use sf agreement
+			case 'sf-btc':
 			// btc mode use tty agreement
 			case 'tty-btc':
 				// get speed data
-				$arySpeedData = SpeedModel::getSpeedDataByApi();
+				if ( $strCheckTar == 'sf-btc' )
+					$arySpeedData = SpeedModel::getSpeedDataBySfApi();
+				else
+					$arySpeedData = SpeedModel::getSpeedDataByApi();
 				
 				// get history accept
 				$historyLog = $redis->readByKey( 'speed.history.log' );
@@ -770,11 +808,16 @@ class IndexController extends BaseController
 			case 'tty-ltc':
 			// ltc mode use usb but data from api
 			case 'lsusb-api':
+			// ltc mode use sf agreement
+			case 'sf-ltc':
 			// ltc mode use spi agreement
 			case 'spi-ltc':
 				
 				// get speed data
-				$arySpeedData = SpeedModel::getSpeedDataByApi();
+				if ( $strCheckTar == 'sf-ltc' )
+					$arySpeedData = SpeedModel::getSpeedDataBySfApi();
+				else
+					$arySpeedData = SpeedModel::getSpeedDataByApi();
 
 				// get history accept
 				$historyLog = $redis->readByKey( 'speed.history.log' );
@@ -1026,7 +1069,7 @@ class IndexController extends BaseController
 		$redis->writeByKey( 'speed.count.log' , json_encode( $countData , 1 ) );
 
 		// if need restart
-		if ( $boolIsNeedRestart === true && SYS_INFO !== 'ZS_S_V1' )
+		if ( $boolIsNeedRestart === true && SYS_INFO !== 'ZS_S_V1' && SYS_INFO !== 'SF3301_D_V1' )
 		{
 			$this->actionRestart( true );
 			
@@ -1054,9 +1097,9 @@ class IndexController extends BaseController
 	/**
 	 * Get default speed
 	 */
-	public function getDefaultSpeed()
+	public function getDefaultSpeed($_intAlgo=null)
 	{
-		return CUtilMachine::getDefaultSpeed(SYS_INFO);
+		return CUtilMachine::getDefaultSpeed(SYS_INFO,$_intAlgo);
 	}
 
 	/**

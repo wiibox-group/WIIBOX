@@ -48,7 +48,16 @@ class UsbModel extends CModel
 		// is contain GD miner
 		$boolHasGD = false;
 
-		if ( ( in_array( $_strRunMode , array( 'B' , 'LB' ) ) && empty( $_strCheckTar ) ) || $_strCheckTar === 'lsusb' )
+		if ( $_strCheckTar === 'sf' )
+		{
+			@exec( SUDO_COMMAND.'ls /dev/tty* |grep -E "ACM|USB"' , $output );
+
+			$aryUsbCache = array();
+			$aryUsbCache['usb'] = $output;
+			$aryUsbCache['time'] = time();
+			$aryUsbCache['hasgd'] = 0;
+		}
+		else if ( ( in_array( $_strRunMode , array( 'B' , 'LB' ) ) && empty( $_strCheckTar ) ) || $_strCheckTar === 'lsusb' )
 		{
 			$redis = $this->getRedis();
 			$aryUsbCache = json_decode( $redis->readByKey( 'usb.check.result' ) , 1 );

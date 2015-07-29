@@ -105,14 +105,40 @@ class SpeedModel extends CModel
 			*/
 
 			$aryUsb = $strMinerName.$data[$strMinerName];
-			$aryUsbData[$aryUsb] = array( 'A'=>$data['Accepted'] , 
-										'R'=>$data['Rejected'] , 
-										'S'=>$data['MHS av'] , 
-										'RUN'=>$data['Device Elapsed'],
-										//'LAST'=>$data['Last Share Time']
-										'LAST'=>$data['Last Valid Work']
-									);
+			$aryUsbData[$aryUsb] = array(
+					'A'=>$data['Accepted'] , 
+					'R'=>$data['Rejected'] , 
+					'S'=>$data['MHS av'] , 
+					'RUN'=>$data['Device Elapsed'],
+					//'LAST'=>$data['Last Share Time']
+					'LAST'=>$data['Last Valid Work']
+				);
 
+		}
+
+		return $aryUsbData;
+	}
+
+	/**
+	 * 获得速度数据
+	 *
+	 * @return array
+	 */
+	public static function getSpeedDataBySfApi()
+	{
+		$aryApiData = SocketModel::request( '{"command":"devs"}' );
+
+		$aryUsbData = array();
+		foreach ( $aryApiData['DEVS'] as $key=>$data ) 
+		{
+			$aryUsb = $data['Name'];
+			$aryUsbData[$aryUsb] = array(
+					'A'=>$data['Accepted'] , 
+					'R'=>$data['Rejected'] , 
+					'S'=>$data['MHS av'] , 
+					'RUN'=>$data['Device Elapsed'],
+					'LAST'=>$data['Last Valid Work']
+				);
 		}
 
 		return $aryUsbData;
@@ -185,18 +211,29 @@ class SpeedModel extends CModel
 	 * @author zhangyi
 	 * @date 2014-6-13
 	 */
-	public function getSpeedSum()
+	public function getSpeedSum( $_strMode = '' )
 	{
-		$arySpeedDatas = $this -> getSpeedDataByApi();	
-		//获取总算力
-		$intSpeedSum = 0;
-		if( !empty( $arySpeedDatas ) )
+		if ( $_strMode == 'sf' )
 		{
-			foreach ( $arySpeedDatas as $arySpeedData )
-				$intSpeedSum += $arySpeedData['S'];
+			$arySpeedDatas = $this -> getSpeedDataBySfApi();
+			$intSpeedSum['L'] = $arySpeedDatas['ltc']['S']*1024;
+			$intSpeedSum['B'] = $arySpeedDatas['btc']['S']*1024;
+		}
+		else
+		{
+			$arySpeedDatas = $this -> getSpeedDataByApi();
+
+			//获取总算力
+			$intSpeedSum = 0;
+			if( !empty( $arySpeedDatas ) )
+			{
+				foreach ( $arySpeedDatas as $arySpeedData )
+					$intSpeedSum += $arySpeedData['S'];
+			}
+			$intSpeedSum *= 1024;
 		}
 		
-		return $intSpeedSum * 1024;
+		return $intSpeedSum;
 	}
 
 	/**
@@ -212,16 +249,14 @@ class SpeedModel extends CModel
 		$aryData = array();
 
 		$arySpeedData = array();
-		//判断是否存在同步错误数据
-		if( file_exists( $redis -> getFilePath( $this -> _noSyncDataFileName ) ) === true )
-		{
-			//将未同步数据进行取出
-			$strSpeedData = $redis -> readByKey( $this -> _noSyncDataFileName );
-			if( empty( $strSpeedData ) )
-				return false;
+		//将未同步数据进行取出
+		$strSpeedData = $redis -> readByKey( $this -> _noSyncDataFileName );
 
+		if( !empty( $strSpeedData ) )
+		{
 			// 解析没有同步的数据
 			$aryGetSpeedData = json_decode( $strSpeedData , 1 );
+			$aryGetSpeedData = empty( $aryGetSpeedData ) ? array() : $aryGetSpeedData;
 			// 分析两种算法的具体数据
 			foreach ( $aryGetSpeedData as $algorithm=>$ary )
 			{
@@ -304,19 +339,27 @@ class SpeedModel extends CModel
 	 * @author zhangyi
 	 * @date 2014-6-11
 	 */
-	public function refreshSpeedData( )
+	public function refreshSpeedData( $_strMode = '' )
 	{
 		$boolFlag = false;
 		try
 		{
 			//创建数据
-			$intSpeedSum = $this -> getSpeedSum();
+			$intSpeedSum = $this -> getSpeedSum( $_strMode );
 			$strRunModel = RunModel::model() -> getRunMode();
 			$intSpeedL = $strRunModel === 'L' ? $intSpeedSum : 0;
 			$intSpeedB = $strRunModel === 'B' ? $intSpeedSum : 0;
+			if ( $strRunModel === 'LB' )
+			{
+				$intSpeedL = $intSpeedSum['L'];
+				$intSpeedB = $intSpeedSum['B'];
+			}
+
+			// 获得历史速度数据
+			$aryData = $this -> getSpeedDataByFile();
 			
 			//如果文件不存在,则写入默认数据
-			if( file_exists( $this -> getFilePath() ) === false )
+			if( empty( $aryData ) )
 			{
 				$aryData = array(
 							'L' => array( ''.$this -> _pointTime => array( $this -> _pointTime , $intSpeedL )),
@@ -329,13 +372,12 @@ class SpeedModel extends CModel
 			else
 			{
 				//如果当前时间减去最后一次时间大于 点与点之间时间差距 则执行插入数据功能,否则替换最后一次数据
-				$aryData = $this -> getSpeedDataByFile();
-				$aryPointsDataL = $aryData['L'];
-				$aryPointsDataB = $aryData['B'];
-				$aryLastDataL = end($aryData['L']);
-				$intLastTime = array_shift( $aryLastDataL );
+				$aryPointsDataL = empty( $aryData['L'] ) ? array() : $aryData['L'];
+				$aryPointsDataB = empty( $aryData['B'] ) ? array() : $aryData['B'];
+				$aryLastDataL = end($aryPointsDataL);
+				$intLastTime = empty( $aryLastDataL ) ? 0 : array_shift( $aryLastDataL );
 				$pointTime = $this -> _pointTime;
-				
+
 				//如果当前可同步时间 与 最后一次同步时间中间相差两个点，并且获得的速度不为0，则跳过三次
 				if( ( $pointTime < $intLastTime 
 							|| $pointTime - $intLastTime >= 2 * $this -> _waitTime )
@@ -431,16 +473,11 @@ class SpeedModel extends CModel
 	public function getIgnoreNum()
 	{	
 		$redis = $this -> getRedis();
-		if( file_exists( $redis -> getFilePath( $this -> _ignoreKey ) ) === true )
-		{
-			$strNum = $redis -> readByKey( $this -> _ignoreKey );
-			if( empty( $strNum ) )
-				return 0;
-			else
-				return intval( $strNum );
-		}
-		else
+		$strNum = $redis -> readByKey( $this -> _ignoreKey );
+		if( empty( $strNum ) )
 			return 0;
+		else
+			return intval( $strNum );
 	}
 	
 	/**

@@ -96,13 +96,17 @@ class LoginModel extends CModel
 	{
 		//判断是否存在用户信息文件来确定是否创建用户文件 
 		$redis = $this -> getRedis();
-		$filePath = $redis -> getFilePath( $this -> _fileName );
-		if( file_exists( $filePath ) === false )
+		$aryUserInfo = $redis -> readByKey( $this -> _fileName );
+		if( empty($aryUserInfo) )
+		{
 			return $redis -> writeByKey( $this -> _fileName , json_encode(
 						array(
 							'uname' => UUSERNAME ,
 							'pwd' => CString::encodeMachinePassword( UPASSWORD ) 
 						) ) );
+		}
+		else 
+			return false;
 	}
 	
 	/**
@@ -120,7 +124,7 @@ class LoginModel extends CModel
 		$aryUserInfo = $redis -> readByKey( $this -> _fileName );
 		
 		if( empty( $aryUserInfo ) )
-			throw new CModelException( CUtil::i18n('exception,sys_error') );
+			$aryUserInfo = '{}';
 		return json_decode( $aryUserInfo , 1 );
 	}
 	

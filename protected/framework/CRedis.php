@@ -239,5 +239,18 @@ class CRedis extends CApplicationComponents
 		return $data;
 	}
 
+	/**
+	 * 获取文件路径
+	 * @param string $_key 指定的key
+	 * @return string 文件完整地址
+	 * 
+	 * @author zhangyi
+	 * @date 2014-5-28
+	 */
+	public function getFilePath( $_key = '' )
+	{
+		return '/tmp/';
+	}
+
 //end class
 }

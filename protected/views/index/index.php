@@ -3,8 +3,6 @@
 	$aryStatus = array( 'success'=>'alert-success' , 'warning'=>'alert-warning' , 'error'=>'alert-danger' );
 	// 运行模式
 	$strRunMode = RunModel::model()->getRunMode();
-	// 可调速度集合
-	$arySpeed = CUtilMachine::getSpeedList( SYS_INFO );
 ?>
 <div class="container page-index">
 	<div class="page-header">
@@ -27,6 +25,25 @@
 			<div class="form-group">
 				<input class="form-control" placeholder="<?php echo CUtil::i18n('vindex,sha_workerPwd')?>" name="password_btc" value="<?php echo $btc['pw']; ?>" type="text" />
 			</div>
+			<?php if ( count( $aryBTLSpeed ) ) : ?>
+			<div class="form-group">
+				<input type="hidden" id="run_speed_btc" name="run_speed_btc" value="<?php echo $speedBTC; ?>" />
+				<div class="btn-group">
+					<button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown">
+					    <?php echo CUtil::i18n('vindex,runFrequency')?><span id="speed-cur"><?php echo $speedBTC; ?></span>M
+					    &nbsp;<span class="caret"></span>
+					</button>
+					<ul id="selectSpeed" class="dropdown-menu" role="menu">
+						<?php foreach ( $aryBTCSpeed as $intSpeed ) { ?>
+						<li>
+							<a data-value="<?php echo $intSpeed ?>"><?php echo $intSpeed ?>M</a>
+						</li>
+						<?php } ?>
+					</ul>
+				</div>
+				<span>&nbsp;&nbsp;(<?php echo CUtil::i18n('vindex,frequencyTip');?><?php echo $speedDefBTC; ?>M)</span>
+			</div>
+			<?php endif; ?>
 			<?php endif; ?>
 			<?php if ( $strRunMode === 'L' || $strRunMode === 'LB' ) : ?>
 			<div class="form-title">
@@ -41,25 +58,25 @@
 			<div class="form-group">
 				<input class="form-control input-lg" placeholder="<?php echo CUtil::i18n('vindex,scrypt_workerPwd'); ?>" name="password_ltc" value="<?php echo $ltc['pw']; ?>" type="text" />
 			</div>
-			<?php endif; ?>
-			<?php if ( count( $arySpeed ) ) : ?>
+			<?php if ( count( $aryLTCSpeed ) ) : ?>
 			<div class="form-group">
-				<input type="hidden" id="run_speed" name="run_speed" value="<?php echo $speed; ?>" />
+				<input type="hidden" id="run_speed_ltc" name="run_speed_ltc" value="<?php echo $speedLTC; ?>" />
 				<div class="btn-group">
 					<button type="button" class="btn btn-default btn-lg dropdown-toggle" data-toggle="dropdown">
-					    <?php echo CUtil::i18n('vindex,runFrequency')?><span id="speed-cur"><?php echo $speed; ?></span>M
+					    <?php echo CUtil::i18n('vindex,runFrequency')?><span id="speed-cur"><?php echo $speedLTC; ?></span>M
 					    &nbsp;<span class="caret"></span>
 					</button>
 					<ul id="selectSpeed" class="dropdown-menu" role="menu">
-						<?php foreach ( $arySpeed as $intSpeed ) { ?>
+						<?php foreach ( $aryLTCSpeed as $intSpeed ) { ?>
 						<li>
 							<a data-value="<?php echo $intSpeed ?>"><?php echo $intSpeed ?>M</a>
 						</li>
 						<?php } ?>
 					</ul>
 				</div>
-				<span>&nbsp;&nbsp;(<?php echo CUtil::i18n('vindex,frequencyTip');?><?php echo CUtilMachine::getDefaultSpeed(SYS_INFO); ?>M)</span>
+				<span>&nbsp;&nbsp;(<?php echo CUtil::i18n('vindex,frequencyTip');?><?php echo $speedDefLTC; ?>M)</span>
 			</div>
+			<?php endif; ?>
 			<?php endif; ?>
 			<div class="alert alert-warning text-center">
 		  		<strong><?php echo CUtil::i18n('vindex,importantOption');?></strong>

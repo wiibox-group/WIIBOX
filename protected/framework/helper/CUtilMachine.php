@@ -35,6 +35,8 @@ class CUtilMachine
 				'ZS_S_V1'		=> 0,
 				// LK 33M
 				'LK_S_V1'		=> 325,
+				// SF 3301
+				'SF3301_D_V1'	=> array(450,850),
 			);
 
 	/** default check mode for single mode **/
@@ -59,6 +61,7 @@ class CUtilMachine
 	/** default check mode for dule mode **/
 	private static $_checkMode_D = array(
 				'OPENWRT_GS_D_V2'		=> 'lsusb',
+				'RASPBERRY_SF3301_D_V1'	=> 'sf-ltc',
 			);
 
 	/** default work time interval **/
@@ -75,20 +78,26 @@ class CUtilMachine
 				'DIF_S_V1'		=> 300,
 				'ZS_S_V1'		=> 300,
 				'LK_S_V1'		=> 300,
+				'LK_S_V1'		=> 300,
+				'SF3301_D_V1'	=> 600,
 			);
 	
 	/**
 	 * 获得默认运行频率
 	 *
 	 * @param string $_strType 设备类型
+	 * @param int $_intAlgo 指定算法
 	 * @return int
 	 */
-	public static function getDefaultSpeed( $_strType = '' )
+	public static function getDefaultSpeed( $_strType = '' , $_intAlgo = null )
 	{
 		if ( empty( $_strType ) )
 			return 0;
 
-		return empty( self::$_defaultSpeed[$_strType] ) ? 850 : self::$_defaultSpeed[$_strType];
+		// 频率
+		$intFreq = !is_null( $_intAlgo ) ? self::$_defaultSpeed[$_strType][$_intAlgo] : self::$_defaultSpeed[$_strType];
+
+		return empty( $intFreq ) ? 850 : $intFreq;
 	}
 
 	/**
@@ -109,20 +118,21 @@ class CUtilMachine
 	 * 获得当前可用运行频率
 	 *
 	 * @param string $_strType 设备类型
+	 * @param int $_intAlgo 指定算法
 	 * @return int
 	 */
-	public static function getSpeedList( $_strType = '' )
+	public static function getSpeedList( $_strType = '' , $_intAlgo = null )
 	{
 		if ( empty( $_strType ) )
 			return array();
 
 		// 运行速度
-		$intSpeed = self::$_defaultSpeed[ $_strType ];
-		if ( empty( $intSpeed ) )
+		$intFreq = !is_null( $_intAlgo ) ? self::$_defaultSpeed[$_strType][$_intAlgo] : self::$_defaultSpeed[$_strType];
+		if ( empty( $intFreq ) )
 			return array();
 
 		// 最小速度，前后延伸4个速度梯度
-		$intMin = floor( $intSpeed / self::SPEED_STEP ) * self::SPEED_STEP - 4 * self::SPEED_STEP;
+		$intMin = floor( $intFreq / self::SPEED_STEP ) * self::SPEED_STEP - 4 * self::SPEED_STEP;
 		$intMin = $intMin > 0 ? $intMin : 0;
 
 		// 可用速度集合
@@ -133,7 +143,7 @@ class CUtilMachine
 			$arySpeed[$intGetSpeed] = $intGetSpeed;
 		}
 
-		$arySpeed[$intSpeed] = $intSpeed;
+		$arySpeed[$intFreq] = $intFreq;
 		ksort( $arySpeed );
 
 		return array_values( $arySpeed );

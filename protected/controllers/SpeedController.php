@@ -15,8 +15,14 @@ class SpeedController extends BaseController
 	 */
 	public function actionIndex()
 	{
-		
-		if ( SpeedModel::model() -> refreshSpeedData() === false )
+		$strMode = '';
+		// If Sfards 3301 chip
+		if ( strpos( SYS_INFO , 'SF3301' ) === 0 )
+		{
+			$strMode = 'sf';
+		}
+
+		if ( SpeedModel::model() -> refreshSpeedData( $strMode ) === false )
 			echo '500';
 
 		echo '200';
@@ -43,8 +49,15 @@ class SpeedController extends BaseController
 			*/
 				$aryData = $objSpeedModel -> getSpeedDataByFile();
 
+				$strMode = '';
+				// If Sfards 3301 chip
+				if ( strpos( SYS_INFO , 'SF3301' ) === 0 )
+				{
+					$strMode = 'sf';
+				}
+
 				//如果数据不存在，则刷新一次数据
-				if ( empty( $aryData ) && $objSpeedModel -> refreshSpeedData() === true )
+				if ( empty( $aryData ) && $objSpeedModel -> refreshSpeedData($strMode) === true )
 					$aryData = $objSpeedModel -> getSpeedDataByFile();
 				
 				//如果数据依然不存在，则抛出系统异常错误
