@@ -260,7 +260,13 @@ class IndexController extends BaseController
 					$aryConfig['ac'] = $aryBTCData['ac'];
 					$aryConfig['speed'] = $aryBTCData['speed'];
 
-					CUtilRestart::restartBySf3301( $aryConfig , array($aryUsb[0],$aryUsb[2],$aryUsb[4]) , 'BTC' );
+					if ( count( $aryUsb ) === 6 )
+						$tmpUsbs = array($aryUsb[0],$aryUsb[2],$aryUsb[4]);
+					else if ( count( $aryUsb ) === 10 )
+						$tmpUsbs = array($aryUsb[0],$aryUsb[2],$aryUsb[4],$aryUsb[6],$aryUsb[8]);
+					else
+						$tmpUsbs = array($aryUsb[0]);
+					CUtilRestart::restartBySf3301( $aryConfig , $tmpUsbs , 'BTC' );
 
 					break;
 
@@ -340,7 +346,13 @@ class IndexController extends BaseController
 					$aryConfig['ac'] = $aryLTCData['ac'];
 					$aryConfig['speed'] = $aryLTCData['speed'];
 
-					CUtilRestart::restartBySf3301( $aryConfig , array($aryUsb[1],$aryUsb[3],$aryUsb[5]) , 'LTC' );
+					if ( count( $aryUsb ) === 6 )
+						$tmpUsbs = array($aryUsb[1],$aryUsb[3],$aryUsb[5]);
+					else if ( count( $aryUsb ) === 10 )
+						$tmpUsbs = array($aryUsb[1],$aryUsb[3],$aryUsb[5],$aryUsb[7],$aryUsb[9]);
+					else
+						$tmpUsbs = array($aryUsb[1]);
+					CUtilRestart::restartBySf3301( $aryConfig , $tmpUsbs , 'LTC' );
 
 					break;
 
@@ -550,11 +562,11 @@ class IndexController extends BaseController
 
 		// if need restart
 		if ( ( in_array( $strRunMode , array( 'L','LB' ) ) 
-				&& $intCountMachine > 0
-				&& count( $aryData['alived']['LTC'] ) === 0 )
-			|| ( in_array( $strRunMode , array( 'B','LB' ) )
-				&& $intCountMachine > 0
-				&& count( $aryData['alived']['BTC'] ) === 0 )
+					&& $intCountMachine > 0 
+					&& count( $aryData['alived']['LTC'] ) === 0 ) 
+				|| ( in_array( $strRunMode , array( 'B','LB' ) ) 
+					&& $intCountMachine > 0 
+					&& count( $aryData['alived']['BTC'] ) === 0 ) 
 		)
 			echo $this->actionRestart( true ) === true ? 1 : -1;
 		else
@@ -690,7 +702,12 @@ class IndexController extends BaseController
 
 		// if speed is null
 		if ( empty($aryData['speed']) )
-			$aryData['speed'] = self::getDefaultSpeed();
+		{
+			$intFreq = null;
+			if ( SYS_INFO === 'SF3301_D_V1' )
+				$intFreq = array('btc'=>0,'ltc'=>1);
+			$aryData['speed'] = self::getDefaultSpeed(is_null($intFreq)?null:$intFreq[$_strTar]);
+		}
 
 		$aryData['ac'] = $aryUidsSet;
 		$aryData['acc'] = count( $aryUidsSet );

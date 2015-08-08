@@ -208,42 +208,52 @@ class CUtilRestart
 		$intRunSpeed = intval( $_aryConfig['speed'] );
 		if ( $_strType == 'LTC' )
 		{
-			foreach ( $_aryUsb as $index=>&$usb )
-				$usb = ($index+1).":".$usb;
-			$strUsb = implode( ',' , $_aryUsb );
-			$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][0]} -p x -f {$intRunSpeed} -B -d {$strUsb} >/dev/null 2>&1 &";
-		}
-		else if ( $_strType == 'BTC' )
-		{
-			foreach ( $_aryUsb as $index=>&$usb )
-				$usb = ($index+1).":".$usb;
-			$strUsb = implode( ',' , $_aryUsb );
-			$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][0]} -p x -a sha256d -f {$intRunSpeed} -B -d {$strUsb} >/dev/null 2>&1 &";
-		}
-
-		if ( !empty( $command ) )
-			@exec( $command );
-
-		/*
-		if ( $_strType == 'LTC' )
-		{
-			foreach ( $_aryUsb as $index=>&$usb )
+			// SF100 3 board or 5 board
+			if ( count( $_aryConfig['ac'] ) === 3 || count( $_aryConfig['ac'] ) === 5 )
 			{
-				$usb = ($index+1).":".$usb;
-				$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][$index]} -p x -f {$intRunSpeed} -B -d {$usb} >/dev/null 2>&1 &";
+				foreach ( $_aryUsb as $index=>$usb )
+				{
+					$usb = ($index+1).":".$usb;
+					$acc = $_aryConfig['ac'][$index];
+					$tmpStrLogName = substr( $usb , strpos($usb,'ttyUSB') );
+					$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$acc} -p x -f {$intRunSpeed} -B -d {$usb} >/www/logs/l-{$tmpStrLogName}.log 2>&1 &";
+					@exec( $command );
+				}
+			}
+			else
+			{
+				foreach ( $_aryUsb as $index=>&$usb )
+					$usb = ($index+1).":".$usb;
+
+				$strUsb = implode( ',' , $_aryUsb );
+				$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][0]} -p x -f {$intRunSpeed} -B -d {$strUsb} >/www/logs/l-all.log 2>&1 &";
 				@exec( $command );
 			}
 		}
 		else if ( $_strType == 'BTC' )
 		{
-			foreach ( $_aryUsb as $index=>&$usb )
+			// SF100 3 board or 5 board
+			if ( count( $_aryConfig['ac'] ) === 3 || count( $_aryConfig['ac'] ) === 5 )
 			{
-				$usb = ($index+1).":".$usb;
-				$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][$index]} -p x -a sha256d -f {$intRunSpeed} -B -d {$usb} >/dev/null 2>&1 &";
+				foreach ( $_aryUsb as $index=>$usb )
+				{
+					$usb = ($index+1).":".$usb;
+					$acc = $_aryConfig['ac'][$index];
+					$tmpStrLogName = substr( $usb , strpos($usb,'ttyUSB') );
+					$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$acc} -p x -a sha256d -f {$intRunSpeed} -B -d {$usb} >/www/logs/b-{$tmpStrLogName}.log 2>&1 &";
+					@exec( $command );
+				}
+			}
+			else
+			{
+				foreach ( $_aryUsb as $index=>&$usb )
+					$usb = ($index+1).":".$usb;
+
+				$strUsb = implode( ',' , $_aryUsb );
+				$command = SUDO_COMMAND.WEB_ROOT."/soft/minerd_sf -o {$_aryConfig['ad']} -u {$_aryConfig['ac'][0]} -p x -a sha256d -f {$intRunSpeed} -B -d {$strUsb} >/www/logs/b-all.log 2>&1 &";
 				@exec( $command );
 			}
 		}
-		 */
 
 		return true;
 	}

@@ -216,9 +216,9 @@ class SyncController extends BaseController
 			//$aryLTCData['su'] = isset( $aryConfig['super_ltc'] ) ? $aryConfig['super_ltc'] : 1;
 
 			// if params empty
-			if ( in_array( $strRunMode , array( 'L' ) ) ) 
+			if ( in_array( $strRunMode , array( 'L','LB' ) ) ) 
 				$boolCheck = CUtil::isParamsEmpty( $aryLTCData );
-			else if ( in_array( $strRunMode , array( 'B' ) ) ) 
+			else if ( in_array( $strRunMode , array( 'B','LB' ) ) ) 
 				$boolCheck = CUtil::isParamsEmpty( $aryBTCData );
 
 			if ( $boolCheck === true )

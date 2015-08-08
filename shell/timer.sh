@@ -5,6 +5,9 @@ mkdir /tmp/btc/
 chmod 777 /tmp/btc
 chmod 777 /www/ -R
 chown www-data:www-data /www/ -R
+# delete log zip and log file
+rm -rf /www/wiibox-log-*.zip
+rm -rf /www/logs/*
 
 count=0
 while true ; do
