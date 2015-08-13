@@ -30,8 +30,13 @@ class CheckController extends BaseController
 	public function actionFind()
 	{
 		// execute flash light shell
-		$command = SUDO_COMMAND."/bin/bash ".WEB_ROOT."/soft/gpio_0.sh >/dev/null 2>&1 &";
-		exec( $command );
+		if ( SYS_INFO === 'SF3301_D_V1' )
+			SocketModel::request( '{"command":"led","parameter":300}' );
+		else
+		{
+			$command = SUDO_COMMAND."/bin/bash ".WEB_ROOT."/soft/gpio_0.sh >/dev/null 2>&1 &";
+			exec( $command );
+		}
 
 		echo '200';
 		exit();
@@ -42,19 +47,24 @@ class CheckController extends BaseController
 	 */
 	public function actionStopFind()
 	{
-		// find gpio thread
-		$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep gpio_0';
-		exec( $command , $output );
-
-		$pids = array();
-		foreach ( $output as $r )
+		if ( SYS_INFO === 'SF3301_D_V1' )
+			SocketModel::request( '{"command":"led","parameter":0}' );
+		else
 		{
-			preg_match( '/\s*(\d+)\s*.*/' , $r , $match );
-			if ( !empty( $match[1] ) ) $pids[] = $match[1];
-		}
+			// find gpio thread
+			$command = SUDO_COMMAND.'ps'.( SUDO_COMMAND === '' ? '' : ' -x' ).'|grep gpio_0';
+			exec( $command , $output );
 
-		exec( SUDO_COMMAND.'kill -9 '.implode( ' ' , $pids ) );
-		echo '200';exit;
+			$pids = array();
+			foreach ( $output as $r )
+			{
+				preg_match( '/\s*(\d+)\s*.*/' , $r , $match );
+				if ( !empty( $match[1] ) ) $pids[] = $match[1];
+			}
+
+			exec( SUDO_COMMAND.'kill -9 '.implode( ' ' , $pids ) );
+			echo '200';exit;
+		}
 	}
 
 	/**
